@@ -26,7 +26,7 @@ Vue.prototype.$message = Message;
 
 import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
-import './components/tool'
+import './plugin/tool'
 
 //权限控制
 import permissionDirective from './components/directives'

@@ -14,6 +14,9 @@
 Route::get('/', 'IndexController@index');
 Route::get('/test', 'TestController@index');
 
+Route::get('/article_lists', 'ArticleController@lists');
+Route::get('/article_info', 'ArticleController@info');
+
 Route::post('/regist', 'RegisterController@regist');
 Route::post('/uploads_image', 'UploadsController@image');
 Route::post('/login', 'UserController@login');

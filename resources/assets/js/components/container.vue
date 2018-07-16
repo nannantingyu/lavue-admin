@@ -20,7 +20,7 @@
                         v-if="user_module_permission['article-read']"
                         index="/article">
                     <template slot="title">
-                        <i class="el-icon-menu"></i>
+                        <i class="el-icon-tickets"></i>
                         <span slot="title">文章管理</span>
                     </template>
                     <el-menu-item-group>

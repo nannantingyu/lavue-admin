@@ -4,6 +4,7 @@ import user from "./modules/user"
 import banner from "./modules/banner"
 import banner_state from './modules/banner_state'
 import module from './modules/module'
+import article from './modules/article'
 
 Vue.use(Vuex)
 import actions from "./actions"
@@ -15,7 +16,8 @@ export default new Vuex.Store({
         user,
         banner,
         banner_state,
-        module
+        module,
+        article
     },
     state: {
         app_name: {},

@@ -56,21 +56,26 @@ class ModuleController extends Controller
             return response()->json(['success'=>0, "errors"=>$validator->errors()]);
         }
 
-        $module = new Module([
+        $form = [
             'name' => $request->input('name'),
             'pid' => $request->input('pid'),
             'path' => $request->input('path'),
             'state' => $request->input('state'),
             'sequence' => $request->input('sequence'),
             'display' => $request->input('display'),
-        ]);
+        ];
 
         $id = $request->input('id');
         if(is_null($id)) {
+            $module = new Module($form);
             $module->save();
         }
         else {
-            $module->id = $id;
+            $module = Module::find($id);
+            foreach ($form as $key=>$val) {
+                $module->$key = $val;
+            }
+
             $module->save();
         }
 
