@@ -7,7 +7,7 @@ import Vuex from 'vuex'
 import router from './router'
 import App from './components/container'
 
-import {Container, Header, Aside, Main, Footer, Row, Col, Message, Button, Switch, Menu, MenuItemGroup, MenuItem, Submenu} from 'element-ui'
+import {Container, Header, Aside, Main, Footer, Row, Col, Message, Button, Switch, Menu, MenuItemGroup, MenuItem, Submenu, Scrollbar} from 'element-ui'
 Vue.use(Container)
 Vue.use(Header)
 Vue.use(Aside)

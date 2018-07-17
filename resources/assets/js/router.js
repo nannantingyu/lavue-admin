@@ -51,8 +51,13 @@ export default new VueRouter({
         },
         {
             name: "article-edit",
-            path: '/article-edit/:id',
+            path: '/article-edit/:id?',
             component: resolve =>void(require(['./page/add-article.vue'], resolve))
+        },
+        {
+            name: "config",
+            path: '/config',
+            component: resolve =>void(require(['./page/config.vue'], resolve))
         },
     ]
 })

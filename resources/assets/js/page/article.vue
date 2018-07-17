@@ -30,6 +30,7 @@
                   style="width: 100%">
             <el-table-column
                     prop="id"
+                    sortable
                     :label="columns['id']['title']"
                     v-if="columns['id']['show']"
                     width="80">
@@ -58,7 +59,7 @@
                     v-if="columns['image']['show']"
                     width="160">
                 <template slot-scope="scope">
-                    <img width="140" :src="'http://images.jujin8.com'+scope.row.image.replace('/uploads/crawler', '/uploads')" :alt="scope.row.image">
+                    <img width="140" :src="transfer(scope.row.image)" :alt="scope.row.image">
                 </template>
             </el-table-column>
 
@@ -127,16 +128,16 @@
                     width="80">
             </el-table-column>
             <el-table-column
-                    prop="created_time"
-                    :label="columns['created_time']['title']"
-                    v-if="columns['created_time']['show']"
-                    width="80">
+                    prop="created_at"
+                    :label="columns['created_at']['title']"
+                    v-if="columns['created_at']['show']"
+                    width="120">
             </el-table-column>
             <el-table-column
-                    prop="updated_time"
-                    :label="columns['updated_time']['title']"
-                    v-if="columns['updated_time']['show']"
-                    width="80">
+                    prop="updated_at"
+                    :label="columns['updated_at']['title']"
+                    v-if="columns['updated_at']['show']"
+                    width="120">
             </el-table-column>
             <el-table-column prop="author" :label="columns['author']['title']"
                              v-if="columns['author']['show']" width="180"></el-table-column>
@@ -147,7 +148,7 @@
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['article-list-delete']"
+                            :disabled="!user_module_permission['article-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                 </template>
             </el-table-column>
@@ -212,6 +213,9 @@
                 set_per_page: "article/set_per_page",
                 filte_data: "article/filte_data"
             }),
+            ...mapActions({
+                set_article_state: "article/set_article_state"
+            }),
             setState: function(index, row) {
                 const new_state = 1 - row.state, _this = this, msg = new_state == 0?"删除":"上线";
                 this.set_article_state({id: row.id, state: new_state, index: index})
@@ -230,6 +234,9 @@
             },
             size_change: function(size) {
                 this.set_per_page(size);
+            },
+            transfer: function(img) {
+                return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
             }
         }
     }

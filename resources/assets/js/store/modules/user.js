@@ -94,7 +94,7 @@ const mutations = {
     add_user_module_permission: (state, {path, values}) => {
         state.user_module_permission[path+'-read'] = ((values['permission'] & 1) === 1);
         state.user_module_permission[path+'-update'] = ((values['permission'] & 2) === 2);
-        state.user_module_permission[path+'-delete'] = ((values['permission3'] & 4) === 4);
+        state.user_module_permission[path+'-delete'] = ((values['permission'] & 4) === 4);
     },
     clear_user_module_permission: (state) => {
         state.user_module_permission = {}
@@ -109,8 +109,10 @@ const actions = {
                         commit('set_login_user', {
                             user_id: result.data.userid,
                             nick_name: result.data.nickname
-                        })
+                        });
 
+                        document.head.querySelector('meta[name="csrf-token"]').content = result.data._token;
+                        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = result.data._token;
                         dispatch('get_user_module_permission').then(res=> {
                             resolve()
                         })
@@ -119,9 +121,7 @@ const actions = {
                         reject(data.errors)
                     }
                 }).catch(data => {
-                    console.log(123456)
                     reject(data.response.data.errors)
-                    // console.log(data.response.data)
                 })
         })
     },

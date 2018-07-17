@@ -31,8 +31,8 @@
                             <span slot="title">文章列表</span>
                         </el-menu-item>
                         <el-menu-item
-                                v-if="user_module_permission['add-article-read']"
-                                index="/add-article">
+                                v-if="user_module_permission['article-edit-read']"
+                                index="/article-edit">
                             <i class="el-icon-circle-plus-outline"></i>
                             <span slot="title">添加文章</span>
                         </el-menu-item>
@@ -44,28 +44,12 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
-                <el-submenu
+                <el-menu-item
                         v-if="user_module_permission['module-read']"
                         index="/module">
-                    <template slot="title">
-                        <i class="el-icon-menu"></i>
-                        <span slot="title">菜单</span>
-                    </template>
-                    <el-menu-item-group>
-                        <el-menu-item
-                                v-if="user_module_permission['module-read']"
-                                index="/module">
-                            <i class="el-icon-tickets"></i>
-                            <span slot="title">菜单列表</span>
-                        </el-menu-item>
-                        <el-menu-item
-                                v-if="user_module_permission['add-module-read']"
-                                index="/add-module">
-                            <i class="el-icon-circle-plus-outline"></i>
-                            <span slot="title">添加菜单</span>
-                        </el-menu-item>
-                    </el-menu-item-group>
-                </el-submenu>
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">菜单列表</span>
+                </el-menu-item>
                 <el-submenu
                         v-if="user_module_permission['user-read']"
                         index="/user">
@@ -100,6 +84,12 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
+                <el-menu-item
+                        v-if="user_module_permission['config-read']"
+                        index="/config">
+                    <i class="el-icon-edit"></i>
+                    <span slot="title">系统配置</span>
+                </el-menu-item>
             </el-menu>
         </el-aside>
         <el-container>

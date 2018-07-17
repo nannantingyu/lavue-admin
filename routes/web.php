@@ -14,8 +14,12 @@
 Route::get('/', 'IndexController@index');
 Route::get('/test', 'TestController@index');
 
-Route::get('/article_lists', 'ArticleController@lists');
-Route::get('/article_info', 'ArticleController@info');
+Route::get('/articleLists', 'ArticleController@lists');
+Route::get('/articleInfo', 'ArticleController@info');
+Route::post('/setArticleState', 'ArticleController@setArticleState');
+Route::post('/addArticle', 'ArticleController@addArticle');
+
+Route::get('/configLists', 'ConfigController@lists');
 
 Route::post('/regist', 'RegisterController@regist');
 Route::post('/uploads_image', 'UploadsController@image');

@@ -27,7 +27,7 @@ class UserController extends Controller
         $result = $this->authenticatesUsersLogin($request);
         if(!isset($result->message)) {
             $user = Auth::user();
-            return ['success'=>1, 'userid'=>$user->id, 'nickname'=>$user->nickname];
+            return ['success'=>1, 'userid'=>$user->id, 'nickname'=>$user->nickname, '_token'=>$request->session()->token()];
         }
         else {
             return $result;
@@ -53,7 +53,7 @@ class UserController extends Controller
     public function adlogout(Request $request) {
         $this->guard()->logout();
         $request->session()->invalidate();
-        return ['success'=>1];
+        return ['success'=>1, 'session'=>$request->session()->all()];
     }
 
     /**

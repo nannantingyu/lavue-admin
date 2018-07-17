@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model {
     protected $table = 'article';
+    protected $fillable = ['title', 'image', 'description', 'type', 'keywords', 'author', 'publish_time', 'hits', 'state', 'recommend', 'favor', 'source_type'];
 
     public function body() {
         return $this->hasOne("App\Models\ArticleBody", 'aid', 'id');
