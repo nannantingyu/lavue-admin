@@ -50,46 +50,10 @@ class ArticleController extends Controller {
      * @param Request $request
      */
     public function addArticle(Request $request) {
-        $messages = [
-            'title.required' => '请输入标题',
-            'title.max' => '标题长度不能超过32个字符',
-            'title.min' => '标题长度不能少于2个字符',
-            'description.required' => '描述不能为空',
-            'description.max' => '描述长度不能超过512个字符',
-            'description.min' => '描述长度不能少于2个字符',
-            'keywords.max' => '关键词长度最多64个字符',
-            'author.max' => '作者长度最多16个字符',
-            'image.required' => '图片不能为空',
-            'type.required' => '类型不能为空',
-            'type.max' => '类型长度不能超过32字符',
-            'type.min' => '类型长度不能少于2字符',
-            'recommend.integer' => '推荐状态不正确',
-            'state.integer' => '状态不正确',
-            'favor.integer' => '收藏数不正确',
-            'hits.integer' => '点击量不正确',
-            'source_type.required' => '原创类型不能为空',
-            'publish_time.require' => '发布日期不能为空',
-            'publish_time.data' => '发布时间不正确'
-        ];
-
-        $rules = [
-            'title' => 'required|max:32|min:2',
-            'description' => 'required|max:512|min:2',
-            'keywords' => 'max:64',
-            'author' => 'max:16',
-            'image' => 'required',
-            'type' => 'required|max:32|min:2',
-            'recommend' => 'required|integer',
-            'hits' => 'required|integer',
-            'favor' => 'required|integer',
-            'state' => 'required|integer',
-            'publish_time' => 'required|date',
-            'source_type' => 'required'
-        ];
-
-        $validator = \Validator::make($request->all(), $rules, $messages);
-        if($validator->fails()) {
-            return response()->json(['success'=>0, "errors"=>$validator->errors()]);
+        //验证表单
+        $validate = $this->validateForm($request);
+        if(!$validate['success']) {
+            return response()->json(['success'=>0, "errors"=>$validate['msg']]);
         }
 
         $form = [
@@ -133,6 +97,57 @@ class ArticleController extends Controller {
             ArticleBody::where('aid', $article->id)->update([
                'body' => $body
             ]);
+        }
+
+        return ['success'=>1];
+    }
+
+    /**
+     * 表单验证
+     * @param Request $request
+     * @return array
+     */
+    private function validateForm(Request $request) {
+        $messages = [
+            'title.required' => '请输入标题',
+            'title.max' => '标题长度不能超过32个字符',
+            'title.min' => '标题长度不能少于2个字符',
+            'description.required' => '描述不能为空',
+            'description.max' => '描述长度不能超过512个字符',
+            'description.min' => '描述长度不能少于2个字符',
+            'keywords.max' => '关键词长度最多64个字符',
+            'author.max' => '作者长度最多16个字符',
+            'image.required' => '图片不能为空',
+            'type.required' => '类型不能为空',
+            'type.max' => '类型长度不能超过32字符',
+            'type.min' => '类型长度不能少于2字符',
+            'recommend.integer' => '推荐状态不正确',
+            'state.integer' => '状态不正确',
+            'favor.integer' => '收藏数不正确',
+            'hits.integer' => '点击量不正确',
+            'source_type.required' => '原创类型不能为空',
+            'publish_time.require' => '发布日期不能为空',
+            'publish_time.data' => '发布时间不正确'
+        ];
+
+        $rules = [
+            'title' => 'required|max:32|min:2',
+            'description' => 'required|max:512|min:2',
+            'keywords' => 'max:64',
+            'author' => 'max:16',
+            'image' => 'required',
+            'type' => 'required|max:32|min:2',
+            'recommend' => 'required|integer',
+            'hits' => 'required|integer',
+            'favor' => 'required|integer',
+            'state' => 'required|integer',
+            'publish_time' => 'required|date',
+            'source_type' => 'required'
+        ];
+
+        $validator = \Validator::make($request->all(), $rules, $messages);
+        if($validator->fails()) {
+            return ['success'=>0, 'msg'=>$validator->errors()];
         }
 
         return ['success'=>1];

@@ -86,7 +86,7 @@ class UserController extends Controller
         $form = [
             'role_name' => $role_name,
             'state' => $state,
-            'updated_time' => date('Y-m-d H:i:s')
+            'updated_at' => date('Y-m-d H:i:s')
         ];
 
         $role_id = $request->input('id');

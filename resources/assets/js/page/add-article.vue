@@ -119,9 +119,8 @@
         },
         mounted() {
             let id = this.$route.params.id;
-            if(id) {
-                this.getArticle(this.$route.params.id);
-            }
+            if(id) this.getArticle(this.$route.params.id);
+            else this.set_default_form()
         },
         methods: {
             ...mapActions({
@@ -129,7 +128,8 @@
                 'add_or_update_article': 'article/add_or_update_article'
             }),
             ...mapMutations({
-                'set_form_value': 'article/set_form_value'
+                'set_form_value': 'article/set_form_value',
+                'set_default_form': "article/set_default_form"
             }),
             handleSuccess: function(response, file, file_list) {
                 if(response.success) {

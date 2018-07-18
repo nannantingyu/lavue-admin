@@ -176,10 +176,11 @@ const actions = {
                 {
                     commit('set_article_list', result.data.data)
                     commit('set_back_data', result.data.data)
-                    // commit('filte_data')
                     commit('set_current_page', 1)
                     commit('set_total', result.data.data.length)
+                    resolve()
                 }
+                else reject()
             })
         })
 
@@ -216,7 +217,7 @@ const actions = {
                                     value = value?value.toString():value
 
                                 else if(state.to_booleans.includes(o))
-                                    value = value == 1 || !!!value
+                                    value = value == 1 || !!value
 
                                 commit('set_form_value', {key: o, value: value})
                             }

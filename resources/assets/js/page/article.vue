@@ -179,8 +179,9 @@
     export default {
         name: "article-list",
         created() {
+            const _this = this;
             this.$store.dispatch('article/get_data').then(data => {
-                console.log(data)
+                _this.$message.success("成功获取文章列表")
             })
         },
         computed: {
@@ -211,7 +212,7 @@
             ...mapMutations({
                 set_current_page: "article/set_current_page",
                 set_per_page: "article/set_per_page",
-                filte_data: "article/filte_data"
+                filte_data: "article/filte_data",
             }),
             ...mapActions({
                 set_article_state: "article/set_article_state"
