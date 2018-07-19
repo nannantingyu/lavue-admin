@@ -388,6 +388,19 @@ CREATE TABLE `jujin8_menu` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `jujin8_menu` VALUES ('1', '首页', '/index', null, 'main', '10', '1', '2018-07-13 15:46:38', null);
+INSERT INTO `jujin8_menu` VALUES ('2', '新闻', '/news', null, 'main', '9', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('3', '日历', '/calendar', null, 'main', '8', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('4', '下载中心', '/down', null, 'main', '7', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('5', '行情', '/quotes', null, 'main', '6', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('6', '关于我们', '/about', null, 'bottom', '10', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('7', '联系我们', '/contact', null, 'bottom', '9', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('8', '隐私声明', '/privacy', null, 'bottom', '8', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('9', '意见反馈', '/feedback', null, 'bottom', '7', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('10', '版权声明', '/copyright', null, 'bottom', '6', '1', null, null);
+INSERT INTO `jujin8_menu` VALUES ('11', '快讯', '/live', null, 'main', '10', '1', '2018-07-17 15:49:33', '2018-07-17 15:49:36');
+INSERT INTO `jujin8_menu` VALUES ('12', '机构', '/company', null, 'main', '8', '1', '2018-07-17 15:51:46', '2018-07-17 15:51:50');
+
 DROP TABLE IF EXISTS `jujin8_migrations`;
 CREATE TABLE `jujin8_migrations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
