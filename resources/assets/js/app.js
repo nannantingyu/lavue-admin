@@ -1,4 +1,4 @@
-import {getCookie} from "../../../../../Captain/jujin_trade_api/resources/assets/js/plugin/cookie";
+import {getCookie} from "./plugin/cookie";
 
 require('./bootstrap');
 window.Vue = require('vue');
