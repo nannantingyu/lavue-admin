@@ -27,7 +27,7 @@ class KuaixunController extends Controller
         $platform = $request->input('p', 'pc');
         $date = $request->input('st', null);
         $enddate = $request->input('et', null);
-        $page_num = $request->input('num', 5);
+        $page_num = $request->input('num', 10);
         if($page_num > 20) {
             $page_num = 20;
         }
@@ -43,7 +43,7 @@ class KuaixunController extends Controller
                 $ret['ret'][$key]->body = strip_tags($val->body);
         }
 
-        return ['success'=>1, 'value'=>array_values($ret['ret']), 'count'=>$ret['count'][0]->cou];
+        return ['success'=>1, 'value'=>array_values($ret['ret']), 'count'=>$ret['count']];
     }
 
     /**

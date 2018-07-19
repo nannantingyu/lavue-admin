@@ -49,7 +49,7 @@ class Kuaixun extends Model {
 
         return [
             "ret" => $ret,
-            "count" => $retcount
+            "count" => min($retcount[0]->cou, $num)
         ];
     }
 }
