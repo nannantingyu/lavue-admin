@@ -27,10 +27,17 @@ select broker,pair,day,val,created_at,updated_at
 from crawl.crawl_fxssi;
 
 insert into jujin8.jujin8_kuaixun (title,description,keywords,body,source_id,publish_time,importance,more_link,image,type,former_value,predicted_value,published_value,country,influnce,star,created_at,updated_at)
-select '','','',body,calendar_id,publish_time,importance,more_link,image,type,former_value,predicted_value,published_value,country,influnce,star,created_time,updated_time
+select '','','',body,dateid,publish_time,importance,more_link,image,type,former_value,predicted_value,published_value,country,influnce,star,created_time,updated_time
 from crawl.crawl_jin10_kuaixun;
 
 insert into jujin8.jujin8_kuaixun_block (source_id,title,description,keywords,body,source_site,publish_time,source_url,type,status,importance,image,link_name,link,created_at,updated_at)
 select live_id,'','','',content,source,publish_time,source_url,type,status,grade,image,link_name,link,created_time,updated_time
 from crawl.crawl_jinse_kuaixun;
 
+insert into jujin8.jujin8_article(id,title,description,keywords,author,image,type,hits,url,recommend,state,favor,source_type,source_url,source_site,source_id,publish_time,created_at,updated_at)
+select id,title,description,keywords,author,image,type,0,concat('read/', id, '.html'),0,1,0,'crawl',source_url,source_site,source_id,publish_time,created_time,updated_time
+from crawl.crawl_article;
+
+insert into jujin8.jujin8_article_body(aid,body,created_at,updated_at)
+select id,body,created_time,updated_time
+from crawl.crawl_article_body;
