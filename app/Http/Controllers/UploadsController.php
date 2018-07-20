@@ -12,7 +12,7 @@ class UploadsController extends Controller
      */
     public function image(Request $request) {
         $path = $request->file('fileDataFileName')
-            ->store('uploads/'.date("Ymd"));
+            ->store('uploads/'.date("Y".'/'.date("m").'/'.date("d")));
 
         return [
             "success"=> true,
