@@ -41,6 +41,30 @@ class ArticleController extends Controller {
     }
 
     /**
+     * 搜索文章
+     * @param keyword 关键词
+     */
+    public function searchArticle(Request $request) {
+        $keywords = $request->input('keywords');
+        if(!is_null($keywords)) {
+
+            $articles = Article::where('state', 1);
+            if(\numcheck::is_int($keywords)) {
+                $articles = $articles->where('id', 'like', $keywords);
+            }
+            else {
+                $articles = $articles->where('title', 'like', '%'.$keywords.'%');
+            }
+
+            $articles->select('id', 'title')
+                ->orderBy('publish_time', 'desc')
+                ->get();
+
+            return ['success'=>1, 'data'=>$articles];
+        }
+    }
+
+    /**
      * 设置文章发布状态
      * @param Request $request
      */

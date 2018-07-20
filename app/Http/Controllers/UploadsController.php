@@ -17,7 +17,7 @@ class UploadsController extends Controller
         return [
             "success"=> true,
             "msg"=> "upload_success",
-            "file_path"=> "/".str_replace($path, 'uploads', 'cms')
+            "file_path"=> "/".str_replace('uploads', 'cms', $path)
         ];
     }
 }

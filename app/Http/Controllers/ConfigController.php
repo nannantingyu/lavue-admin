@@ -9,7 +9,7 @@ class ConfigController extends Controller {
      * @return array
      */
     public function lists () {
-        return ['success'=>1, 'data'=>config::orderBy('sequence', 'asc')->get()];
+        return ['success'=>1, 'data'=>Config::orderBy('sequence', 'asc')->get()];
     }
 
     /**
