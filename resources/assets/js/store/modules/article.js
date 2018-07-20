@@ -125,6 +125,9 @@ const mutations = {
     update_article_list_by_index: (state, prop) => {
         state.article_lists[prop['index']][prop['key']] = prop['val']
     },
+    delete_article: (state, index) => {
+        state.article_lists.splice(index, 1)
+    },
     set_default_form: (state) => {
         state.form = {
             id: null,
@@ -244,6 +247,19 @@ const actions = {
 
             axios.post("/addArticle", form).then(function(result){
                 if(result.data.success === 1) {
+                    resolve()
+                }
+                else {
+                    reject()
+                }
+            });
+        });
+    },
+    delete_article({ commit, state }, {id, index}) {
+        return new Promise((resolve, reject) => {
+            axios.post("/deleteArticle", {id: id}).then(function(result){
+                if(result.data.success === 1) {
+                    commit("delete_article", index);
                     resolve()
                 }
                 else {

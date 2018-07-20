@@ -8,6 +8,7 @@ const state = {
         sequence: {title: "顺序", show: true},
         group: {title: "分组", show: true},
         state: {title: "状态", show: true},
+        comment: {title: "注释", show: true},
         created_time: {title: "创建时间", show: false},
         updated_time: {title: "更新时间", show: false},
     },
@@ -18,6 +19,7 @@ const state = {
         group: '',
         sequence: '',
         state: 1,
+        comment: '',
         created_at: '',
         updated_at: ''
     },
@@ -84,6 +86,19 @@ const mutations = {
             }
         }
     },
+    set_default_form: (state) => {
+        state.form = {
+            id: null,
+            key: null,
+            value: null,
+            group: '',
+            sequence: '',
+            state: 1,
+            comment: '',
+            created_at: '',
+            updated_at: ''
+        }
+    },
     filte_data: (state) => {
         if(state.show_type == 3) state.config_lists = state.back_data;
         else
@@ -102,7 +117,7 @@ const mutations = {
         state.config_lists[prop['index']][key] = value
     },
     append_config_list: (state, row) => {
-        state.config_lists.shift(row)
+        state.config_lists.splice(0, 0, row)
     },
 };
 

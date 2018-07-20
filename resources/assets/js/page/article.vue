@@ -142,7 +142,7 @@
             <el-table-column prop="author" :label="columns['author']['title']"
                              v-if="columns['author']['show']" width="180"></el-table-column>
             <el-table-column prop="publish_time" label="发布时间" width="180"></el-table-column>
-            <el-table-column label="操作" fixed="right" width="160">
+            <el-table-column label="操作" fixed="right" width="230">
                 <template slot-scope="scope">
                     <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">编辑</router-link>
                     <el-button
@@ -150,6 +150,11 @@
                             :type="scope.row.state?'success':'danger'"
                             :disabled="!user_module_permission['article-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
+                    <el-button
+                            size="mini"
+                            :type="scope.row.state?'success':'danger'"
+                            :disabled="!user_module_permission['article-delete']"
+                            @click="drop_article(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -166,7 +171,7 @@
 
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, Loading, Popover, Switch, RadioGroup, RadioButton} from 'element-ui'
+    import {Table, TableColumn, Pagination, MessageBox, Loading, Popover, Switch, RadioGroup, RadioButton} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
@@ -215,7 +220,8 @@
                 filte_data: "article/filte_data",
             }),
             ...mapActions({
-                set_article_state: "article/set_article_state"
+                set_article_state: "article/set_article_state",
+                delete_article: "article/delete_article"
             }),
             setState: function(index, row) {
                 const new_state = 1 - row.state, _this = this, msg = new_state == 0?"删除":"上线";
@@ -225,6 +231,25 @@
                     }).catch((x)=>{
                     _this.$message.error(msg + "失败");
                 })
+            },
+            drop_article: function(index, row) {
+                const _this = this;
+                MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    _this.delete_article({id: row.id, index: index}).then(result=> {
+                        _this.$message.success("删除成功");
+                    })
+                }).catch(() => {
+                    _this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+
             },
             filterHandler: function(value, row, column) {
                 const property = column['property'];

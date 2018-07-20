@@ -26,6 +26,21 @@ class ArticleController extends Controller {
     }
 
     /**
+     * 删除文章
+     * @param id 文章id
+     */
+    public function deleteArticle(Request $request) {
+        $id = $request->input('id');
+        if(!is_null($id) and \numcheck::is_int($id)) {
+            Article::where('id', $id)->delete();
+
+            return ['success'=>1];
+        }
+
+        return ['success'=>0];
+    }
+
+    /**
      * 设置文章发布状态
      * @param Request $request
      */

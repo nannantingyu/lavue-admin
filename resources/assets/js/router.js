@@ -15,6 +15,11 @@ export default new VueRouter({
             component: resolve=>void(require(['./page/login.vue'], resolve))
         },
         {
+            name: 'user',
+            path: '/user',
+            component: resolve=>void(require(['./page/user.vue'], resolve))
+        },
+        {
             name: 'add-user',
             path: '/add-user',
             component: resolve=>void(require(['./page/add-user.vue'], resolve))

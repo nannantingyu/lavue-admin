@@ -42,6 +42,25 @@ const state = {
             { validator: validatePhone, trigger: 'blur' }
         ]
     },
+    columns: {
+        id: {title: "ID", show: true},
+        name: {title: "用户名", show: true},
+        nickname: {title: "昵称", show: true},
+        email: {title: "邮箱", show: true},
+        phone: {title: "电话", show: true},
+        created_at: {title: "创建时间", show: false},
+        updated_at: {title: "更新时间", show: false},
+    },
+    form: {
+        id: null,
+        name: null,
+        nickname: null,
+        email: '',
+        phone: '',
+        state: 1,
+        created_at: '',
+        updated_at: ''
+    },
     role_rules: {
         role_name: [
             { required: true, message: '请输入角色', trigger: 'blur' },
@@ -63,6 +82,12 @@ const state = {
         role_name: '',
         state: 1,
     },
+    show_type: 3,
+    loading: false,
+    current_page: 1,
+    total: 0,
+    per_page: 10,
+    dialog_visible: false,
     roles: [],
     users: [],
     role_users: [],
@@ -89,6 +114,22 @@ const mutations = {
         if(user_id && nick_name) {
             setCookie('userid', user_id)
             setCookie('nickname', nick_name)
+        }
+    },
+    set_form_value: (state, {key, value})=> {
+        state.form[key] = value
+    },
+    set_dialog_visible: (state, value) => {
+        state.dialog_visible = value;
+    },
+    set_row_index: (state, row_index) => {
+        state.row_index = row_index;
+    },
+    set_form: (state, form) => {
+        for (let o in form) {
+            if(state.form.hasOwnProperty(o)) {
+                state.form[o] = form[o]
+            }
         }
     },
     add_user_module_permission: (state, {path, values}) => {

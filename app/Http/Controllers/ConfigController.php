@@ -50,6 +50,7 @@ class ConfigController extends Controller {
             'group' => $request->input('group'),
             'state' => $request->input('state'),
             'sequence' => $request->input('sequence'),
+            'comment' => $request->input('comment'),
         ];
 
         $id = $request->input('id');
