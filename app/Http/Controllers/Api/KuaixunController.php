@@ -82,6 +82,35 @@ class KuaixunController extends Controller
     }
 
     /**
+     * 获取合并的快讯
+     * @param Request $request
+     */
+    public function getUnionKx(Request $request) {
+        $kx = $this->getkx($request);
+        $bkx = $this->getBlockKx($request);
+
+        $ret = [];
+        if($kx['success'] === 1 and is_array($kx['value'])) {
+            $ret = array_merge($ret, $kx['value']);
+        }
+
+        if($bkx['success'] === 1 and is_array($bkx['value'])) {
+            $ret = array_merge($ret, $bkx['value']);
+        }
+
+        usort($ret, function($a, $b) {
+            return $a->publish_time < $b->publish_time;
+        });
+
+        $num = $request->input('num', 10);
+        if(count($ret) > $num) {
+            $ret = array_slice($ret, $num);
+        }
+
+        return ['success'=>1, 'value'=>$ret];
+    }
+
+    /**
      * 获取区块链快讯（来源：金色财经）
      * @param Request $request
      * @param p ['pc', 'app]：请求来自pc还是app
@@ -105,7 +134,7 @@ class KuaixunController extends Controller
 
         $result = DB::table('kuaixun_block')
             ->orderBy('publish_time', 'desc')
-            ->select('id', 'body', 'publish_time');
+            ->select('id', 'body', 'publish_time', 'importance', 'created_at');
 
         if($date) {
             $result = $result->where('publish_time', '>=', $date);
@@ -126,6 +155,6 @@ class KuaixunController extends Controller
                 array_push($data, $val);
         }
 
-        return response()->json(['success'=>1, 'value'=>array_values($data)]);
+        return ['success'=>1, 'value'=>array_values($data)];
     }
 }

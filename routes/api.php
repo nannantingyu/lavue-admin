@@ -21,3 +21,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/jiedu', 'Api\CalendarController@getjiedu');
 Route::get('/kx', 'Api\KuaixunController@getkx');
 Route::get('/bkx', 'Api\KuaixunController@getBlockKx');
+Route::get('/ukx', 'Api\KuaixunController@getUnionKx');
