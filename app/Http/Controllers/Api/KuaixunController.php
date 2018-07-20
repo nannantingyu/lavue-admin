@@ -103,9 +103,9 @@ class KuaixunController extends Controller
 
         list($date, $enddate) = $this->getDefaultDate($date, $enddate);
 
-        $result = DB::table('jinse_kuaixun')
+        $result = DB::table('kuaixun_block')
             ->orderBy('publish_time', 'desc')
-            ->select('id', 'content', 'publish_time');
+            ->select('id', 'body', 'publish_time');
 
         if($date) {
             $result = $result->where('publish_time', '>=', $date);
@@ -119,9 +119,9 @@ class KuaixunController extends Controller
 
         $data = [];
         foreach ($result['data'] as $key=>$val) {
-            if(!$this->inWords($val->content, ['金色']))
+            if(!$this->inWords($val->body, ['金色']))
                 if ($platform == 'app')
-                    $val->content = strip_tags($val->content);
+                    $val->body = strip_tags($val->body);
 
                 array_push($data, $val);
         }
