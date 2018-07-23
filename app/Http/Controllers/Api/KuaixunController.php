@@ -137,11 +137,11 @@ class KuaixunController extends Controller
             ->select('id', 'body', 'publish_time', 'importance', 'created_at');
 
         if($date) {
-            $result = $result->where('publish_time', '>=', $date);
+            $result = $result->where('publish_time', '>', $date);
         }
 
         if($enddate) {
-            $result = $result->where('publish_time', '<=', $enddate);
+            $result = $result->where('publish_time', '<', $enddate);
         }
 
         $result = $result->paginate($page_num)->toArray();
