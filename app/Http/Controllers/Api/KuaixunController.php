@@ -148,6 +148,7 @@ class KuaixunController extends Controller
 
         $data = [];
         foreach ($result['data'] as $key=>$val) {
+            $val->importance = $val->importance > 3?1:0;
             if(!$this->inWords($val->body, ['金色']))
                 if ($platform == 'app')
                     $val->body = strip_tags($val->body);
