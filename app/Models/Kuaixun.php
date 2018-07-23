@@ -20,9 +20,9 @@ class Kuaixun extends Model {
             $start_date = date("Y-m-d 00:00:00", strtotime("-1 day"));
         }
 
-        $where_date = " publish_time >= '".$start_date."' ";
+        $where_date = " publish_time > '".$start_date."' ";
         if(!is_null($end_date)) {
-            $where_date .= " and publish_time <= '" . $end_date . "' ";
+            $where_date .= " and publish_time < '" . $end_date . "' ";
         }
 
         $columns = ' id, publish_time, importance, body, created_at ';
