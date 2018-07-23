@@ -48,7 +48,6 @@ class HotBannerController extends Controller {
             'link' => $request->input('link'),
             'state' => $request->input('state'),
             'sequence' => $request->input('sequence'),
-            'comment' => $request->input('comment'),
         ];
 
         $id = $request->input('id');
@@ -82,7 +81,7 @@ class HotBannerController extends Controller {
         ];
 
         $rules = [
-            'title' => 'required|max:32|min:2',
+            'title' => 'required|max:64|min:2',
             'image' => 'required',
             'link' => 'required|min:2|max:256',
             'sequence' => 'required|integer',

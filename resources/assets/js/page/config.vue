@@ -80,14 +80,14 @@
             </el-table-column>
             <el-table-column
                     prop="created_at"
-                    :label="columns['created_time']['title']"
-                    v-if="columns['created_time']['show']"
+                    :label="columns['created_at']['title']"
+                    v-if="columns['created_at']['show']"
                     width="120">
             </el-table-column>
             <el-table-column
                     prop="updated_at"
-                    :label="columns['updated_time']['title']"
-                    v-if="columns['updated_time']['show']"
+                    :label="columns['updated_at']['title']"
+                    v-if="columns['updated_at']['show']"
                     width="120">
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="160">

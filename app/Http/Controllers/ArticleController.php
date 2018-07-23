@@ -57,7 +57,7 @@ class ArticleController extends Controller {
                 $articles = $articles->where('title', 'like', '%'.$keywords.'%');
             }
 
-            $articles = $articles->select('id', 'title')
+            $articles = $articles->select('id', 'title', 'image', 'url')
                 ->orderBy('publish_time', 'desc')
                 ->get();
 
@@ -169,7 +169,6 @@ class ArticleController extends Controller {
             'publish_time.require' => '发布日期不能为空',
             'publish_time.data' => '发布时间不正确'
         ];
-
         $rules = [
             'title' => 'required|max:32|min:2',
             'description' => 'required|max:512|min:2',
@@ -184,7 +183,6 @@ class ArticleController extends Controller {
             'publish_time' => 'required|date',
             'source_type' => 'required'
         ];
-
         $validator = \Validator::make($request->all(), $rules, $messages);
         if($validator->fails()) {
             return ['success'=>0, 'msg'=>$validator->errors()];

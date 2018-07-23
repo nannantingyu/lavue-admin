@@ -59,6 +59,12 @@
                     </template>
                     <el-menu-item-group>
                         <el-menu-item
+                                v-if="user_module_permission['user-read']"
+                                index="/user">
+                            <i class="el-icon-service"></i>
+                            <span slot="title">用户列表</span>
+                        </el-menu-item>
+                        <el-menu-item
                                 v-if="user_module_permission['add-user-read']"
                                 index="/add-user">
                             <i class="el-icon-tickets"></i>
@@ -89,6 +95,12 @@
                         index="/config">
                     <i class="el-icon-edit"></i>
                     <span slot="title">系统配置</span>
+                </el-menu-item>
+                <el-menu-item
+                        v-if="user_module_permission['hot-banner-read']"
+                        index="/hot-banner">
+                    <i class="el-icon-picture"></i>
+                    <span slot="title">热门图片</span>
                 </el-menu-item>
             </el-menu>
         </el-aside>

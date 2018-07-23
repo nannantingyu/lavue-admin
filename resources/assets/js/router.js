@@ -64,5 +64,10 @@ export default new VueRouter({
             path: '/config',
             component: resolve =>void(require(['./page/config.vue'], resolve))
         },
+        {
+            name: "hot-banner",
+            path: '/hot-banner',
+            component: resolve =>void(require(['./page/hot-banner.vue'], resolve))
+        },
     ]
 })

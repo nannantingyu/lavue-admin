@@ -14,16 +14,26 @@
 Route::get('/', 'IndexController@index');
 Route::get('/test', 'TestController@index');
 
+// 文章
 Route::get('/articleLists', 'ArticleController@lists');
 Route::get('/articleInfo', 'ArticleController@info');
 Route::post('/setArticleState', 'ArticleController@setArticleState');
 Route::post('/addArticle', 'ArticleController@addArticle');
 Route::post('/deleteArticle', 'ArticleController@deleteArticle');
+Route::post('/searchArticle', 'ArticleController@searchArticle');
 
+
+// 系统配置
 Route::get('/configLists', 'ConfigController@lists');
 Route::get('/configInfo', 'ConfigController@info');
 Route::post('/setConfigState', 'ConfigController@setConfigState');
 Route::post('/addConfig', 'ConfigController@addConfig');
+
+// 热门图片
+Route::get('/hotBannerLists', 'HotBannerController@lists');
+Route::get('/hotBannerInfo', 'HotBannerController@info');
+Route::post('/setHotBannerState', 'HotBannerController@setHotBannerState');
+Route::post('/addHotBanner', 'HotBannerController@addHotBanner');
 
 Route::any('mail', 'TestController@mail');
 

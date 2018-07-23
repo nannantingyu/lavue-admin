@@ -267,7 +267,19 @@ const actions = {
                 }
             });
         });
-    }
+    },
+    search_article({ commit, state }, keywords) {
+        return new Promise((resolve, reject) => {
+            axios.post("/searchArticle", {keywords: keywords}).then(function(result){
+                if(result.data.success === 1) {
+                    resolve(result.data)
+                }
+                else {
+                    reject()
+                }
+            });
+        });
+    },
 }
 
 export default {

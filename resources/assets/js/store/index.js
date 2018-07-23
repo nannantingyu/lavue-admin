@@ -6,6 +6,7 @@ import banner_state from './modules/banner_state'
 import module from './modules/module'
 import article from './modules/article'
 import config from './modules/config'
+import hot_banner from './modules/hot_banner'
 
 Vue.use(Vuex)
 import actions from "./actions"
@@ -19,7 +20,8 @@ export default new Vuex.Store({
         banner_state,
         module,
         article,
-        config
+        config,
+        hot_banner
     },
     state: {
         app_name: {},
