@@ -147,7 +147,7 @@ class UserController extends Controller
      */
     public function getUsers(Request $request) {
         $users = User::orderBy('updated_at', 'desc')
-            ->select('id', 'name', 'nickname')
+            ->select('id', 'name', 'nickname', 'phone', 'email', 'created_at', 'updated_at')
             ->get();
 
         return ['success'=>1, 'data'=>$users];

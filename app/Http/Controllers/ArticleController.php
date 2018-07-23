@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleBody;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller {
     /**
@@ -56,7 +57,7 @@ class ArticleController extends Controller {
                 $articles = $articles->where('title', 'like', '%'.$keywords.'%');
             }
 
-            $articles->select('id', 'title')
+            $articles = $articles->select('id', 'title')
                 ->orderBy('publish_time', 'desc')
                 ->get();
 

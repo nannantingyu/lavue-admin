@@ -187,7 +187,7 @@ class ModuleController extends Controller
         else {
             $module = objToArray($this->getModuleList());
             $module_var = var_export($module, true);
-            Redis::set('admin_module', $module_var);
+//            Redis::set('admin_module', $module_var);
         }
 
         $id = $request->input('id');
