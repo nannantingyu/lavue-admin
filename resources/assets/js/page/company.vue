@@ -43,13 +43,13 @@
                     prop="name"
                     sortable
                     :label="columns['name']['title']"
-                    v-if="columns['name']['show']" width="200">
+                    v-if="columns['name']['show']" width="250">
             </el-table-column>
             <el-table-column
                     prop="shortname"
                     :label="columns['shortname']['title']"
                     v-if="columns['shortname']['show']"
-                    width="*">
+                    width="250">
             </el-table-column>
             <el-table-column
                     prop="sequence"
@@ -61,19 +61,21 @@
                     prop="tag"
                     :label="columns['tag']['title']"
                     v-if="columns['tag']['show']"
-                    width="160">
+                    width="*">
             </el-table-column>
             <el-table-column
                     prop="link"
                     :label="columns['link']['title']"
                     v-if="columns['link']['show']"
-                    width="160">
+                    width="300">
             </el-table-column>
             <el-table-column
-                    prop="logo"
                     :label="columns['logo']['title']"
                     v-if="columns['logo']['show']"
-                    width="160">
+                    width="180">
+                <template slot-scope="scope">
+                    <img width="140" :src="transfer(scope.row.logo)" :alt="scope.row.logo">
+                </template>
             </el-table-column>
             <el-table-column
                     prop="state"
@@ -292,6 +294,9 @@
                         });
                     else _this.$message.error('请填写完整的信息！');
                 });
+            },
+            transfer: function(img) {
+                return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
             }
         },
         mounted() {
