@@ -266,7 +266,6 @@
             }),
             filter_by_category: function(value) {
                 this.$store.dispatch('article/get_data_by_category').then(result=> {
-                    console.log(result)
                 });
             },
             get_article_list: function() {

@@ -113,7 +113,6 @@
                         for(let index in this.role_permissions) {
                             const role = this.role_permissions[index];
                             if(result.hasOwnProperty(role['role_id'])) {
-                                console.log(result[role['role_id']]['permission'])
                                 if((result[role['role_id']]['permission'] & 1) === 1)
                                     this.role_permissions[index]['permissions'].push(permission_map[1])
                                 if((result[role['role_id']]['permission'] & 2) === 2)

@@ -55,14 +55,12 @@
                 return this.form.id ? "立即更新" : "立即添加"
             }
         },
-        created(){console.log(this.form.id)},
         methods: {
             ...mapActions({
                 'get_banner_info': 'banner/get_banner_info',
                 'add_or_update_banner': 'banner/add_or_update_banner'
             }),
             submitForm: function() {
-                console.log(this.form)
                 this.$refs['form'].validate((valid) => {
                     if (valid)
                         this.$store.dispatch('module/add_or_update_module')

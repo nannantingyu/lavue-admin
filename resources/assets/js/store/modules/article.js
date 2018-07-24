@@ -145,7 +145,6 @@ const mutations = {
         state.total = state.article_lists.length;
     },
     update_article_list_by_index: (state, prop) => {
-        console.log(prop)
         state.article_lists[prop['index']][prop['key']] = prop['val']
     },
     delete_article: (state, index) => {
@@ -207,7 +206,6 @@ const actions = {
                         }
                     }
 
-                    console.log(article_lists)
                     commit('set_article_list', article_lists)
                     commit('set_back_data', article_lists)
                     commit('set_current_page', 1)

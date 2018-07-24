@@ -45,10 +45,12 @@
                     v-if="columns['title']['show']" width="*">
             </el-table-column>
             <el-table-column
-                    prop="image"
                     :label="columns['image']['title']"
                     v-if="columns['image']['show']"
                     width="150">
+                <template slot-scope="scope">
+                    <img width="160" :src="transfer(scope.row.image)" :alt="scope.row.image">
+                </template>
             </el-table-column>
             <el-table-column
                     prop="sequence"
@@ -248,7 +250,7 @@
                 'set_default_form': "hot_banner/set_default_form",
                 'set_loading': "hot_banner/set_loading",
                 'set_article_options': "hot_banner/set_article_options",
-                'set_search_article_lists': "hot_banner/set_search_article_lists"
+                'set_search_article_lists': "hot_banner/set_search_article_lists",
             }),
             ...mapActions({
                 'get_hot_banner_lists': 'hot_banner/get_hot_banner_lists',
@@ -346,6 +348,9 @@
                         });
                     else _this.$message.error('请填写完整的信息！');
                 });
+            },
+            transfer: function(img) {
+                return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
             }
         },
         mounted() {

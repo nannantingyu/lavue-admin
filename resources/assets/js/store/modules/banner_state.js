@@ -152,7 +152,6 @@ const actions = {
                         commit('add_new_banner_state', state.form)
                     }
 
-                    console.log(state.tb)
                     state.tb.sort(state.sort_col, state.sort_order);
                     resolve()
                 }

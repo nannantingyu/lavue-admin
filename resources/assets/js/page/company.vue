@@ -247,6 +247,7 @@
                 'update_company_list_by_index': "company/update_company_list_by_index",
                 'append_company_list': "company/append_company_list",
                 'set_default_form': "company/set_default_form",
+                'transfer': 'transfer'
             }),
             ...mapActions({
                 'get_company_lists': 'company/get_company_lists',
@@ -309,12 +310,12 @@
             transfer: function(img) {
                 return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
             }
+
         },
         mounted() {
             const _this = this;
             if(this.category_company_lists.length <= 0) {
                 this.$store.dispatch('category_company/get_category_company_lists').then(result=> {
-                    console.log(result)
                 });
             }
             this.get_company_lists().then(result=> {
