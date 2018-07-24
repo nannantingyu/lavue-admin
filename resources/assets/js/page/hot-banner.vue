@@ -69,7 +69,9 @@
                     v-if="columns['state']['show']"
                     width="80">
                 <template slot-scope="scope">
-                    <el-switch v-model="scope.row.state" @change="changeState(scope.row)"></el-switch>
+                    <el-switch v-model="scope.row.state"
+                               :disabled="!user_module_permission['hot-banner-delete']"
+                               @change="changeState(scope.row)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column
@@ -89,12 +91,12 @@
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['hot_banner-delete']"
+                            :disabled="!user_module_permission['hot-banner-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['hot_banner-delete']"
+                            :disabled="!user_module_permission['hot-banner-delete']"
                             @click="edithot_banner(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
