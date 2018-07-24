@@ -49,7 +49,7 @@
                     width="80">
             </el-table-column>
             <el-table-column :label="columns['title']['title']"
-                             v-if="columns['title']['show']" width="250">
+                             v-if="columns['title']['show']" width="*">
                 <template slot-scope="scope">
                     <a target="_blank" v-bind:href="scope.row.url">{{ scope.row.title }}</a>
                 </template>
@@ -107,7 +107,10 @@
                     v-if="columns['state']['show']"
                     width="80">
                 <template slot-scope="scope">
-                    <el-switch v-model="scope.row.state" @change="changeState(scope.row)"></el-switch>
+                    <el-switch
+                            :disabled="!user_module_permission['article-delete']"
+                            v-model="scope.row.state"
+                            @change="changeState(scope.$index, scope.row)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column
@@ -153,14 +156,9 @@
             <el-table-column prop="author" :label="columns['author']['title']"
                              v-if="columns['author']['show']" width="180"></el-table-column>
             <el-table-column prop="publish_time" label="发布时间" width="180"></el-table-column>
-            <el-table-column label="操作" fixed="right" width="230">
+            <el-table-column label="操作" fixed="right" width="140">
                 <template slot-scope="scope">
                     <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">编辑</router-link>
-                    <el-button
-                            size="mini"
-                            :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['article-delete']"
-                            @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
@@ -279,8 +277,11 @@
                     })
                 }
             },
-            setState: function(index, row) {
-                const new_state = 1 - row.state, _this = this, msg = new_state == 0?"删除":"上线";
+            changeState: function(index, row) {
+                console.log(row.state)
+                const state = row.state?1:0;
+                console.log(state)
+                const new_state = state, _this = this, msg = new_state == 0?"下线":"上线";
                 this.set_article_state({id: row.id, state: new_state, index: index})
                     .then((x)=>{
                         _this.$message.success(msg + "成功");

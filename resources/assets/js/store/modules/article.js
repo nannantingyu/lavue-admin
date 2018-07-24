@@ -145,6 +145,7 @@ const mutations = {
         state.total = state.article_lists.length;
     },
     update_article_list_by_index: (state, prop) => {
+        console.log(prop)
         state.article_lists[prop['index']][prop['key']] = prop['val']
     },
     delete_article: (state, index) => {
@@ -198,10 +199,19 @@ const actions = {
             axios.get("/articleLists").then(function(result){
                 if(result.data.success === 1)
                 {
-                    commit('set_article_list', result.data.data)
-                    commit('set_back_data', result.data.data)
+                    let article_lists = result.data.data;
+                    for(let obj of article_lists) {
+                        for(let o in obj) {
+                            if(state.to_strings.includes(o)) obj[o] = obj[o].toString()
+                            else if(state.to_booleans.includes(o)) obj[o] = (obj[o] === 1 || !!obj[o])
+                        }
+                    }
+
+                    console.log(article_lists)
+                    commit('set_article_list', article_lists)
+                    commit('set_back_data', article_lists)
                     commit('set_current_page', 1)
-                    commit('set_total', result.data.data.length)
+                    commit('set_total', article_lists.length)
                     resolve()
                 }
                 else reject()
@@ -216,7 +226,7 @@ const actions = {
                         commit("update_article_list_by_index", {
                             index: index,
                             key: "state",
-                            val: state
+                            val: state===1
                         });
 
                         resolve()
