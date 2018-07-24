@@ -91,6 +91,18 @@
                     </el-menu-item-group>
                 </el-submenu>
                 <el-menu-item
+                        v-if="user_module_permission['company-read']"
+                        index="/company">
+                    <i class="el-icon-goods"></i>
+                    <span slot="title">机构</span>
+                </el-menu-item>
+                <el-menu-item
+                        v-if="user_module_permission['category-read']"
+                        index="/category">
+                    <i class="el-icon-share"></i>
+                    <span slot="title">分类</span>
+                </el-menu-item>
+                <el-menu-item
                         v-if="user_module_permission['config-read']"
                         index="/config">
                     <i class="el-icon-edit"></i>

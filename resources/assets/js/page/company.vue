@@ -25,10 +25,11 @@
                 </el-radio-group>
             </el-col>
             <el-col :span="2">
-                <el-button @click="add_config">添加配置</el-button>
+                <el-button @click="add_company">添加机构</el-button>
             </el-col>
         </el-row>
-        <el-table :data="config_lists.slice((current_page-1)*per_page, current_page*per_page)"
+
+        <el-table :data="company_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
                   style="width: 100%">
             <el-table-column
@@ -39,15 +40,15 @@
                     width="80">
             </el-table-column>
             <el-table-column
-                    prop="key"
+                    prop="name"
                     sortable
-                    :label="columns['key']['title']"
-                    v-if="columns['key']['show']" width="200">
+                    :label="columns['name']['title']"
+                    v-if="columns['name']['show']" width="200">
             </el-table-column>
             <el-table-column
-                    prop="value"
-                    :label="columns['value']['title']"
-                    v-if="columns['value']['show']"
+                    prop="shortname"
+                    :label="columns['shortname']['title']"
+                    v-if="columns['shortname']['show']"
                     width="*">
             </el-table-column>
             <el-table-column
@@ -57,15 +58,21 @@
                     width="120">
             </el-table-column>
             <el-table-column
-                    prop="group"
-                    :label="columns['group']['title']"
-                    v-if="columns['group']['show']"
+                    prop="tag"
+                    :label="columns['tag']['title']"
+                    v-if="columns['tag']['show']"
                     width="160">
             </el-table-column>
             <el-table-column
-                    prop="comment"
-                    :label="columns['comment']['title']"
-                    v-if="columns['comment']['show']"
+                    prop="link"
+                    :label="columns['link']['title']"
+                    v-if="columns['link']['show']"
+                    width="160">
+            </el-table-column>
+            <el-table-column
+                    prop="logo"
+                    :label="columns['logo']['title']"
+                    v-if="columns['logo']['show']"
                     width="160">
             </el-table-column>
             <el-table-column
@@ -95,13 +102,13 @@
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['config-delete']"
+                            :disabled="!user_module_permission['company-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['config-delete']"
-                            @click="editConfig(scope.$index, scope.row)">编辑</el-button>
+                            :disabled="!user_module_permission['company-delete']"
+                            @click="editcompany(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -113,19 +120,33 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
         </el-pagination>
-        <el-dialog title="添加系统配置" :visible.sync="dialog_visible">
+        <el-dialog title="添加机构" :visible.sync="dialog_visible">
             <el-form ref="form" :model="form" :rules="rules">
-                <el-form-item :label-width="formLabelWidth" label="键" prop="key">
-                    <el-input v-model="form.key"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="机构名称" prop="name">
+                    <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="值" prop="value">
-                    <el-input v-model="form.value"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="缩略名称" prop="shortname">
+                    <el-input v-model="form.shortname"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="分组" prop="group">
-                    <el-input v-model="form.group"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="链接" prop="link">
+                    <el-input v-model="form.link"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="注释" prop="comment">
-                    <el-input v-model="form.comment"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="标签" prop="tag">
+                    <el-input v-model="form.tag"></el-input>
+                </el-form-item>
+                <el-form-item :label-width="formLabelWidth" label="Logo">
+                    <el-upload
+                            class="avatar-uploader"
+                            :limit="1"
+                            action="/uploads_image"
+                            name="fileDataFileName"
+                            list-type="picture-card"
+                            :headers="headers"
+                            :file-list="fileimgs"
+                            :on-success="handleSuccess"
+                            :on-remove="handleRemove">
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item :label-width="formLabelWidth" label="状态" prop="state">
                     <el-switch v-model="form.state">启用</el-switch>
@@ -144,7 +165,7 @@
 </template>
 
 <script>
-    import {mapState, mapActions, mapMutations} from 'vuex'
+    import {mapState, mapActions, mapGetters, mapMutations} from 'vuex'
     import {Table, TableColumn, Pagination, Loading, Popover, RadioGroup, RadioButton, Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
     Vue.use(FormItem);
     Vue.use(Input);
@@ -164,72 +185,84 @@
     Vue.use(Dialog);
 
     export default {
-        name: "config",
+        name: "company",
         computed: {
+            ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
-                'config_lists': state=>state.config.config_lists,
-                'columns': state=>state.config.columns,
-                'loading': state=>state.config.loading,
-                'current_page': state=>state.config.current_page,
-                'per_page': state=>state.config.per_page,
-                'total': state=>state.config.total,
+                'company_lists': state=>state.company.company_lists,
+                'columns': state=>state.company.columns,
+                'loading': state=>state.company.loading,
+                'current_page': state=>state.company.current_page,
+                'per_page': state=>state.company.per_page,
+                'total': state=>state.company.total,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'form': state=>state.config.form,
-                'rules': state=>state.config.rules,
+                'form': state=>state.company.form,
+                'rules': state=>state.company.rules,
                 'formLabelWidth': state=>state.formLabelWidth,
-                'row_index': state=>state.config.row_index,
+                'row_index': state=>state.company.row_index,
+            }),
+            ...mapGetters({
+                'fileimgs': 'company/fileimgs',
             }),
             dialog_visible: {
                 get() {
-                    return this.$store.state.config.dialog_visible
+                    return this.$store.state.company.dialog_visible
                 },
                 set(value) {
-                    this.$store.commit('config/set_dialog_visible', value)
+                    this.$store.commit('company/set_dialog_visible', value)
                 }
             },
             show_type: {
                 get() {
-                    return this.$store.state.config.show_type
+                    return this.$store.state.company.show_type
                 },
                 set(value) {
-                    this.$store.commit('config/set_show_type', value)
+                    this.$store.commit('company/set_show_type', value)
                     this.filte_data()
                 }
             },
         },
         methods: {
             ...mapMutations({
-                'set_current_page': "config/set_current_page",
-                'set_per_page': "config/set_per_page",
-                'filte_data': "config/filte_data",
-                'set_dialog_visible': "config/set_dialog_visible",
-                'set_form': "config/set_form",
-                'set_row_index': "config/set_row_index",
-                'set_form_value': "config/set_form_value",
-                'update_config_list_by_index': "config/update_config_list_by_index",
-                'append_config_list': "config/append_config_list",
-                'set_default_form': "config/set_default_form"
+                'set_current_page': "company/set_current_page",
+                'set_per_page': "company/set_per_page",
+                'filte_data': "company/filte_data",
+                'set_dialog_visible': "company/set_dialog_visible",
+                'set_form': "company/set_form",
+                'set_row_index': "company/set_row_index",
+                'set_form_value': "company/set_form_value",
+                'update_company_list_by_index': "company/update_company_list_by_index",
+                'append_company_list': "company/append_company_list",
+                'set_default_form': "company/set_default_form"
             }),
             ...mapActions({
-                'get_config_lists': 'config/get_config_lists',
-                'get_config': "config/get_config",
-                'add_or_update_config': "config/add_or_update_config",
-                'set_config_state': "config/set_config_state"
+                'get_company_lists': 'company/get_company_lists',
+                'get_company': "company/get_company",
+                'add_or_update_company': "company/add_or_update_company",
+                'set_company_state': "company/set_company_state"
             }),
-            editConfig: function(index, row) {
+            handleSuccess: function(response, file, file_list) {
+                if(response.success) {
+                    this.set_form_value({key: 'logo', value: response.file_path})
+                }
+            },
+            handleRemove: function() {
+                this.set_form_value({key: 'logo', value: null})
+            },
+            editcompany: function(index, row) {
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
             },
             changeState: function (row) {
                 const _this = this;
-                this.set_config_state({id:row.id, state:row.state}).then(result=>{
+                this.set_company_state({id:row.id, state:row.state}).then(result=>{
                     let message = row.state?"上线成功":"下线成功";
                     _this.filte_data()
                     _this.$message.success(message);
                 });
             },
-            add_config: function() {
+            add_company: function() {
                 this.set_default_form();
                 this.set_dialog_visible(true);
             },
@@ -237,10 +270,10 @@
                 const _this = this;
                 this.$refs['form'].validate((valid) => {
                     if (valid)
-                        _this.add_or_update_config(this.form).then(function(result){
+                        _this.add_or_update_company(this.form).then(function(result){
                             if(_this.form.id) {
                                 for(let key in _this.form) {
-                                    _this.update_config_list_by_index({
+                                    _this.update_company_list_by_index({
                                         index: _this.row_index,
                                         key: key,
                                         value: _this.form[key]
@@ -250,7 +283,7 @@
                             }
                             else {
                                 _this.set_form_value({key: 'id', value: result.id});
-                                _this.append_config_list(_this.form);
+                                _this.append_company_list(_this.form);
                                 _this.$message.success("添加成功");
                             }
 
@@ -263,8 +296,8 @@
         },
         mounted() {
             const _this = this;
-            this.get_config_lists().then(result=> {
-                _this.$message.success('成功获取系统配置！');
+            this.get_company_lists().then(result=> {
+                _this.$message.success('成功获取机构数据！');
             })
         }
     }

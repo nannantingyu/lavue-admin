@@ -46,7 +46,6 @@ async function hasAccessPermission (path) {
             })
 
             store.dispatch('user/get_user_module_permission').then(()=>{
-                console.log(store.state.user.user_module_permission);
                 resolve(store.state.user.user_module_permission[path+'-read'])
             }).catch(()=> {
                 router.push({path: '/login'})
