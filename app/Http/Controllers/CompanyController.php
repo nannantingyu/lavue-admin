@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Models\CompanyCategory;
 
 class CompanyController extends Controller {
     /**
@@ -59,6 +60,18 @@ class CompanyController extends Controller {
             $company = new Company($form);
             $company->save();
             $id = $company->id;
+        }
+
+        //更新分类
+        $categories = $request->input('categories', []);
+        if(is_array($categories) and count($categories) > 0) {
+            CompanyCategory::where('cid', $company->id)->delete();
+            $all_cats = [];
+            foreach ($categories as $val) {
+                array_push($all_cats, ['cid'=> $company->id, 'ccid'=>$val]);
+            }
+
+            CompanyCategory::insert($all_cats);
         }
 
         return ['success'=>1, 'data'=>['id'=>$id]];

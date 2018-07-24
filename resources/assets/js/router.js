@@ -79,5 +79,10 @@ export default new VueRouter({
             path: '/category',
             component: resolve =>void(require(['./page/category.vue'], resolve))
         },
+        {
+            name: "category-company",
+            path: '/category-company',
+            component: resolve =>void(require(['./page/category-company.vue'], resolve))
+        },
     ]
 })

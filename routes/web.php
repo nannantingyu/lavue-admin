@@ -23,6 +23,11 @@ Route::post('/deleteArticle', 'ArticleController@deleteArticle');
 Route::post('/searchArticle', 'ArticleController@searchArticle');
 Route::get('/articleListsByCategory', 'ArticleController@articleListsByCategory');
 
+// 文章分类
+Route::get('/categoryLists', 'CategoryController@lists');
+Route::get('/categoryInfo', 'CategoryController@info');
+Route::post('/setCategoryState', 'CategoryController@setCategoryState');
+Route::post('/addCategory', 'CategoryController@addCategory');
 
 // 系统配置
 Route::get('/configLists', 'ConfigController@lists');
@@ -36,11 +41,11 @@ Route::get('/companyInfo', 'CompanyController@info');
 Route::post('/setCompanyState', 'CompanyController@setCompanyState');
 Route::post('/addCompany', 'CompanyController@addCompany');
 
-// 分类
-Route::get('/categoryLists', 'CategoryController@lists');
-Route::get('/categoryInfo', 'CategoryController@info');
-Route::post('/setCategoryState', 'CategoryController@setCategoryState');
-Route::post('/addCategory', 'CategoryController@addCategory');
+// 机构类型
+Route::get('/categoryCompanyLists', 'CategoryCompanyController@lists');
+Route::get('/categoryCompanyInfo', 'CategoryCompanyController@info');
+Route::post('/setCategoryCompanyState', 'CategoryCompanyController@setCategoryCompanyState');
+Route::post('/addCategoryCompany', 'CategoryCompanyController@addCategoryCompany');
 
 // 热门图片
 Route::get('/hotBannerLists', 'HotBannerController@lists');

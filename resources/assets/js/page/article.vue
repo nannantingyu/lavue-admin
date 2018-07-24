@@ -278,9 +278,7 @@
                 }
             },
             changeState: function(index, row) {
-                console.log(row.state)
                 const state = row.state?1:0;
-                console.log(state)
                 const new_state = state, _this = this, msg = new_state == 0?"下线":"上线";
                 this.set_article_state({id: row.id, state: new_state, index: index})
                     .then((x)=>{

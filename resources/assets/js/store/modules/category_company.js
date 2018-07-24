@@ -3,32 +3,26 @@ import $ from 'jquery'
 const state = {
     columns: {
         id: {title: "ID", show: true},
-        name: {title: "机构名称", show: true},
-        shortname: {title: "缩略名称", show: true},
+        name: {title: "分类名称", show: true},
+        ename: {title: "英文名称", show: true},
         sequence: {title: "顺序", show: true},
-        link: {title: "链接", show: true},
+        pid: {title: "父分类", show: true},
         state: {title: "状态", show: true},
-        tag: {title: "标签", show: true},
-        logo: {title: "Logo", show: true},
+        target: {title: "Target", show: true},
         created_at: {title: "创建时间", show: false},
         updated_at: {title: "更新时间", show: false},
     },
     form: {
         id: null,
         name: null,
-        shortname: null,
-        link: '',
         sequence: '',
         state: 1,
-        tag: '',
-        logo: '',
-        categories: [],
         created_at: '',
         updated_at: ''
     },
     to_strings: [],
     to_booleans: ['state'],
-    company_lists: [],
+    category_company_lists: [],
     show_type: 3,
     loading: false,
     current_page: 1,
@@ -38,24 +32,19 @@ const state = {
     row_index: 0,
     rules: {
         name: [
-            { required: true, message: '请输入机构名称', trigger: 'blur' },
-            { min: 2, max: 32, message: '机构名称长度在 2 到 32 个字符', trigger: 'blur' }
+            { required: true, message: '请输入分类名称', trigger: 'blur' },
+            { min: 2, max: 20, message: '分类名称长度在 2 到 20 个字符', trigger: 'blur' }
         ],
-        shortname: [
-            { required: true, message: '请输入缩略名称', trigger: 'blur' },
-            { min: 2, max: 16, message: '机构名称长度在 2 到 16 个字符', trigger: 'blur' }
+        ename: [
+            { required: true, message: '请输入分类英文名称', trigger: 'blur' },
+            { min: 2, max: 20, message: '分类英文名称长度在 2 到 20 个字符', trigger: 'blur' }
         ],
         link: [
             { required: true, message: '请输入链接', trigger: 'blur' },
             { min: 2, max: 256, message: '链接长度在 2 到 256 个字符', trigger: 'blur' }
         ],
-        tag: [
-            { required: true, message: '请输入标签', trigger: 'blur' },
-            { min: 2, max: 64, message: '标签长度在 2 到 64 个字符', trigger: 'blur' }
-        ],
-        logo: [
-            { required: true, message: '请输入Logo', trigger: 'blur' },
-            { min: 2, max: 256, message: 'Logo长度在 2 到 256 个字符', trigger: 'blur' }
+        target: [
+            { required: true, message: '请选择Target', trigger: 'blur' },
         ],
         sequence: [
             { validator: check_integer_factory('顺序为数字类型'), trigger: 'blur' }
@@ -76,8 +65,8 @@ const mutations = {
     set_show_type: (state, show_type) => {
         state.show_type = show_type;
     },
-    set_company_list: (state, company_lists) => {
-        state.company_lists = company_lists;
+    set_category_company_list: (state, category_company_lists) => {
+        state.category_company_lists = category_company_lists;
     },
     set_back_data: (state, back_data) => {
         state.back_data = back_data;
@@ -102,81 +91,73 @@ const mutations = {
         state.form = {
             id: null,
             name: null,
-            shortname: null,
-            link: '',
             sequence: '',
             state: 1,
-            categories: [],
-            tag: '',
-            logo: '',
             created_at: '',
             updated_at: ''
         }
     },
     filte_data: (state) => {
-        if(state.show_type == 3) state.company_lists = state.back_data;
+        if(state.show_type == 3) state.category_company_lists = state.back_data;
         else
-            state.company_lists = state.back_data.filter(x=>{
+            state.category_company_lists = state.back_data.filter(x=>{
                 return x.state == state.show_type;
             });
 
-        state.total = state.company_lists.length;
+        state.total = state.category_company_lists.length;
     },
-    update_company_list_by_index: (state, prop) => {
+    update_category_company_list_by_index: (state, prop) => {
         let value = prop['value'], key = prop['key'];
 
-        if(state.to_booleans.includes(key))
-            value = value?1:0
-
-        state.company_lists[prop['index']][key] = value
+        state.category_company_lists[prop['index']][key] = value
     },
-    append_company_list: (state, row) => {
-        state.company_lists.splice(0, 0, row)
+    append_category_company_list: (state, row) => {
+        state.category_company_lists.splice(0, 0, row)
     },
 };
 
 const actions = {
-    get_company_lists: ({commit, state}) => {
+    get_category_company_lists: ({commit, state}) => {
         return new Promise((resolve, reject) => {
-            axios.get('/companyLists').then(result=> {
+            axios.get('/categoryCompanyLists').then(result=> {
                 if(result.data.success === 1) {
-                    let company_lists = result.data.data;
-                    for(let obj of company_lists) {
+                    let category_company_lists = result.data.data;
+                    for(let obj of category_company_lists) {
                         for(let o in obj) {
                             if(state.to_strings.includes(o)) obj[o] = obj[o].toString()
                             else if(state.to_booleans.includes(o)) obj[o] = (obj[o] === 1 || !!obj[o])
                         }
                     }
 
-                    commit('set_company_list', company_lists);
-                    commit('set_back_data', company_lists)
-                    resolve()
+                    commit('set_category_company_list', category_company_lists);
+                    commit('set_back_data', category_company_lists)
+                    resolve(category_company_lists)
                 }
                 else reject()
             })
         })
     },
-    get_company: ({commit, state})=> {
+    get_category_company: ({commit, state})=> {
         return new Promise((resolve, reject)=> {
-            axios.get('/companyInfo').then(result=> {
+            axios.get('/categoryCompanyInfo').then(result=> {
                 if(result.data.success === 1) {
                     commit('set_form', result.data.data)
                 }
             })
         })
     },
-    set_company_state ({commit}, {id, state})  {
+    set_category_company_state ({commit}, {id, state})  {
         return new Promise((resolve, reject)=> {
             state = state?1:0;
 
-            axios.post('/setCompanyState', {id: id, state: state})
+            axios.post('/setCategoryCompanyState', {id: id, state: state})
                 .then(function(result) {
                     if(result.data.success === 1) resolve()
                     else reject()
                 });
         })
     },
-    add_or_update_company({ commit, state }, form) {
+    add_or_update_category_company({ commit, state }, form) {
         return new Promise((resolve, reject) => {
             let subform = {};
             $.extend(subform, form);
@@ -187,7 +168,7 @@ const actions = {
                 }
             }
 
-            axios.post("/addCompany", subform).then(function(result){
+            axios.post("/addCategoryCompany", subform).then(function(result){
                 if(result.data.success === 1) resolve(result.data.data)
                 else reject()
             });
