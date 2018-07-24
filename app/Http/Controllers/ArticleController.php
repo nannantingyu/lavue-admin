@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleBody;
+use App\Models\ArticleCategory;
 use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller {
@@ -15,15 +16,35 @@ class ArticleController extends Controller {
     }
 
     /**
+     * 根据分类获取文章列表
+     */
+    public function articleListsByCategory(Request $request) {
+        $categories = $request->input('categories');
+        if(!is_null($categories)) {
+            $articles = DB::table('article_category')
+                ->join('article', 'article_category.aid', '=', 'article.id')
+                ->whereIn('article_category.cid', explode(',', $categories))
+                ->select('article.*')
+                ->orderBy('article.publish_time', 'desc')
+                ->get();
+
+            return ['success'=>1, 'data'=>$articles];
+        }
+
+        return ['success'=>0];
+    }
+
+    /**
      * 获取单个文章详情
      */
     public function info(Request $request) {
         $id = $request->input('id');
         if(!is_null($id)) {
-            $article = Article::with('body')->find($id);
+            $article = Article::with('body')->with('categories')->find($id);
+            return ['success'=>1, 'data'=>$article];
         }
 
-        return ['success'=>1, 'data'=>$article];
+        return ['success'=>0];
     }
 
     /**
@@ -137,6 +158,18 @@ class ArticleController extends Controller {
             ArticleBody::where('aid', $article->id)->update([
                'body' => $body
             ]);
+        }
+
+        //更新分类
+        $categories = $request->input('categories', []);
+        if(is_array($categories) and count($categories) > 0) {
+            ArticleCategory::where('aid', $article->id)->delete();
+            $all_cats = [];
+            foreach ($categories as $val) {
+                array_push($all_cats, ['aid'=> $article->id, 'cid'=>$val]);
+            }
+
+            ArticleCategory::insert($all_cats);
         }
 
         return ['success'=>1];

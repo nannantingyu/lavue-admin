@@ -11,6 +11,8 @@ const state = {
     types: [],
     article_now: {},
     editor: null,
+    search_key: '',
+    category: [],
     columns: {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
@@ -67,6 +69,7 @@ const state = {
         ]
     },
     modules: [],
+    article_categories: [],
     form: {
         id: null,
         title: '',
@@ -78,6 +81,7 @@ const state = {
         type: '',
         hits: '',
         state: '',
+        categories: [],
         recommend: '',
         favor: 1,
         source_type: 'crawl',
@@ -91,6 +95,12 @@ const state = {
 const mutations = {
     set_article_list: (state, article_lists) => {
         state.article_lists = article_lists;
+    },
+    set_search_key: (state, search_key) => {
+        state.search_key = search_key;
+    },
+    set_category: (state, category) => {
+        state.category = category;
     },
     set_back_data: (state, back_data) => {
         state.back_data = back_data;
@@ -113,11 +123,23 @@ const mutations = {
     set_article_now: (state, article_now) => {
         state.article_now = article_now;
     },
+    set_article_categories: (state, article_categories) => {
+        state.article_categories = article_categories;
+    },
     filte_data: (state) => {
         if(state.show_type == 3) state.article_lists = state.back_data;
         else
             state.article_lists = state.back_data.filter(x=>{
                 return x.state == state.show_type;
+            });
+
+        state.total = state.article_lists.length;
+    },
+    filte_search: (state) => {
+        if(!state.search_key) state.article_lists = state.back_data;
+        else
+            state.article_lists = state.back_data.filter(x=>{
+                return x.title.indexOf(state.search_key) >= 0 || x.description.indexOf(state.search_key) >= 0;
             });
 
         state.total = state.article_lists.length;
@@ -140,6 +162,7 @@ const mutations = {
             type: '',
             hits: '',
             state: '',
+            categories: [],
             recommend: '',
             favor: 1,
             source_type: 'crawl',
@@ -154,10 +177,8 @@ const mutations = {
 const getters = {
     type_filter: state=> {
         let types = [];
-        for(let ar of state.article_lists) {
-            if(!types.includes_by_key('value', ar['type'])) {
-                types.push({text: ar['type'], value: ar['type']});
-            }
+        for(let ar of state.article_categories) {
+            types.push({text: ar['name'], value: ar['name']});
         }
 
         return types;
@@ -186,7 +207,6 @@ const actions = {
                 else reject()
             })
         })
-
     },
     set_article_state ({commit}, {id, state, index})  {
         return new Promise((resolve, reject)=> {
@@ -207,6 +227,21 @@ const actions = {
                 });
         })
     },
+    get_data_by_category: ({state, commit}) => {
+        return new Promise((resolve, reject)=> {
+            axios.get("/articleListsByCategory?categories="+state.category.join(',')).then(function(result){
+                if(result.data.success === 1)
+                {
+                    commit('set_article_list', result.data.data)
+                    commit('set_back_data', result.data.data)
+                    commit('set_current_page', 1)
+                    commit('set_total', result.data.data.length)
+                    resolve()
+                }
+                else reject()
+            })
+        })
+    },
     getArticle: function({state, commit}, id) {
         return new Promise((resolve, reject)=> {
             axios.get("/articleInfo?id="+id)
@@ -221,6 +256,11 @@ const actions = {
 
                                 else if(state.to_booleans.includes(o))
                                     value = value == 1 || !!value
+                                else if(o == 'categories') {
+                                    value = value.map(x=>{
+                                        return x.id
+                                    });
+                                }
 
                                 commit('set_form_value', {key: o, value: value})
                             }

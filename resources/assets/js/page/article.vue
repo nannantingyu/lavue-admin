@@ -24,6 +24,19 @@
                     <el-radio-button label="0">下线</el-radio-button>
                 </el-radio-group>
             </el-col>
+            <el-col :span="4">
+                <el-input v-model="search_key" @change="filte_search"></el-input>
+            </el-col>
+            <el-col :span="4">
+                <el-select v-model="category" multiple placeholder="请选择分类" @change="filter_by_category">
+                    <el-option
+                            v-for="item in article_categories"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
         </el-row>
         <el-table :data="article_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
@@ -94,9 +107,7 @@
                     v-if="columns['state']['show']"
                     width="80">
                 <template slot-scope="scope">
-                    <div slot="reference" class="name-wrapper">
-                        {{ scope.row.state==1?'已上线':'已下线' }}
-                    </div>
+                    <el-switch v-model="scope.row.state" @change="changeState(scope.row)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column
@@ -171,7 +182,7 @@
 
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, MessageBox, Loading, Popover, Switch, RadioGroup, RadioButton} from 'element-ui'
+    import {Table, TableColumn, Pagination, MessageBox, Loading, Popover, Switch, RadioGroup, RadioButton, Input, Select, Option} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
@@ -180,14 +191,23 @@
     Vue.use(Switch);
     Vue.use(RadioGroup);
     Vue.use(RadioButton);
+    Vue.use(Input);
+    Vue.use(Select);
+    Vue.use(Option);
 
     export default {
         name: "article-list",
         created() {
             const _this = this;
-            this.$store.dispatch('article/get_data').then(data => {
-                _this.$message.success("成功获取文章列表")
-            })
+            if(this.article_categories.length <= 0) {
+                this.$store.dispatch("category/get_category_lists").then(result=> {
+                    _this.set_article_categories(result);
+                    _this.get_article_list();
+                })
+            }
+            else {
+                _this.get_article_list()
+            }
         },
         computed: {
             ...mapState({
@@ -198,7 +218,8 @@
                 per_page: state=>state.article.per_page,
                 total: state=>state.article.total,
                 columns: state=>state.article.columns,
-                user_module_permission: state=>state.user.user_module_permission
+                user_module_permission: state=>state.user.user_module_permission,
+                article_categories: state=>state.article.article_categories,
             }),
             ...mapGetters({
                 'type_filter': 'article/type_filter'
@@ -212,17 +233,52 @@
                     this.filte_data()
                 }
             },
+            category: {
+                get() {
+                    return this.$store.state.article.category
+                },
+                set(value) {
+                    this.$store.commit('article/set_category', value)
+                    this.filte_data()
+                }
+            },
+            search_key: {
+                get() {
+                    return this.$store.state.article.search_key
+                },
+                set(value) {
+                    this.$store.commit('article/set_search_key', value)
+                    this.filte_data()
+                }
+            },
         },
         methods: {
             ...mapMutations({
                 set_current_page: "article/set_current_page",
                 set_per_page: "article/set_per_page",
                 filte_data: "article/filte_data",
+                set_article_categories: "article/set_article_categories",
+                set_search_key: "article/set_search_key",
+                filte_search: "article/filte_search",
+                filter_by_category: "article/filter_by_category"
             }),
             ...mapActions({
                 set_article_state: "article/set_article_state",
                 delete_article: "article/delete_article"
             }),
+            filter_by_category: function(value) {
+                this.$store.dispatch('article/get_data_by_category').then(result=> {
+                    console.log(result)
+                });
+            },
+            get_article_list: function() {
+                if(this.article_lists.length <= 0) {
+                    const _this = this;
+                    this.$store.dispatch('article/get_data').then(data => {
+                        _this.$message.success("成功获取文章列表")
+                    })
+                }
+            },
             setState: function(index, row) {
                 const new_state = 1 - row.state, _this = this, msg = new_state == 0?"删除":"上线";
                 this.set_article_state({id: row.id, state: new_state, index: index})

@@ -25,10 +25,10 @@
                 </el-radio-group>
             </el-col>
             <el-col :span="2">
-                <el-button @click="add_config">添加配置</el-button>
+                <el-button @click="add_category">添加文章分类</el-button>
             </el-col>
         </el-row>
-        <el-table :data="config_lists.slice((current_page-1)*per_page, current_page*per_page)"
+        <el-table :data="category_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
                   style="width: 100%">
             <el-table-column
@@ -39,15 +39,15 @@
                     width="80">
             </el-table-column>
             <el-table-column
-                    prop="key"
+                    prop="name"
                     sortable
-                    :label="columns['key']['title']"
-                    v-if="columns['key']['show']" width="200">
+                    :label="columns['name']['title']"
+                    v-if="columns['name']['show']" width="200">
             </el-table-column>
             <el-table-column
-                    prop="value"
-                    :label="columns['value']['title']"
-                    v-if="columns['value']['show']"
+                    prop="ename"
+                    :label="columns['ename']['title']"
+                    v-if="columns['ename']['show']"
                     width="*">
             </el-table-column>
             <el-table-column
@@ -57,15 +57,15 @@
                     width="120">
             </el-table-column>
             <el-table-column
-                    prop="group"
-                    :label="columns['group']['title']"
-                    v-if="columns['group']['show']"
+                    prop="pid"
+                    :label="columns['pid']['title']"
+                    v-if="columns['pid']['show']"
                     width="160">
             </el-table-column>
             <el-table-column
-                    prop="comment"
-                    :label="columns['comment']['title']"
-                    v-if="columns['comment']['show']"
+                    prop="target"
+                    :label="columns['target']['title']"
+                    v-if="columns['target']['show']"
                     width="160">
             </el-table-column>
             <el-table-column
@@ -95,13 +95,13 @@
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['config-delete']"
+                            :disabled="!user_module_permission['category-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['config-delete']"
-                            @click="editConfig(scope.$index, scope.row)">编辑</el-button>
+                            :disabled="!user_module_permission['category-delete']"
+                            @click="editcategory(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -113,19 +113,19 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
         </el-pagination>
-        <el-dialog title="添加系统配置" :visible.sync="dialog_visible">
+        <el-dialog title="添加文章分类" :visible.sync="dialog_visible">
             <el-form ref="form" :model="form" :rules="rules">
-                <el-form-item :label-width="formLabelWidth" label="键" prop="key">
-                    <el-input v-model="form.key"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="分类名称" prop="name">
+                    <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="值" prop="value">
-                    <el-input v-model="form.value"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="分类英文名称" prop="ename">
+                    <el-input v-model="form.ename"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="分组" prop="group">
-                    <el-input v-model="form.group"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="Target" prop="target">
+                    <el-input v-model="form.target"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="注释" prop="comment">
-                    <el-input v-model="form.comment"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="父分类" prop="pid">
+                    <el-input v-model="form.pid"></el-input>
                 </el-form-item>
                 <el-form-item :label-width="formLabelWidth" label="状态" prop="state">
                     <el-switch v-model="form.state">启用</el-switch>
@@ -164,72 +164,72 @@
     Vue.use(Dialog);
 
     export default {
-        name: "config",
+        name: "category",
         computed: {
             ...mapState({
-                'config_lists': state=>state.config.config_lists,
-                'columns': state=>state.config.columns,
-                'loading': state=>state.config.loading,
-                'current_page': state=>state.config.current_page,
-                'per_page': state=>state.config.per_page,
-                'total': state=>state.config.total,
+                'category_lists': state=>state.category.category_lists,
+                'columns': state=>state.category.columns,
+                'loading': state=>state.category.loading,
+                'current_page': state=>state.category.current_page,
+                'per_page': state=>state.category.per_page,
+                'total': state=>state.category.total,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'form': state=>state.config.form,
-                'rules': state=>state.config.rules,
+                'form': state=>state.category.form,
+                'rules': state=>state.category.rules,
                 'formLabelWidth': state=>state.formLabelWidth,
-                'row_index': state=>state.config.row_index,
+                'row_index': state=>state.category.row_index,
             }),
             dialog_visible: {
                 get() {
-                    return this.$store.state.config.dialog_visible
+                    return this.$store.state.category.dialog_visible
                 },
                 set(value) {
-                    this.$store.commit('config/set_dialog_visible', value)
+                    this.$store.commit('category/set_dialog_visible', value)
                 }
             },
             show_type: {
                 get() {
-                    return this.$store.state.config.show_type
+                    return this.$store.state.category.show_type
                 },
                 set(value) {
-                    this.$store.commit('config/set_show_type', value)
+                    this.$store.commit('category/set_show_type', value)
                     this.filte_data()
                 }
             },
         },
         methods: {
             ...mapMutations({
-                'set_current_page': "config/set_current_page",
-                'set_per_page': "config/set_per_page",
-                'filte_data': "config/filte_data",
-                'set_dialog_visible': "config/set_dialog_visible",
-                'set_form': "config/set_form",
-                'set_row_index': "config/set_row_index",
-                'set_form_value': "config/set_form_value",
-                'update_config_list_by_index': "config/update_config_list_by_index",
-                'append_config_list': "config/append_config_list",
-                'set_default_form': "config/set_default_form"
+                'set_current_page': "category/set_current_page",
+                'set_per_page': "category/set_per_page",
+                'filte_data': "category/filte_data",
+                'set_dialog_visible': "category/set_dialog_visible",
+                'set_form': "category/set_form",
+                'set_row_index': "category/set_row_index",
+                'set_form_value': "category/set_form_value",
+                'update_category_list_by_index': "category/update_category_list_by_index",
+                'append_category_list': "category/append_category_list",
+                'set_default_form': "category/set_default_form"
             }),
             ...mapActions({
-                'get_config_lists': 'config/get_config_lists',
-                'get_config': "config/get_config",
-                'add_or_update_config': "config/add_or_update_config",
-                'set_config_state': "config/set_config_state"
+                'get_category_lists': 'category/get_category_lists',
+                'get_category': "category/get_category",
+                'add_or_update_category': "category/add_or_update_category",
+                'set_category_state': "category/set_category_state"
             }),
-            editConfig: function(index, row) {
+            editcategory: function(index, row) {
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
             },
             changeState: function (row) {
                 const _this = this;
-                this.set_config_state({id:row.id, state:row.state}).then(result=>{
+                this.set_category_state({id:row.id, state:row.state}).then(result=>{
                     let message = row.state?"上线成功":"下线成功";
                     _this.filte_data()
                     _this.$message.success(message);
                 });
             },
-            add_config: function() {
+            add_category: function() {
                 this.set_default_form();
                 this.set_dialog_visible(true);
             },
@@ -237,10 +237,10 @@
                 const _this = this;
                 this.$refs['form'].validate((valid) => {
                     if (valid)
-                        _this.add_or_update_config(this.form).then(function(result){
+                        _this.add_or_update_category(this.form).then(function(result){
                             if(_this.form.id) {
                                 for(let key in _this.form) {
-                                    _this.update_config_list_by_index({
+                                    _this.update_category_list_by_index({
                                         index: _this.row_index,
                                         key: key,
                                         value: _this.form[key]
@@ -250,7 +250,7 @@
                             }
                             else {
                                 _this.set_form_value({key: 'id', value: result.id});
-                                _this.append_config_list(_this.form);
+                                _this.append_category_list(_this.form);
                                 _this.$message.success("添加成功");
                             }
 
@@ -263,8 +263,8 @@
         },
         mounted() {
             const _this = this;
-            this.get_config_lists().then(result=> {
-                _this.$message.success('成功获取系统配置！');
+            this.get_category_lists().then(result=> {
+                _this.$message.success('成功获取文章分类！');
             })
         }
     }
