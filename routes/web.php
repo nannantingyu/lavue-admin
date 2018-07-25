@@ -65,6 +65,7 @@ Route::post('/retractRoleFromUser', 'UserController@retractRoleFromUser');
 Route::get('/getRoles', 'UserController@getRoles');
 Route::get('/getUsers', 'UserController@getUsers');
 Route::get('/getRoleUsers', 'UserController@getRoleUsers');
+Route::post('/setPassword', 'UserController@setPassword');
 
 // 上传
 Route::post('/uploads_image', 'UploadsController@image');

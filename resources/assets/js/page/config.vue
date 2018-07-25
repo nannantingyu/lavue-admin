@@ -119,7 +119,7 @@
                     <el-input v-model="form.key"></el-input>
                 </el-form-item>
                 <el-form-item :label-width="formLabelWidth" label="值" prop="value">
-                    <el-input v-model="form.value"></el-input>
+                    <el-input v-model="form.value" type="textarea" :rows="5"></el-input>
                 </el-form-item>
                 <el-form-item :label-width="formLabelWidth" label="分组" prop="group">
                     <el-input v-model="form.group"></el-input>

@@ -61,6 +61,7 @@ const state = {
         created_at: '',
         updated_at: ''
     },
+    pwd: '',
     role_rules: {
         role_name: [
             { required: true, message: '请输入角色', trigger: 'blur' },
@@ -88,6 +89,7 @@ const state = {
     total: 0,
     per_page: 10,
     dialog_visible: false,
+    dialog_password_visible: false,
     roles: [],
     users: [],
     role_users: [],
@@ -108,6 +110,9 @@ const mutations = {
     set_role_users: (state, role_users)=>{
         state.role_users = role_users
     },
+    set_pwd: (state, pwd) => {
+        state.pwd = pwd;
+    },
     set_login_user: (state, {user_id, nick_name})=> {
         state.login_user.user_id = user_id
         state.login_user.nick_name = nick_name
@@ -121,6 +126,9 @@ const mutations = {
     },
     set_dialog_visible: (state, value) => {
         state.dialog_visible = value;
+    },
+    set_dialog_password_visible: (state, value) => {
+        state.dialog_password_visible = value;
     },
     set_row_index: (state, row_index) => {
         state.row_index = row_index;
@@ -164,6 +172,14 @@ const actions = {
                 }).catch(data => {
                     reject(data.response.data.errors)
                 })
+        })
+    },
+    update_password({commit, state}) {
+        return new Promise((resolve, reject)=> {
+            axios.post('/setPassword', {userid: state.form.id, password: state.pwd}).then(result=> {
+                if(result.data.success === 1) resolve()
+                else reject()
+            })
         })
     },
     logout ({commit, state}) {

@@ -145,9 +145,16 @@ const actions = {
                         for(let o in obj) {
                             if(state.to_strings.includes(o)) obj[o] = obj[o].toString()
                             else if(state.to_booleans.includes(o)) obj[o] = (obj[o] === 1 || !!obj[o])
+
+                            if(o === 'categories') {
+                                obj[o] = obj[o].map(x=>{
+                                    return x.id;
+                                })
+                            }
                         }
                     }
 
+                    console.log(company_lists)
                     commit('set_company_list', company_lists);
                     commit('set_back_data', company_lists)
                     resolve()

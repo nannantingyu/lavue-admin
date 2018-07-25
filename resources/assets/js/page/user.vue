@@ -77,6 +77,11 @@
                             :type="scope.row.state?'success':'danger'"
                             :disabled="!user_module_permission['user-delete']"
                             @click="edituser(scope.$index, scope.row)">编辑</el-button>
+                    <el-button
+                            size="mini"
+                            :type="scope.row.state?'success':'danger'"
+                            :disabled="!user_module_permission['user-delete']"
+                            @click="reset_password(scope.$index, scope.row)">密码重置</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -108,6 +113,21 @@
                 <el-form-item>
                     <el-col :offset="4" :span="8">
                         <el-button type="primary" @click="submitForm()">{{ form.id?"更新":"添加" }}</el-button>
+                    </el-col>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+        <el-dialog title="修改用户密码" :visible.sync="dialog_password_visible">
+            <el-form ref="form-password">
+                <el-form-item :label-width="formLabelWidth" label="用户名" prop="name">
+                    <el-input disabled v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item :label-width="formLabelWidth" label="密码" prop="password">
+                    <el-input v-model="pwd"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-col :offset="4" :span="8">
+                        <el-button type="primary" @click="resetPassword()">更新</el-button>
                     </el-col>
                 </el-form-item>
             </el-form>
@@ -151,12 +171,28 @@
                 'formLabelWidth': state=>state.formLabelWidth,
                 'row_index': state=>state.user.row_index,
             }),
+            pwd: {
+                get() {
+                    return this.$store.state.user.pwd
+                },
+                set(value) {
+                    this.$store.commit('user/set_pwd', value)
+                }
+            },
             dialog_visible: {
                 get() {
                     return this.$store.state.user.dialog_visible
                 },
                 set(value) {
                     this.$store.commit('user/set_dialog_visible', value)
+                }
+            },
+            dialog_password_visible: {
+                get() {
+                    return this.$store.state.user.dialog_password_visible
+                },
+                set(value) {
+                    this.$store.commit('user/set_dialog_password_visible', value)
                 }
             },
             show_type: {
@@ -175,6 +211,7 @@
                 'set_per_page': "user/set_per_page",
                 'filte_data': "user/filte_data",
                 'set_dialog_visible': "user/set_dialog_visible",
+                'set_dialog_password_visible': "user/set_dialog_password_visible",
                 'set_form': "user/set_form",
                 'set_row_index': "user/set_row_index",
                 'set_form_value': "user/set_form_value",
@@ -185,12 +222,29 @@
                 'get_users': 'user/get_users',
                 'get_user': "user/get_user",
                 'add_or_update_user': "user/add_or_update_user",
-                'set_user_state': "user/set_user_state"
+                'set_user_state': "user/set_user_state",
+                'update_password': "user/update_password"
             }),
             edituser: function(index, row) {
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
+            },
+            reset_password: function(index, row) {
+                this.set_form(row);
+                this.set_dialog_password_visible(true);
+            },
+            resetPassword: function() {
+                if(!this.pwd) {
+                    this.$message.error('请输入密码');
+                    return
+                }
+
+                const _this = this;
+                this.update_password().then(result=> {
+                    _this.$message.success("密码重置成功");
+                });
+
             },
             changeState: function (row) {
                 const _this = this;
