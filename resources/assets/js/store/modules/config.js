@@ -136,6 +136,8 @@ const actions = {
 
                     commit('set_config_list', config_lists);
                     commit('set_back_data', config_lists)
+                    commit('set_current_page', 1)
+                    commit('set_total', config_lists.length)
                     resolve()
                 }
                 else reject()
