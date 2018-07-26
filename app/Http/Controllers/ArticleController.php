@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleBody;
 use App\Models\ArticleCategory;
+use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller {
@@ -160,6 +161,8 @@ class ArticleController extends Controller {
             ]);
         }
 
+        $this->kafka->produce($this->static_topic, 'read/'.$article->id);
+
         //更新分类
         $categories = $request->input('categories', []);
         if(is_array($categories) and count($categories) > 0) {
@@ -170,6 +173,16 @@ class ArticleController extends Controller {
             }
 
             ArticleCategory::insert($all_cats);
+
+            $categories_enames = Category::whereIn('id', $categories)->pluck('ename');
+            foreach ($categories_enames as $ename) {
+                if(!empty($ename)) {
+                    $url = 'news/'.$ename;
+                    $this->kafka->produce($this->static_topic, $url);
+                }
+            }
+
+            $this->kafka->produce($this->static_topic, 'news');
         }
 
         return ['success'=>1];

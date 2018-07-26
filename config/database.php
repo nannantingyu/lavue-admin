@@ -78,6 +78,9 @@ return [
             'prefix' => '',
         ],
 
+        'kafka' => [
+            'host' => env('KAFKA_HOST'),
+        ]
     ],
 
     /*

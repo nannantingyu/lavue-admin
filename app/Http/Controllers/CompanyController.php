@@ -74,6 +74,12 @@ class CompanyController extends Controller {
             CompanyCategory::insert($all_cats);
         }
 
+        // 更新静态页
+        $this->kafka->produce($this->static_topic, 'company');
+        foreach ($categories as $ca) {
+            $this->kafka->produce($this->static_topic, 'company/'.$ca);
+        }
+
         return ['success'=>1, 'data'=>['id'=>$id]];
     }
 

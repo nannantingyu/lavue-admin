@@ -268,6 +268,9 @@ const actions = {
                                     value = value.map(x=>{
                                         return x.id
                                     });
+
+                                    value = Array.from(new Set(value));
+                                    console.log(value);
                                 }
 
                                 commit('set_form_value', {key: o, value: value})
