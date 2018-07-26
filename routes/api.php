@@ -22,3 +22,5 @@ Route::get('/jiedu', 'Api\CalendarController@getjiedu');
 Route::get('/kx', 'Api\KuaixunController@getkx');
 Route::get('/bkx', 'Api\KuaixunController@getBlockKx');
 Route::get('/ukx', 'Api\KuaixunController@getUnionKx');
+Route::post('/addKuaiXun', 'KuaiXunController@addKuaiXun');
+Route::get('/addKuaiXun', 'KuaiXunController@addKuaiXun');

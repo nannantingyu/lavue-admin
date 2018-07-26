@@ -54,3 +54,8 @@ Route::get('/getModulePermission', 'ModuleController@getModulePermission');
 Route::post('/addModulePermission', 'ModuleController@addModulePermission');
 Route::get('/getRoleMoudlePermission', 'ModuleController@getRoleMoudlePermission');
 Route::get('/getUserModulePermission', 'ModuleController@getUserModulePermission');
+
+
+
+Route::post('/addKuaiXun', 'KuaiXunController@addKuaiXun');
+Route::get('/addKuaiXun', 'KuaiXunController@addKuaiXun');
