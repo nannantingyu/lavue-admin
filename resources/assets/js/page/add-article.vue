@@ -52,6 +52,17 @@
                 <el-input v-model="form.type"></el-input>
             </el-form-item>
 
+            <el-form-item label="分类" prop="categories">
+                <el-select v-model="form.categories" multiple placeholder="请选择分类">
+                    <el-option
+                            v-for="item in article_categories"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
             <el-form-item label="发布状态" prop="state">
                 <el-switch v-model="form.state"></el-switch>
             </el-form-item>
@@ -111,16 +122,24 @@
             ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
                 'form': state=>state.article.form,
-                'rules': state=>state.article.rules
+                'article_categories': state=>state.article.article_categories,
+                'rules': state=>state.article.rules,
             }),
             ...mapGetters({
                 'fileimgs': 'article/fileimgs',
             }),
         },
         mounted() {
+            const _this = this;
             let id = this.$route.params.id;
             if(id) this.getArticle(this.$route.params.id);
             else this.set_default_form()
+
+            if(this.article_categories.length <= 0) {
+                this.$store.dispatch("category/get_category_lists").then(result=> {
+                    _this.set_article_categories(result);
+                })
+            }
         },
         methods: {
             ...mapActions({
@@ -129,7 +148,8 @@
             }),
             ...mapMutations({
                 'set_form_value': 'article/set_form_value',
-                'set_default_form': "article/set_default_form"
+                'set_default_form': "article/set_default_form",
+                'set_article_categories': "article/set_article_categories"
             }),
             handleSuccess: function(response, file, file_list) {
                 if(response.success) {

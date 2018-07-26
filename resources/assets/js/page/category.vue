@@ -24,8 +24,11 @@
                     <el-radio-button label="0">下线</el-radio-button>
                 </el-radio-group>
             </el-col>
+            <el-col :span="2">
+                <el-button @click="add_category">添加文章分类</el-button>
+            </el-col>
         </el-row>
-        <el-table :data="users"
+        <el-table :data="category_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
                   style="width: 100%">
             <el-table-column
@@ -42,46 +45,63 @@
                     v-if="columns['name']['show']" width="200">
             </el-table-column>
             <el-table-column
-                    prop="nickname"
-                    :label="columns['nickname']['title']"
-                    v-if="columns['nickname']['show']"
-                    width="200">
+                    prop="ename"
+                    :label="columns['ename']['title']"
+                    v-if="columns['ename']['show']"
+                    width="*">
             </el-table-column>
             <el-table-column
-                    prop="email"
-                    :label="columns['email']['title']"
-                    v-if="columns['email']['show']"
-                    width="*">
+                    prop="sequence"
+                    :label="columns['sequence']['title']"
+                    v-if="columns['sequence']['show']"
+                    width="120">
+            </el-table-column>
+            <el-table-column
+                    prop="pid"
+                    :label="columns['pid']['title']"
+                    v-if="columns['pid']['show']"
+                    width="160">
+            </el-table-column>
+            <el-table-column
+                    prop="target"
+                    :label="columns['target']['title']"
+                    v-if="columns['target']['show']"
+                    width="160">
+            </el-table-column>
+            <el-table-column
+                    prop="state"
+                    sortable
+                    :label="columns['state']['title']"
+                    v-if="columns['state']['show']"
+                    width="80">
+                <template slot-scope="scope">
+                    <el-switch v-model="scope.row.state" @change="changeState(scope.row)"></el-switch>
+                </template>
             </el-table-column>
             <el-table-column
                     prop="created_at"
                     :label="columns['created_at']['title']"
                     v-if="columns['created_at']['show']"
-                    width="160">
+                    width="120">
             </el-table-column>
             <el-table-column
-                        prop="updated_at"
-                        :label="columns['updated_at']['title']"
-                        v-if="columns['updated_at']['show']"
-                        width="160">
+                    prop="updated_at"
+                    :label="columns['updated_at']['title']"
+                    v-if="columns['updated_at']['show']"
+                    width="120">
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="160">
                 <template slot-scope="scope">
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['user-delete']"
+                            :disabled="!user_module_permission['category-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['user-delete']"
-                            @click="edituser(scope.$index, scope.row)">编辑</el-button>
-                    <el-button
-                            size="mini"
-                            :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['user-delete']"
-                            @click="reset_password(scope.$index, scope.row)">密码重置</el-button>
+                            :disabled="!user_module_permission['category-delete']"
+                            @click="editcategory(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -93,41 +113,29 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
         </el-pagination>
-        <el-dialog title="修改用户信息" :visible.sync="dialog_visible">
+        <el-dialog title="添加文章分类" :visible.sync="dialog_visible">
             <el-form ref="form" :model="form" :rules="rules">
-                <el-form-item :label-width="formLabelWidth" label="用户名" prop="name">
+                <el-form-item :label-width="formLabelWidth" label="分类名称" prop="name">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="昵称" prop="nickname">
-                    <el-input v-model="form.nickname"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="分类英文名称" prop="ename">
+                    <el-input v-model="form.ename"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="邮箱" prop="email">
-                    <el-input v-model="form.email"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="Target" prop="target">
+                    <el-input v-model="form.target"></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="电话" prop="phone">
-                    <el-input v-model="form.phone"></el-input>
+                <el-form-item :label-width="formLabelWidth" label="父分类" prop="pid">
+                    <el-input v-model="form.pid"></el-input>
                 </el-form-item>
-                <!--<el-form-item :label-width="formLabelWidth" label="状态" prop="phone">-->
-                    <!--<el-switch v-model="form.state">启用</el-switch>-->
-                <!--</el-form-item>-->
+                <el-form-item :label-width="formLabelWidth" label="状态" prop="state">
+                    <el-switch v-model="form.state">启用</el-switch>
+                </el-form-item>
+                <el-form-item :label-width="formLabelWidth" label="顺序" prop="sequence">
+                    <el-input v-model="form.sequence" type="number"></el-input>
+                </el-form-item>
                 <el-form-item>
                     <el-col :offset="4" :span="8">
                         <el-button type="primary" @click="submitForm()">{{ form.id?"更新":"添加" }}</el-button>
-                    </el-col>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-        <el-dialog title="修改用户密码" :visible.sync="dialog_password_visible">
-            <el-form ref="form-password">
-                <el-form-item :label-width="formLabelWidth" label="用户名" prop="name">
-                    <el-input disabled v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="密码" prop="password">
-                    <el-input v-model="pwd"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-col :offset="4" :span="8">
-                        <el-button type="primary" @click="resetPassword()">更新</el-button>
                     </el-col>
                 </el-form-item>
             </el-form>
@@ -156,112 +164,83 @@
     Vue.use(Dialog);
 
     export default {
-        name: "user",
+        name: "category",
         computed: {
             ...mapState({
-                'users': state=>state.user.users,
-                'columns': state=>state.user.columns,
-                'loading': state=>state.user.loading,
-                'current_page': state=>state.user.current_page,
-                'per_page': state=>state.user.per_page,
-                'total': state=>state.user.total,
+                'category_lists': state=>state.category.category_lists,
+                'columns': state=>state.category.columns,
+                'loading': state=>state.category.loading,
+                'current_page': state=>state.category.current_page,
+                'per_page': state=>state.category.per_page,
+                'total': state=>state.category.total,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'form': state=>state.user.form,
-                'rules': state=>state.user.rules,
+                'form': state=>state.category.form,
+                'rules': state=>state.category.rules,
                 'formLabelWidth': state=>state.formLabelWidth,
-                'row_index': state=>state.user.row_index,
+                'row_index': state=>state.category.row_index,
             }),
-            pwd: {
-                get() {
-                    return this.$store.state.user.pwd
-                },
-                set(value) {
-                    this.$store.commit('user/set_pwd', value)
-                }
-            },
             dialog_visible: {
                 get() {
-                    return this.$store.state.user.dialog_visible
+                    return this.$store.state.category.dialog_visible
                 },
                 set(value) {
-                    this.$store.commit('user/set_dialog_visible', value)
-                }
-            },
-            dialog_password_visible: {
-                get() {
-                    return this.$store.state.user.dialog_password_visible
-                },
-                set(value) {
-                    this.$store.commit('user/set_dialog_password_visible', value)
+                    this.$store.commit('category/set_dialog_visible', value)
                 }
             },
             show_type: {
                 get() {
-                    return this.$store.state.user.show_type
+                    return this.$store.state.category.show_type
                 },
                 set(value) {
-                    this.$store.commit('user/set_show_type', value)
+                    this.$store.commit('category/set_show_type', value)
                     this.filte_data()
                 }
             },
         },
         methods: {
             ...mapMutations({
-                'set_current_page': "user/set_current_page",
-                'set_per_page': "user/set_per_page",
-                'filte_data': "user/filte_data",
-                'set_dialog_visible': "user/set_dialog_visible",
-                'set_dialog_password_visible': "user/set_dialog_password_visible",
-                'set_form': "user/set_form",
-                'set_row_index': "user/set_row_index",
-                'set_form_value': "user/set_form_value",
-                'update_user_list_by_index': "user/update_user_list_by_index",
-                'append_user_list': "user/append_user_list"
+                'set_current_page': "category/set_current_page",
+                'set_per_page': "category/set_per_page",
+                'filte_data': "category/filte_data",
+                'set_dialog_visible': "category/set_dialog_visible",
+                'set_form': "category/set_form",
+                'set_row_index': "category/set_row_index",
+                'set_form_value': "category/set_form_value",
+                'update_category_list_by_index': "category/update_category_list_by_index",
+                'append_category_list': "category/append_category_list",
+                'set_default_form': "category/set_default_form"
             }),
             ...mapActions({
-                'get_users': 'user/get_users',
-                'get_user': "user/get_user",
-                'add_or_update_user': "user/add_or_update_user",
-                'set_user_state': "user/set_user_state",
-                'update_password': "user/update_password"
+                'get_category_lists': 'category/get_category_lists',
+                'get_category': "category/get_category",
+                'add_or_update_category': "category/add_or_update_category",
+                'set_category_state': "category/set_category_state"
             }),
-            edituser: function(index, row) {
+            editcategory: function(index, row) {
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
             },
-            reset_password: function(index, row) {
-                this.set_form(row);
-                this.set_dialog_password_visible(true);
-            },
-            resetPassword: function() {
-                if(!this.pwd) {
-                    this.$message.error('请输入密码');
-                    return
-                }
-
-                const _this = this;
-                this.update_password().then(result=> {
-                    _this.$message.success("密码重置成功");
-                });
-
-            },
             changeState: function (row) {
                 const _this = this;
-                this.set_user_state({id:row.id, state:row.state}).then(result=>{
+                this.set_category_state({id:row.id, state:row.state}).then(result=>{
                     let message = row.state?"上线成功":"下线成功";
                     _this.filte_data()
                     _this.$message.success(message);
                 });
             },
+            add_category: function() {
+                this.set_default_form();
+                this.set_dialog_visible(true);
+            },
             submitForm: function () {
                 const _this = this;
                 this.$refs['form'].validate((valid) => {
                     if (valid)
-                        _this.add_or_update_user(this.form).then(function(result){
+                        _this.add_or_update_category(this.form).then(function(result){
                             if(_this.form.id) {
                                 for(let key in _this.form) {
-                                    _this.update_user_list_by_index({
+                                    _this.update_category_list_by_index({
                                         index: _this.row_index,
                                         key: key,
                                         value: _this.form[key]
@@ -271,7 +250,7 @@
                             }
                             else {
                                 _this.set_form_value({key: 'id', value: result.id});
-                                _this.append_user_list(_this.form);
+                                _this.append_category_list(_this.form);
                                 _this.$message.success("添加成功");
                             }
 
@@ -284,14 +263,9 @@
         },
         mounted() {
             const _this = this;
-            if(this.users.length === 0) {
-                this.get_users().then(result=> {
-                    _this.$message.success('成功获取用户列表！');
-                })
-            }
-            else {
-                _this.$message.success('成功获取用户列表！');
-            }
+            this.get_category_lists().then(result=> {
+                _this.$message.success('成功获取文章分类！');
+            })
         }
     }
 </script>

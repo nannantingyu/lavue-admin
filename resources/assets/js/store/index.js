@@ -7,6 +7,9 @@ import module from './modules/module'
 import article from './modules/article'
 import config from './modules/config'
 import hot_banner from './modules/hot_banner'
+import company from './modules/company'
+import category from './modules/category'
+import category_company from './modules/category_company'
 
 Vue.use(Vuex)
 import actions from "./actions"
@@ -21,7 +24,10 @@ export default new Vuex.Store({
         module,
         article,
         config,
-        hot_banner
+        hot_banner,
+        company,
+        category,
+        category_company
     },
     state: {
         app_name: {},

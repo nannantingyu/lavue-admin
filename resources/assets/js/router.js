@@ -69,5 +69,20 @@ export default new VueRouter({
             path: '/hot-banner',
             component: resolve =>void(require(['./page/hot-banner.vue'], resolve))
         },
+        {
+            name: "company",
+            path: '/company',
+            component: resolve =>void(require(['./page/company.vue'], resolve))
+        },
+        {
+            name: "category",
+            path: '/category',
+            component: resolve =>void(require(['./page/category.vue'], resolve))
+        },
+        {
+            name: "category-company",
+            path: '/category-company',
+            component: resolve =>void(require(['./page/category-company.vue'], resolve))
+        },
     ]
 })

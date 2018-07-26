@@ -635,6 +635,8 @@ CREATE TABLE `jujin8_company` (
   `link` varchar(256) NOT NULL COMMENT '公司网址',
   `tag` varchar(64) DEFAULT NULL COMMENT '标签',
   `logo` varchar(256) DEFAULT NULL COMMENT '公司logo',
+  `state` tinyint(4) DEFAULT NULL,
+  `sequence` int(11) DEFAULT 1 COMMENT '顺序',
   `created_at` datetime NOT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)

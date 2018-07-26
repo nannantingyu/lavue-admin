@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class UserController extends Controller
@@ -45,6 +46,27 @@ class UserController extends Controller
         return username(
             request()->input('username')
         );
+    }
+
+    /**
+     * 修改用户密码
+     * @param Request $request
+     */
+    public function setPassword(Request $request) {
+        $userid = $request->input('userid');
+        $password = $request->input('password');
+        $password = Hash::make($password);
+
+        $user = Auth::user();
+        if($user->id === 1) {
+            User::where('id', $userid)->update([
+                'password'=>$password
+            ]);
+
+            return ['success'=>1, 'user'=>$user, 'password'=>$password];
+        }
+
+        return ['success'=>0, 'msg'=>'无权修改密码'];
     }
 
     /**
