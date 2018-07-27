@@ -58,7 +58,7 @@ class CategoryCompanyController extends Controller {
         }
 
         // 更新静态页
-        $this->kafka->produce($this->static_topic, 'company/'.$id);
+        $this->updateCategoryCompanyTemplate($id);
         return ['success'=>1, 'data'=>['id'=>$id]];
     }
 
@@ -103,10 +103,20 @@ class CategoryCompanyController extends Controller {
             CategoryCompany::where('id', $id)->update(['state'=>$state]);
 
             // 更新静态页
-            $this->kafka->produce($this->static_topic, 'company/'.$id);
             return ['success'=>1];
         }
 
+        $this->updateCategoryCompanyTemplate($id);
         return ['success'=>0];
+    }
+
+    /**
+     * 更新静态页
+     * @param $id
+     * @param string $type
+     */
+    public function updateCategoryCompanyTemplate($id, $type='update') {
+        $this->template_updater->update('company/'.$id, $type);
+        $this->template_updater->update_page('company');
     }
 }

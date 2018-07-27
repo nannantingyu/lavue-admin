@@ -61,7 +61,7 @@ class HotBannerController extends Controller {
         }
 
         // 更新静态页
-        $this->kafka->produce($this->static_topic, 'index');
+        $this->updateHotBannerTemplate();
         return ['success'=>1, 'data'=>['id'=>$id]];
     }
 
@@ -110,10 +110,14 @@ class HotBannerController extends Controller {
 
             HotBanner::where('id', $id)->update(['state'=>$state]);
             // 更新静态页
-            $this->kafka->produce($this->static_topic, 'index');
+            $this->updateHotBannerTemplate();
             return ['success'=>1];
         }
 
         return ['success'=>0];
+    }
+
+    private function updateHotBannerTemplate() {
+        $this->template_updater->update_page('index');
     }
 }
