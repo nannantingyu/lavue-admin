@@ -15,6 +15,29 @@ use App\Models\Kuaixun;
 class KuaiXunController extends Controller
 {
 
+    /**
+     * 根据页码查询快讯列表
+     * @param Request $request
+     * @return array
+     */
+    public function getPageList(Request $request)
+    {
+        $type = $request->input('type');
+        $pageSize = $request->input('pageSize');
+        $page = $request->input('page');
+        $order = $request->input('order');
+        $isDesc = $request->input('isDesc');
+
+        $kain = new Kuaixun();
+        $value = $kain->getPageList($type, $page, $pageSize, $order, $isDesc);
+        return ['success' => 0, 'data' => $value];
+    }
+
+    /**
+     * 根据时间查询快讯列表
+     * @param Request $request
+     * @return array
+     */
     public function getList(Request $request)
     {
         $type = $request->input('type');
@@ -22,7 +45,7 @@ class KuaiXunController extends Controller
         $endTime = $request->input('endTime');
         $kain = new Kuaixun();
         $list = $kain->getList($type, $startTime, $endTime);
-        return ['success' => 0, 'msg' => $list];
+        return ['success' => 0, 'data' => $list];
     }
 
 

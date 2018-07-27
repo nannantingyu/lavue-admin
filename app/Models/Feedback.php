@@ -12,6 +12,13 @@ class Feedback extends Model
 
     protected $fillable = ['content', 'phone', 'is_handling', 'ip'];
 
+    /** 分页查询意见反馈列表
+     * @param int $page 页码
+     * @param int $pageSize 每页数量
+     * @param string $order 排序方式
+     * @param bool $isDesc 是否正序 倒叙
+     * @return array
+     */
     public function lists($page = 0, $pageSize = 20, $order = 'id', $isDesc = true)
     {
         $qTable = ' jujin8_feedback';

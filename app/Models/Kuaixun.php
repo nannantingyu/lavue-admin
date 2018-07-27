@@ -16,6 +16,46 @@ class Kuaixun extends Model
         'published_value', 'country', 'influnce', 'star',
     ];
 
+
+    /**
+     * 根据页码查询数据
+     * @param string $type 查询那种类型的快讯
+     * @param int $page 第几页
+     * @param int $pageSize 每页显示数量
+     * @param string $order 排序方式
+     * @param bool $isDesc 是否正序 还是倒叙
+     * @return array
+     */
+    public function getPageList($type = 'kuaixun', $page = 0, $pageSize = 10, $order = 'publish_time', $isDesc = true)
+    {
+        $qTable = " FROM jujin8_$type ";
+        $orderBy = ' ORDER BY ' . $order . ' ' . ($isDesc ? 'DESC' : 'ASC') . ' ';
+        $columns = " id,title,description,body,image,source_id,publish_time,type,importance,created_at,`status`,updated_at,'$type' AS source_site ";
+
+        $limit = ' limit ' . ($page * $pageSize) . ' , ' . $pageSize;
+        $sql = "select $columns $qTable $orderBy $limit";
+        $ret = DB::connection()->select($sql);
+
+        $count = DB::connection()->selectOne("select count(id) AS count $qTable");
+
+        return [
+            'value' => $ret,
+            'count' => $count->count,
+            'page' => $page,
+            'pageSize' => $pageSize
+        ];
+        return $ret;
+    }
+
+
+    /**根据时间查询数据
+     * @param string $type 查询那种快讯表
+     * @param null $startTime 开始时间
+     * @param null $endTime 结束时间
+     * @param string $order 排序方式
+     * @param bool $isDesc 是否正序
+     * @return array
+     */
     public function getList($type = 'kuaixun', $startTime = null, $endTime = null, $order = 'publish_time', $isDesc = true)
     {
         //如果结束时间不是空的，那;么就往后面加一天 就是包含当前天
