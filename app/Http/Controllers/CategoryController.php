@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Config;
 
 class CategoryController extends Controller {
     /**
@@ -40,10 +41,11 @@ class CategoryController extends Controller {
             return response()->json(['success'=>0, "errors"=>$validate['msg']]);
         }
 
+        $ename = $request->input('ename');
         //添加或者更新数据
         $form = [
             'name' => $request->input('name'),
-            'ename' => $request->input('ename'),
+            'ename' => $ename,
             'pid' => $request->input('pid'),
             'target' => $request->input('target'),
             'state' => $request->input('state'),
@@ -61,6 +63,30 @@ class CategoryController extends Controller {
         }
 
         return ['success'=>1, 'data'=>['id'=>$id]];
+    }
+
+    /**
+     * 更新文章静态页
+     */
+    private function updateCategoryTemplate() {
+        $except_categories_config = Config::where('key', 'articleFilter')
+            ->find();
+
+        $all_categories = Category::orderBy('sequence', 'asc');
+
+        if(!is_null($except_categories_config)) {
+            $except_categories = explode(",", $except_categories_config->value);
+            $all_categories = $all_categories->whereNotIn('ename', $except_categories);
+        }
+
+        $all_categories = $all_categories->pluck('ename');
+
+        $this->kafka->produce($this->static_topic, 'news');
+        if(!is_null($all_categories)) {
+            foreach ($all_categories as $category) {
+                $this->kafka->produce($this->static_topic, 'news/'.$category);
+            }
+        }
     }
 
     /**

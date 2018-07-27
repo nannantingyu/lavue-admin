@@ -57,6 +57,8 @@ class CategoryCompanyController extends Controller {
             $id = $category->id;
         }
 
+        // 更新静态页
+        $this->kafka->produce($this->static_topic, 'company/'.$id);
         return ['success'=>1, 'data'=>['id'=>$id]];
     }
 
@@ -99,6 +101,9 @@ class CategoryCompanyController extends Controller {
             $state = $state === 1?$state:0;
 
             CategoryCompany::where('id', $id)->update(['state'=>$state]);
+
+            // 更新静态页
+            $this->kafka->produce($this->static_topic, 'company/'.$id);
             return ['success'=>1];
         }
 

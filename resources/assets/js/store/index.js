@@ -10,6 +10,7 @@ import hot_banner from './modules/hot_banner'
 import company from './modules/company'
 import category from './modules/category'
 import category_company from './modules/category_company'
+import template_generate from './modules/template'
 
 Vue.use(Vuex)
 import actions from "./actions"
@@ -27,7 +28,8 @@ export default new Vuex.Store({
         hot_banner,
         company,
         category,
-        category_company
+        category_company,
+        template: template_generate
     },
     state: {
         app_name: {},

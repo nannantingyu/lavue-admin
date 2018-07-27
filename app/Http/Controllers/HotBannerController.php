@@ -60,6 +60,8 @@ class HotBannerController extends Controller {
             $id = $hotbanner->id;
         }
 
+        // 更新静态页
+        $this->kafka->produce($this->static_topic, 'index');
         return ['success'=>1, 'data'=>['id'=>$id]];
     }
 
@@ -107,6 +109,8 @@ class HotBannerController extends Controller {
             $state = $state === 1?$state:0;
 
             HotBanner::where('id', $id)->update(['state'=>$state]);
+            // 更新静态页
+            $this->kafka->produce($this->static_topic, 'index');
             return ['success'=>1];
         }
 
