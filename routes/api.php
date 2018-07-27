@@ -23,4 +23,7 @@ Route::get('/kx', 'Api\KuaixunController@getkx');
 Route::get('/bkx', 'Api\KuaixunController@getBlockKx');
 Route::get('/ukx', 'Api\KuaixunController@getUnionKx');
 Route::post('/addFeedback', 'Api\FeedbackController@addFeedback');
-Route::post('/addKuaiXun', 'KuaiXunController@addKuaiXun');
+
+Route::get('feedback/getList', 'Api\FeedbackController@getList');
+Route::post('kuaixun/addKuaiXun', 'KuaiXunController@addKuaiXun');
+Route::get('kuaixun/getList', 'KuaiXunController@getList');

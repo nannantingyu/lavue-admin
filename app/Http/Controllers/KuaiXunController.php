@@ -9,20 +9,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Module;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Kuaixun;
 
 class KuaiXunController extends Controller
 {
 
-
-    public function getKx(Request $request)
+    public function getList(Request $request)
     {
-        return ['success' => 1, 'value' => '成功'];
+        $type = $request->input('type');
+        $startTime = $request->input('startTime');
+        $endTime = $request->input('endTime');
+        $kain = new Kuaixun();
+        $list = $kain->getList($type, $startTime, $endTime);
+        return ['success' => 0, 'msg' => $list];
     }
+
 
     /**
      */
@@ -31,16 +33,17 @@ class KuaiXunController extends Controller
         $messages = [
             'title.required' => '请输入快讯标题',
             'body.required' => '请输入快讯内容',
+            'importance.required' => '是否重要',
         ];
 
         $rules = [
             'title' => 'required',
             'body' => 'required',
+            'importance' => ['required'],
         ];
 
         return Validator::make($data, $rules, $messages);
     }
-
 
     /**
      * 添加或者修改快讯
@@ -49,8 +52,17 @@ class KuaiXunController extends Controller
      */
     public function addKuaiXun(Request $request)
     {
-        if(1==1){
-            return ['success' => 1, 'value' => '1212121'];
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return ['success' => 0, 'msg' => $validator->errors()];
+        }
+
+        $importance = $request->input('importance');
+
+        if ($importance != 1 && $importance != 0) {
+            //如果重要性 不是0或者1
+            return ['success' => 0, 'msg' => '重要性只能是0或者1'];
         }
 
         $form = [
@@ -72,7 +84,6 @@ class KuaiXunController extends Controller
             'star' => $request->input('star'),
         ];
 
-        $this->validator($form);
 
         $id = $request->input('id');
         if (!is_null($id)) {
