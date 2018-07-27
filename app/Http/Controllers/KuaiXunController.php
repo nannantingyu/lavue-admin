@@ -49,6 +49,9 @@ class KuaiXunController extends Controller
      */
     public function addKuaiXun(Request $request)
     {
+        if(1==1){
+            return ['success' => 1, 'value' => '1212121'];
+        }
 
         $form = [
             'title' => $request->input('title'),
