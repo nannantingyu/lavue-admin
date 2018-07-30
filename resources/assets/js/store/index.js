@@ -12,6 +12,7 @@ import category from './modules/category'
 import live from './modules/live'
 import category_company from './modules/category_company'
 import template_generate from './modules/template'
+import feedback from './modules/feedback'
 Vue.use(Vuex)
 import actions from "./actions"
 import mutations from "./mutations"
@@ -30,6 +31,7 @@ export default new Vuex.Store({
         category,
         category_company,
         live,
+        feedback,
         template: template_generate
     },
     state: {

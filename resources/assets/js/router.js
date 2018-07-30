@@ -88,7 +88,13 @@ export default new VueRouter({
             name: "live",
             path: '/live',
             component: resolve =>void(require(['./page/live.vue'], resolve))
-        },{
+        },
+        {
+            name: "feedback",
+            path: '/feedback',
+            component: resolve =>void(require(['./page/feedback.vue'], resolve))
+        },
+            {
             name: "template",
             path: '/template',
             component: resolve =>void(require(['./page/template.vue'], resolve))

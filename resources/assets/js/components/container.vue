@@ -130,6 +130,12 @@
                     <i class="el-icon-picture"></i>
                     <span slot="title">热门图片</span>
                 </el-menu-item>
+                <el-menu-item
+                        v-if="user_module_permission['feedback-read']"
+                        index="/feedback">
+                    <i class="el-icon-question"></i>
+                    <span slot="title">意见列表</span>
+                </el-menu-item>
                 <el-submenu
                         v-if="user_module_permission['live-read']"
                         index="/live">
@@ -147,7 +153,7 @@
                         <el-menu-item
                                 v-if="user_module_permission['live-add-read']"
                                 index="/live-add">
-                            <i class="el-icon-sold-out"></i>
+                            <i class="el-icon-plus"></i>
                             <span slot="title">快讯添加</span>
                         </el-menu-item>
                     </el-menu-item-group>
