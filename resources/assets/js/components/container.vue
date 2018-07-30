@@ -130,6 +130,12 @@
                     <i class="el-icon-picture"></i>
                     <span slot="title">热门图片</span>
                 </el-menu-item>
+                <el-menu-item
+                        v-if="user_module_permission['kuaixun-read']"
+                        index="/kuaixun">
+                    <i class="el-icon-info"></i>
+                    <span slot="title">快讯管理</span>
+                </el-menu-item>
             </el-menu>
         </el-aside>
         <el-container>
