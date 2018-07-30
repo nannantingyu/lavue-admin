@@ -3,6 +3,11 @@
         <el-container>
             <el-header>
                 <h5>jujin8意见反馈列表</h5>
+                <el-radio-group v-model="radio" style="float: right;padding-bottom: 10px" @change="filterData">
+                    <el-radio-button label="全部"></el-radio-button>
+                    <el-radio-button label="未处理"></el-radio-button>
+                    <el-radio-button label="已处理"></el-radio-button>
+                </el-radio-group>
             </el-header>
             <el-main>
                 <el-table
@@ -71,16 +76,20 @@
 
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, Loading, Popover, RadioGroup, RadioButton, Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
+    import {Table, TableColumn, Pagination, Loading, Radio,RadioGroup,RadioButton,Popover,  Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
     Vue.use(Loading);
+    Vue.use(RadioGroup);
+    Vue.use(Radio);
+    Vue.use(RadioButton);
     export default {
         name: "feedback",
         data() {
             return {
-                loading: false
+                loading: false,
+                radio:"全部"
             }
         },
 
@@ -97,15 +106,34 @@
         methods:{
             ...mapMutations({
                 'page_changeEvent': "feedback/set_current_page",
-                'size_changeEvent': "feedback/set_page_size"
+                'size_changeEvent': "feedback/set_page_size",
+                'set_state':'feedback/set_state',
+                'set_feed_state': "feedback/set_feed_state"
             }),
             ...mapActions({
                 'get_feed_lists': 'feedback/get_feed_lists'
             }),
+            //深拷贝
+            deepCopy:function (p, c){
+                var c = c || {};
+                for (var i in p) {
+                    if (typeof p[i] === 'object') {
+                        c[i] = (p[i].constructor === Array) ? [] : {};
+                        deepCopy(p[i], c[i]);
+                    } else {
+                        c[i] = p[i];
+                    }
+                }
+                return c;
+            },
             //更改handle状态
             changeState: function (row) {
                 const _this = this;
-                console.log(row);
+                const obj=this.deepCopy(row);
+                obj.is_handling=row.is_handling?1:0;
+                this.set_feed_state(obj).then(result=>{
+                    _this.$message.success("更新成功");
+                });
             },
             //下一页上一页
             page_change:function (state) {
@@ -125,16 +153,29 @@
                     _this.loading=false;
                 });
             },
-            // size_change:function () {
-            //
-            // }
+            //筛选处理未处理
+            filterData:function (state) {
+                let _this=this;
+                let s=-1;
+                   switch (state){
+                       case '全部':s=-1;break;
+                       case '未处理':s=0;break;
+                       case '已处理':s=1;break;
+                       default:s=-1;
+                   }
+                this.loading=true;
+                this.set_feed_state(s);
+                this.get_feed_lists().then(result=> {
+                    _this.loading=false;
+                });
+
+            }
         },
         mounted(){
             //获取意见反馈列表
             var _this=this;
             this.get_feed_lists().then(result=> {
                 _this.$message.success('成功获取意见反馈列表！');
-                // _this.setData({loading:false})
             })
         }
     }

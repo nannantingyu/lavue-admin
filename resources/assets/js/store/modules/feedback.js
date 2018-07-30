@@ -13,7 +13,8 @@ const state = {
     feed_lists: [],
     pageSize:10,
     currentPage:1,
-    total:0
+    total:0,
+    state:-1//0未解决 1已解决 -1全部
 };
 
 const mutations = {
@@ -25,14 +26,28 @@ const mutations = {
     },
     set_feedback_list: (state, list) => {
         state.feed_lists = list
+    },
+    set_feed_state:(state, r)=>{
+        state.state = r
     }
-
 };
 
 const actions = {
+    set_feed_state({commit}, row)  {
+    return new Promise((resolve, reject)=> {
+        axios.post('/api/addFeedback', row)
+            .then(function(result) {
+                if(result.data.success === 1){
+                    resolve()
+                }
+                else reject()
+            });
+        })
+    },
     get_feed_lists: ({commit, state}) => {
         return new Promise((resolve, reject) => {
-            axios.get('/api/feedback/getList?page='+(state.currentPage-1)+'&pageSize='+state.pageSize).then(result=> {
+            axios.get('/api/feedback/getList', {
+                params: {page:(state.currentPage-1),pageSize:state.pageSize,state:state.state}}).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
                     for(let o of data.list) {
@@ -45,9 +60,9 @@ const actions = {
                     }
                     state.total = data.count;
                     commit('set_feedback_list', data.list);
-                    resolve()
+                    resolve(data);
                 }
-                else reject()
+                else reject(data)
             })
         })
     }
