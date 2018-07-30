@@ -28,3 +28,6 @@ Route::get('feedback/getList', 'Api\FeedbackController@getList');
 Route::post('kuaixun/addKuaiXun', 'KuaiXunController@addKuaiXun');
 Route::get('kuaixun/getList', 'KuaiXunController@getList');
 Route::get('kuaixun/pagelist', 'KuaiXunController@getPageList');
+
+Route::post('menu/add', 'MenuController@add');
+Route::get('menu/list', 'MenuController@getList');

@@ -72,9 +72,11 @@ class FeedbackController extends Controller
     {
         $page = $request->input('page');
         $pageSize = $request->input('pageSize');
+        $state = $request->input('state');
+
 
         $feedback = new Feedback();
-        $value = $feedback->lists($page, $pageSize);
+        $value = $feedback->lists($page, $pageSize,$state);
         return ['success' => 1, 'data' => $value];
     }
 
