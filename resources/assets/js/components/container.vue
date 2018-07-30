@@ -130,12 +130,28 @@
                     <i class="el-icon-picture"></i>
                     <span slot="title">热门图片</span>
                 </el-menu-item>
-                <el-menu-item
-                        v-if="user_module_permission['kuaixun-read']"
-                        index="/kuaixun">
-                    <i class="el-icon-info"></i>
-                    <span slot="title">快讯管理</span>
-                </el-menu-item>
+                <el-submenu
+                        v-if="user_module_permission['live-read']"
+                        index="/live">
+                    <template slot="title">
+                        <i class="el-icon-info"></i>
+                        <span slot="title">快讯管理</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item
+                                v-if="user_module_permission['live-read']"
+                                index="/live">
+                            <i class="el-icon-info"></i>
+                            <span slot="title">快讯列表</span>
+                        </el-menu-item>
+                        <el-menu-item
+                                v-if="user_module_permission['live-add-read']"
+                                index="/live-add">
+                            <i class="el-icon-sold-out"></i>
+                            <span slot="title">快讯添加</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
                 <el-submenu
                         v-if="user_module_permission['job-read']"
                         index="/job">

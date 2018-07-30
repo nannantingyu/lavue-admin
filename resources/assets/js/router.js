@@ -87,7 +87,7 @@ export default new VueRouter({
         {
             name: "live",
             path: '/live',
-            component: resolve =>void(require(['./page/kuaixun.vue'], resolve))
+            component: resolve =>void(require(['./page/live.vue'], resolve))
         },{
             name: "template",
             path: '/template',

@@ -175,7 +175,7 @@
     Vue.use(Dialog);
 
     export default {
-        name: "kuaixun",
+        name: "live",
         computed: {
             ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
@@ -340,7 +340,7 @@
             }
         },
         created(){
-           console.log(this.$store.state,"HHHHHH");
+            console.log(this.$store.state,"HHHHHH");
         },
         mounted() {
             const _this = this;
