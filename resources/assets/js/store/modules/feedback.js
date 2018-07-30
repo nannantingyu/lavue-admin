@@ -11,15 +11,17 @@ const state = {
         updated_at: {title: "更新时间", show: true}
     },
     feed_lists: [],
-    // to_booleans: ['is_handling']
+    pageSize:10,
+    currentPage:1,
+    total:0
 };
 
 const mutations = {
     set_current_page: (state, current_page) => {
-        state.current_page = current_page
+        state.currentPage = current_page;
     },
-    set_total: (state, total) => {
-        state.total = total
+    set_page_size: (state, pageSize) => {
+        state.pageSize = pageSize
     },
     set_feedback_list: (state, list) => {
         state.feed_lists = list
@@ -28,11 +30,9 @@ const mutations = {
 };
 
 const actions = {
-    get_feed_lists: ({commit, state},pagePra, pageSizePra) => {
-        let page = pagePra?pagePra:1;
-        let pageSize=pageSizePra?pageSizePra:10;
+    get_feed_lists: ({commit, state}) => {
         return new Promise((resolve, reject) => {
-            axios.get('/api/feedback/getList?page='+page+'&pageSize='+pageSize).then(result=> {
+            axios.get('/api/feedback/getList?page='+(state.currentPage-1)+'&pageSize='+state.pageSize).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
                     for(let o of data.list) {
@@ -43,7 +43,7 @@ const actions = {
                                 o.is_handling=true;
                             }
                     }
-                    console.log(data.list,"BBBBB");
+                    state.total = data.count;
                     commit('set_feedback_list', data.list);
                     resolve()
                 }
@@ -53,20 +53,9 @@ const actions = {
     }
 };
 
-const getters = {
-    fileimgs: state=> {
-        let imgs = [];
-        if(state.form.image)
-            imgs.push({url: 'http://images.jujin8.com'+state.form.image.replace('/uploads/crawler', '/uploads')});
-
-        return imgs;
-    }
-}
-
 export default {
     namespaced: true,
     state,
-    getters,
     actions,
     mutations
 }

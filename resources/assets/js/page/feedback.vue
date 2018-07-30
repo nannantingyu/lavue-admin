@@ -8,7 +8,8 @@
                 <el-table
                         :data="feed_lists"
                         border
-                        style="width: 100%">
+                        style="width: 100%"
+                        v-loading="loading">
                     <el-table-column
                             prop="id"
                             :label="columns['id']['title']"
@@ -53,6 +54,16 @@
                     </el-table-column>
 
                 </el-table>
+                <el-pagination
+                        background
+                        @current-change="page_change"
+                        @size-change="size_change"
+                        :current-page="current_page"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total"
+                        style="margin-top: 40px"
+                >
+                </el-pagination>
             </el-main>
         </el-container>
     </div>
@@ -61,26 +72,15 @@
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
     import {Table, TableColumn, Pagination, Loading, Popover, RadioGroup, RadioButton, Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
-    Vue.use(FormItem);
-    // Vue.use(Input);
-    // Vue.use(Select);
-    // Vue.use(Option);
-    // Vue.use(Switch);
-    // Vue.use(DatePicker);
-    // Vue.use(Upload);
-    // Vue.use(Form);
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
     Vue.use(Loading);
-    // Vue.use(Popover);
-    // Vue.use(RadioGroup);
-    // Vue.use(RadioButton);
-    // Vue.use(Dialog);
     export default {
         name: "feedback",
         data() {
             return {
+                loading: false
             }
         },
 
@@ -89,33 +89,52 @@
             ...mapState({
                 'columns': state=>state.feedback.columns,
                 'feed_lists': state=>state.feedback.feed_lists,
-                'user_module_permission': state=>state.user.user_module_permission
+                'user_module_permission': state=>state.user.user_module_permission,
+                'current_page':state=>state.feedback.currentPage,
+                'total':state=>state.feedback.total
             })
         },
         methods:{
+            ...mapMutations({
+                'page_changeEvent': "feedback/set_current_page",
+                'size_changeEvent': "feedback/set_page_size"
+            }),
             ...mapActions({
                 'get_feed_lists': 'feedback/get_feed_lists'
             }),
+            //更改handle状态
             changeState: function (row) {
                 const _this = this;
                 console.log(row);
-                // this.set_feed_state({id:row.id, state:row.state}).then(result=>{
-                //     let message = row.state?"上线成功":"下线成功";
-                //     _this.filte_data()
-                //     _this.$message.success(message);
-                // });
-                // this.set_hot_banner_state({id:row.id, state:row.state}).then(result=>{
-                //     let message = row.state?"上线成功":"下线成功";
-                //     _this.filte_data()
-                //     _this.$message.success(message);
-                // });
             },
+            //下一页上一页
+            page_change:function (state) {
+                let _this=this;
+                this.loading=true;
+                this.page_changeEvent(state);
+                this.get_feed_lists().then(result=> {
+                    _this.loading=false;
+                });
+            },
+            //分页size
+            size_change:function (state) {
+                let _this=this;
+                this.loading=true;
+                this.size_changeEvent(state);
+                this.get_feed_lists().then(result=> {
+                    _this.loading=false;
+                });
+            },
+            // size_change:function () {
+            //
+            // }
         },
         mounted(){
             //获取意见反馈列表
             var _this=this;
             this.get_feed_lists().then(result=> {
                 _this.$message.success('成功获取意见反馈列表！');
+                // _this.setData({loading:false})
             })
         }
     }
