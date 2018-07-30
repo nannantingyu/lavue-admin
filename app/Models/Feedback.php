@@ -19,16 +19,23 @@ class Feedback extends Model
      * @param bool $isDesc 是否正序 倒叙
      * @return array
      */
-    public function lists($page = 0, $pageSize = 20, $order = 'id', $isDesc = true)
+    public function lists($page = 0, $pageSize = 20, $state = null, $order = 'id', $isDesc = true)
     {
         $qTable = ' jujin8_feedback';
+
+        $where = '  ';
+        if ($state == '0' || $state == '1') {
+            $where = " where is_handling = $state ";
+        }
+
         $orderBy = ' ORDER BY ' . $order . ' ' . ($isDesc ? 'DESC' : 'ASC');
         $start = $page * $pageSize;
         $limit = ' limit ' . $start . ' , ' . $pageSize;
-        $sql = "select * from $qTable  $orderBy $limit";
+
+        $sql = "select * from $qTable $where $orderBy $limit";
         $ret = DB::connection()->select($sql);
 
-        $countSql = 'select count(id) AS count from ' . $qTable;
+        $countSql = 'select count(id) AS count from ' . $qTable . $where;
 
         $count = DB::connection()->select($countSql);
 
