@@ -136,6 +136,22 @@
                     <i class="el-icon-info"></i>
                     <span slot="title">快讯管理</span>
                 </el-menu-item>
+                <el-submenu
+                        v-if="user_module_permission['job-read']"
+                        index="/job">
+                    <template slot="title">
+                        <i class="el-icon-printer"></i>
+                        <span slot="title">任务</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item
+                                v-if="user_module_permission['template-read']"
+                                index="/template">
+                            <i class="el-icon-printer"></i>
+                            <span slot="title">模板生成</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
             </el-menu>
         </el-aside>
         <el-container>

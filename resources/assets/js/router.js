@@ -85,9 +85,13 @@ export default new VueRouter({
             component: resolve =>void(require(['./page/category-company.vue'], resolve))
         },
         {
-            name: "kuaixun",
-            path: '/kuaixun',
+            name: "live",
+            path: '/live',
             component: resolve =>void(require(['./page/kuaixun.vue'], resolve))
+        },{
+            name: "template",
+            path: '/template',
+            component: resolve =>void(require(['./page/template.vue'], resolve))
         }
     ]
 })

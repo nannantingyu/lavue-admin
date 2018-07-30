@@ -13,6 +13,7 @@
 
 Route::get('/', 'IndexController@index');
 Route::get('/test', 'TestController@index');
+Route::get('/tt', 'ArticleController@tt');
 
 // 文章
 Route::get('/articleLists', 'ArticleController@lists');
@@ -79,7 +80,5 @@ Route::post('/addModulePermission', 'ModuleController@addModulePermission');
 Route::get('/getRoleMoudlePermission', 'ModuleController@getRoleMoudlePermission');
 Route::get('/getUserModulePermission', 'ModuleController@getUserModulePermission');
 
-
-
-Route::post('/addKuaiXun', 'KuaiXunController@addKuaiXun');
-Route::get('/addKuaiXun', 'KuaiXunController@addKuaiXun');
+// 任务
+Route::post('/genetateTemplate', 'JobController@genetateTemplate');

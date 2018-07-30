@@ -57,6 +57,7 @@ class ArticleController extends Controller {
         if(!is_null($id) and \numcheck::is_int($id)) {
             Article::where('id', $id)->delete();
 
+            $this->updateArticleTemplate($id, 'delete');
             return ['success'=>1];
         }
 
@@ -97,6 +98,7 @@ class ArticleController extends Controller {
             $state = $request->input('state');
             $state = $state == 1?1:0;
 
+            $this->updateArticleTemplate($id, $state==1?'update':'delete');
             Article::where('id', $id)->update([
                 'state'=>$state
             ]);
@@ -161,8 +163,6 @@ class ArticleController extends Controller {
             ]);
         }
 
-        $this->kafka->produce($this->static_topic, 'read/'.$article->id);
-
         //更新分类
         $categories = $request->input('categories', []);
         if(is_array($categories) and count($categories) > 0) {
@@ -173,19 +173,39 @@ class ArticleController extends Controller {
             }
 
             ArticleCategory::insert($all_cats);
-
-            $categories_enames = Category::whereIn('id', $categories)->pluck('ename');
-            foreach ($categories_enames as $ename) {
-                if(!empty($ename)) {
-                    $url = 'news/'.$ename;
-                    $this->kafka->produce($this->static_topic, $url);
-                }
-            }
-
-            $this->kafka->produce($this->static_topic, 'news');
         }
 
+        $this->updateArticleTemplate($article->id);
+
         return ['success'=>1];
+    }
+
+    /**
+     * 更新相关静态页
+     * @param $id
+     */
+    private function updateArticleTemplate($id, $type='update') {
+        if(!\numcheck::is_int($id)) {
+            return;
+        }
+
+        // 生成静态页
+        if($type == 'update') {
+            $this->template_updater->delete_page('read/'.$id);
+        }
+        elseif($type == 'delete') {
+            $this->template_updater->update_page('read/'.$id);
+        }
+
+        $article = Article::with('categories')
+            ->find($id);
+
+        // 生成列表页
+        if(!is_null($article->categories)) {
+            foreach ($article->categories as $category) {
+                $this->template_updater->update_page('news/'.$category->ename);
+            }
+        }
     }
 
     /**

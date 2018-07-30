@@ -57,6 +57,8 @@ class CategoryCompanyController extends Controller {
             $id = $category->id;
         }
 
+        // 更新静态页
+        $this->updateCategoryCompanyTemplate($id);
         return ['success'=>1, 'data'=>['id'=>$id]];
     }
 
@@ -99,9 +101,22 @@ class CategoryCompanyController extends Controller {
             $state = $state === 1?$state:0;
 
             CategoryCompany::where('id', $id)->update(['state'=>$state]);
+
+            // 更新静态页
             return ['success'=>1];
         }
 
+        $this->updateCategoryCompanyTemplate($id);
         return ['success'=>0];
+    }
+
+    /**
+     * 更新静态页
+     * @param $id
+     * @param string $type
+     */
+    public function updateCategoryCompanyTemplate($id, $type='update') {
+        $this->template_updater->update('company/'.$id, $type);
+        $this->template_updater->update_page('company');
     }
 }

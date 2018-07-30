@@ -60,6 +60,8 @@ class HotBannerController extends Controller {
             $id = $hotbanner->id;
         }
 
+        // 更新静态页
+        $this->updateHotBannerTemplate();
         return ['success'=>1, 'data'=>['id'=>$id]];
     }
 
@@ -107,9 +109,15 @@ class HotBannerController extends Controller {
             $state = $state === 1?$state:0;
 
             HotBanner::where('id', $id)->update(['state'=>$state]);
+            // 更新静态页
+            $this->updateHotBannerTemplate();
             return ['success'=>1];
         }
 
         return ['success'=>0];
+    }
+
+    private function updateHotBannerTemplate() {
+        $this->template_updater->update_page('index');
     }
 }

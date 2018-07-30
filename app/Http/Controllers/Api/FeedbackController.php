@@ -37,7 +37,6 @@ class FeedbackController extends Controller
      */
     public function addFeedback(Request $request)
     {
-
         $ip = $this->getIp();
         $validator = $this->validator($request->all());
 
@@ -61,9 +60,24 @@ class FeedbackController extends Controller
             $feedback->save();
             $id = $feedback->id;
         }
-
-        return ['success' => 1, 'data' => ['id' => $id]];
+        return ['success' => 1, 'data' => '反馈成功'];
     }
+
+    /**
+     * 获取用户反馈
+     * @param Request $request
+     * @return array
+     */
+    public function getList(Request $request)
+    {
+        $page = $request->input('page');
+        $pageSize = $request->input('pageSize');
+
+        $feedback = new Feedback();
+        $value = $feedback->lists($page, $pageSize);
+        return ['success' => 1, 'data' => $value];
+    }
+
 
     //获取用户IP地址
     public function getIp()
