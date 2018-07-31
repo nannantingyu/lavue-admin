@@ -94,6 +94,11 @@ export default new VueRouter({
             path: '/feedback',
             component: resolve =>void(require(['./page/feedback.vue'], resolve))
         },
+        {
+            name: "main-menu",
+            path: '/main-menu',
+            component: resolve =>void(require(['./page/main-menu.vue'], resolve))
+        },
             {
             name: "template",
             path: '/template',

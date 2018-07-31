@@ -19,7 +19,7 @@
                             prop="id"
                             :label="columns['id']['title']"
                             v-if="columns['id']['show']"
-                            width="180">
+                            width="50">
                     </el-table-column>
                     <el-table-column
                             prop="phone"
@@ -35,7 +35,8 @@
                     <el-table-column
                             prop="is_handling"
                             :label="columns['is_handling']['title']"
-                            v-if="columns['is_handling']['show']">
+                            v-if="columns['is_handling']['show']"
+                            width="150">
                         <template slot-scope="scope">
                             <el-switch v-model="scope.row.is_handling"
                                        :disabled="!user_module_permission['feedback-delete']"

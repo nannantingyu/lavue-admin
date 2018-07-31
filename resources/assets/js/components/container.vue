@@ -121,7 +121,7 @@
                 <el-menu-item
                         v-if="user_module_permission['config-read']"
                         index="/config">
-                    <i class="el-icon-edit"></i>
+                    <i class="el-icon-setting"></i>
                     <span slot="title">系统配置</span>
                 </el-menu-item>
                 <el-menu-item
@@ -136,18 +136,24 @@
                     <i class="el-icon-question"></i>
                     <span slot="title">意见列表</span>
                 </el-menu-item>
+                <el-menu-item
+                        v-if="user_module_permission['main-menu-read']"
+                        index="/main-menu">
+                    <i class="el-icon-tickets"></i>
+                    <span slot="title">导航管理</span>
+                </el-menu-item>
                 <el-submenu
                         v-if="user_module_permission['live-read']"
                         index="/live">
                     <template slot="title">
-                        <i class="el-icon-info"></i>
+                        <i class="el-icon-news"></i>
                         <span slot="title">快讯管理</span>
                     </template>
                     <el-menu-item-group>
                         <el-menu-item
                                 v-if="user_module_permission['live-read']"
                                 index="/live">
-                            <i class="el-icon-info"></i>
+                            <i class="el-icon-news"></i>
                             <span slot="title">快讯列表</span>
                         </el-menu-item>
                         <el-menu-item

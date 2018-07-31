@@ -13,6 +13,7 @@ import live from './modules/live'
 import category_company from './modules/category_company'
 import template_generate from './modules/template'
 import feedback from './modules/feedback'
+import menu from './modules/menu'
 Vue.use(Vuex)
 import actions from "./actions"
 import mutations from "./mutations"
@@ -32,6 +33,7 @@ export default new Vuex.Store({
         category_company,
         live,
         feedback,
+        menu,
         template: template_generate
     },
     state: {
