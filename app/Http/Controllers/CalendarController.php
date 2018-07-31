@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Category;
+use App\Models\EconomicCalendar;
 
 class CalendarController extends Controller
 {
@@ -23,7 +23,6 @@ class CalendarController extends Controller
             'publish_time.required' => '请输入发布时间',
             'importance.required' => '请输入重要性',
             'influence.required' => '请输入影响',
-            'source_id.required' => '请输入源id',
             'dataname.required' => '请输入指标名称',
             'datename.required' => '请输入指标时间',
             'dataname_id.required' => '请输入指标id, 关联jiedu表',
@@ -31,8 +30,14 @@ class CalendarController extends Controller
 
         $rules = [
             'country' => 'required',
-            'body' => 'required',
-            'importance' => ['required'],
+            'quota_name' => 'required',
+            'publish_time' => 'required',
+            'importance' => 'required',
+            'influence' => 'required',
+            'source_id' => 'required',
+            'dataname' => 'required',
+            'datename' => 'required',
+            'dataname_id' => 'required',
         ];
 
         return Validator::make($data, $rules, $messages);
@@ -68,15 +73,33 @@ class CalendarController extends Controller
 
         $id = $request->input('id');
         if (!is_null($id)) {
-            Category::where('id', $id)->update($form);
+            EconomicCalendar::where('id', $id)->update($form);
         } else {
-            $category = new Category($form);
-            $category->save();
-            $id = $category->id;
+            $info = new EconomicCalendar($form);
+            $info->save();
+            $id = $info->id;
         }
         return ['success' => 1, 'data' => ['id' => $id]];
     }
 
+    /**
+     * 获取财经日历
+     * @param Request $request
+     */
+    /**
+     * 获取用户反馈
+     * @param Request $request
+     * @return array
+     */
+    public function getList(Request $request)
+    {
+        $page = $request->input('page');
+        $pageSize = $request->input('pageSize');
+
+        $info = new EconomicCalendar();
+        $value = $info->lists($page, $pageSize);
+        return ['success' => 1, 'data' => $value];
+    }
 
 
 }
