@@ -85,9 +85,24 @@ export default new VueRouter({
             component: resolve =>void(require(['./page/category-company.vue'], resolve))
         },
         {
+            name: "live",
+            path: '/live',
+            component: resolve =>void(require(['./page/live.vue'], resolve))
+        },
+        {
+            name: "feedback",
+            path: '/feedback',
+            component: resolve =>void(require(['./page/feedback.vue'], resolve))
+        },
+        {
+            name: "main-menu",
+            path: '/main-menu',
+            component: resolve =>void(require(['./page/main-menu.vue'], resolve))
+        },
+            {
             name: "template",
             path: '/template',
             component: resolve =>void(require(['./page/template.vue'], resolve))
-        },
+        }
     ]
 })

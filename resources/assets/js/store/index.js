@@ -9,9 +9,11 @@ import config from './modules/config'
 import hot_banner from './modules/hot_banner'
 import company from './modules/company'
 import category from './modules/category'
+import live from './modules/live'
 import category_company from './modules/category_company'
 import template_generate from './modules/template'
-
+import feedback from './modules/feedback'
+import menu from './modules/menu'
 Vue.use(Vuex)
 import actions from "./actions"
 import mutations from "./mutations"
@@ -29,6 +31,9 @@ export default new Vuex.Store({
         company,
         category,
         category_company,
+        live,
+        feedback,
+        menu,
         template: template_generate
     },
     state: {
