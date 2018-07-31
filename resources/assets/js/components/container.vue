@@ -96,6 +96,18 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
+                <el-menu-item
+                        v-if="user_module_permission['main-menu-read']"
+                        index="/main-menu">
+                    <i class="el-icon-tickets"></i>
+                    <span slot="title">导航管理</span>
+                </el-menu-item>
+                <el-menu-item
+                        v-if="user_module_permission['tools-read']"
+                        index="/tools">
+                    <i class="el-icon-star-on"></i>
+                    <span slot="title">投资工具</span>
+                </el-menu-item>
                 <el-submenu
                         v-if="user_module_permission['company-read']"
                         index="/company">
@@ -136,12 +148,7 @@
                     <i class="el-icon-question"></i>
                     <span slot="title">意见列表</span>
                 </el-menu-item>
-                <el-menu-item
-                        v-if="user_module_permission['main-menu-read']"
-                        index="/main-menu">
-                    <i class="el-icon-tickets"></i>
-                    <span slot="title">导航管理</span>
-                </el-menu-item>
+
                 <el-submenu
                         v-if="user_module_permission['live-read']"
                         index="/live">

@@ -2,12 +2,12 @@
     <div>
         <el-container>
             <el-header>
-                <h5>jujin8导航管理</h5>
-                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加导航</el-button>
+                <h5>jujin8投资工具管理</h5>
+                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加工具</el-button>
                 <el-radio-group v-model="radio" style="float: right;padding-bottom: 10px" @change="filterData">
-                <el-radio-button label="全部"></el-radio-button>
-                <el-radio-button label="顶部导航"></el-radio-button>
-                <el-radio-button label="底部链接"></el-radio-button>
+                    <el-radio-button label="全部"></el-radio-button>
+                    <el-radio-button label="顶部导航"></el-radio-button>
+                    <el-radio-button label="底部链接"></el-radio-button>
                 </el-radio-group>
             </el-header>
             <el-main>
@@ -23,27 +23,27 @@
                             width="50">
                     </el-table-column>
                     <el-table-column
-                            prop="name"
-                            :label="columns['name']['title']"
-                            v-if="columns['name']['show']"
+                            prop="title"
+                            :label="columns['title']['title']"
+                            v-if="columns['title']['show']"
                             width="100">
                     </el-table-column>
                     <el-table-column
-                        prop="url"
-                        :label="columns['url']['title']"
-                        v-if="columns['url']['show']"
-                        width="150">
-                </el-table-column>
+                            prop="description"
+                            :label="columns['description']['title']"
+                            v-if="columns['description']['show']"
+                            width="150">
+                    </el-table-column>
                     <el-table-column
-                            prop="target"
-                            :label="columns['target']['title']"
-                            v-if="columns['target']['show']"
+                            prop="image"
+                            :label="columns['image']['title']"
+                            v-if="columns['image']['show']"
                             width="100">
                     </el-table-column>
                     <el-table-column
-                            prop="area"
-                            :label="columns['area']['title']"
-                            v-if="columns['area']['show']"
+                            prop="tag"
+                            :label="columns['tag']['title']"
+                            v-if="columns['tag']['show']"
                             width="150">
                     </el-table-column>
                     <el-table-column
@@ -154,7 +154,7 @@
     Vue.use(Option);
     Vue.use(Switch);
     export default {
-        name: "main-menu",
+        name: "tools",
         data() {
             return {
                 loading: false,
@@ -188,22 +188,22 @@
         computed: {
             ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
-                'columns': state=>state.menu.columns,
-                'menu_lists': state=>state.menu.menu_lists,
+                'columns': state=>state.tools.columns,
+                'menu_lists': state=>state.tools.menu_lists,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'current_page':state=>state.menu.currentPage,
-                'total':state=>state.menu.total
+                'current_page':state=>state.tools.currentPage,
+                'total':state=>state.tools.total
             })
         },
         methods:{
             ...mapMutations({
-                'set_state':'menu/set_state',
-                'set_feed_state': "menu/set_feed_state",
-                'filter_data':"menu/filter_data"
+                'set_state':'tools/set_state',
+                'set_feed_state': "tools/set_feed_state",
+                'filter_data':"tools/filter_data"
             }),
             ...mapActions({
-                'get_lists': 'menu/get_lists',
-                'add_update':'menu/add_update'
+                'get_lists': 'tools/get_lists',
+                'add_update':'tools/add_update'
             }),
 
             //添加
