@@ -31,3 +31,13 @@ Route::get('kuaixun/pagelist', 'KuaiXunController@getPageList');
 
 Route::post('menu/add', 'MenuController@add');
 Route::get('menu/list', 'MenuController@getList');
+
+Route::post('tool/add', 'ToolController@add');
+Route::get('tool/list', 'ToolController@getList');
+
+
+Route::post('calendar/add', 'CalendarController@add');
+Route::get('calendar/list', 'CalendarController@getList');
+
+Route::post('event/add', 'CalendarEvent@add');
+Route::get('event/list', 'CalendarEvent@getList');

@@ -50,7 +50,7 @@ class FeedbackController extends Controller
             'content' => $request->input('content'),
             'phone' => $request->input('phone'),
             'is_handling' => is_null($id) ? 0 : $request->input('is_handling'),
-            'ip' => $ip,
+            'ip' => is_null($id) ? $ip : $request->input('ip'),
         ];
 
         if (!is_null($id)) {
@@ -76,7 +76,7 @@ class FeedbackController extends Controller
 
 
         $feedback = new Feedback();
-        $value = $feedback->lists($page, $pageSize,$state);
+        $value = $feedback->lists($page, $pageSize, $state);
         return ['success' => 1, 'data' => $value];
     }
 
