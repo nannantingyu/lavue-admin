@@ -76,8 +76,9 @@
 </template>
 
 <script>
-    import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, Loading, Radio,RadioGroup,RadioButton,Popover,  Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
+    import {deepCopy} from "../plugin/tool";
+    import {mapState, mapActions, mapMutations} from 'vuex'
+    import {Table, TableColumn, Pagination, Loading, Radio,RadioGroup,RadioButton} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
@@ -108,29 +109,16 @@
             ...mapMutations({
                 'page_changeEvent': "feedback/set_current_page",
                 'size_changeEvent': "feedback/set_page_size",
-                'set_state':'feedback/set_state',
-                'set_feed_state': "feedback/set_feed_state"
+                'set_state':'feedback/set_state'
             }),
             ...mapActions({
-                'get_feed_lists': 'feedback/get_feed_lists'
+                'get_feed_lists': 'feedback/get_feed_lists',
+                'set_feed_state': "feedback/set_feed_state"
             }),
-            //深拷贝
-            deepCopy:function (p, c){
-                var c = c || {};
-                for (var i in p) {
-                    if (typeof p[i] === 'object') {
-                        c[i] = (p[i].constructor === Array) ? [] : {};
-                        deepCopy(p[i], c[i]);
-                    } else {
-                        c[i] = p[i];
-                    }
-                }
-                return c;
-            },
             //更改handle状态
             changeState: function (row) {
                 const _this = this;
-                const obj=this.deepCopy(row);
+                const obj=deepCopy(row);
                 obj.is_handling=row.is_handling?1:0;
                 this.set_feed_state(obj).then(result=>{
                     _this.$message.success("更新成功");
@@ -177,6 +165,9 @@
             var _this=this;
             this.get_feed_lists().then(result=> {
                 _this.$message.success('成功获取意见反馈列表！');
+            }).catch((ErrMsg)=>{
+                _this.$message.error('获取数据失败，请刷新此页！');
+                //获取数据失败时的处理逻辑
             })
         }
     }

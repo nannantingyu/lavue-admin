@@ -76,6 +76,17 @@ const actions = {
                 });
         })
     },
+    add_update:({commit, state},form) => {
+        return new Promise((resolve, reject) => {
+            axios.post('/api/menu/add',form).then(result=> {
+                if(result.data.success === 1) {
+                    let data = result.data.data;
+                    resolve(data);
+                }
+                else reject(data)
+            })
+        })
+    },
     get_lists: ({commit, state}) => {
         return new Promise((resolve, reject) => {
             axios.get('/api/menu/list').then(result=> {
@@ -87,6 +98,9 @@ const actions = {
                         }
                         else if(o.state==1){
                             o.state=true;
+                        }
+                        if(!o.target) {
+                            o.target="_self"
                         }
                     }
                     commit('set_menu_list', data);

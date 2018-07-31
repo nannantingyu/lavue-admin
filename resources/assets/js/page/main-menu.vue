@@ -3,6 +3,7 @@
         <el-container>
             <el-header>
                 <h5>jujin8导航管理</h5>
+                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加导航</el-button>
                 <el-radio-group v-model="radio" style="float: right;padding-bottom: 10px" @change="filterData">
                 <el-radio-button label="全部"></el-radio-button>
                 <el-radio-button label="顶部导航"></el-radio-button>
@@ -34,6 +35,12 @@
                         width="150">
                 </el-table-column>
                     <el-table-column
+                            prop="target"
+                            :label="columns['target']['title']"
+                            v-if="columns['target']['show']"
+                            width="150">
+                    </el-table-column>
+                    <el-table-column
                             prop="area"
                             :label="columns['area']['title']"
                             v-if="columns['area']['show']"
@@ -47,7 +54,7 @@
                         <template slot-scope="scope">
                             <el-switch v-model="scope.row.state"
                                        :disabled="!user_module_permission['feedback-delete']"
-                                       @change="changeState(scope.row)"></el-switch>
+                                       @change="changeState(scope.row,'switch')"></el-switch>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -74,34 +81,63 @@
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
                                     :disabled="!user_module_permission['hot-banner-delete']"
-                                    @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
+                                    @click="changeState(scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                             <el-button
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
                                     :disabled="!user_module_permission['hot-banner-delete']"
-                                    @click="edithot_banner(scope.$index, scope.row)">编辑</el-button>
+                                    @click="edit_menu(scope.row)">编辑</el-button>
                         </template>
                     </el-table-column>
 
                 </el-table>
-                <!--<el-pagination-->
-                        <!--background-->
-                        <!--@current-change="page_change"-->
-                        <!--@size-change="size_change"-->
-                        <!--:current-page="current_page"-->
-                        <!--layout="total, sizes, prev, pager, next, jumper"-->
-                        <!--:total="total"-->
-                        <!--style="margin-top: 40px"-->
-                <!--&gt;-->
-                <!--</el-pagination>-->
+                <el-dialog title="编辑导航" :visible.sync="dialogFormVisible">
+                    <el-form :model="form" :rules="rules" ref="form">
+                        <el-form-item label="ID" :label-width="formLabelWidth">
+                            <el-input v-model="form.id" disabled="disabled" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="标题" :label-width="formLabelWidth" prop="name">
+                            <el-input v-model="form.name" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="链接" :label-width="formLabelWidth" prop="url">
+                            <el-input v-model="form.url" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="target" :label-width="formLabelWidth" prop="target">
+                            <el-select v-model="form.target" placeholder="请选择target">
+                                <el-option label="_self" value="_self"></el-option>
+                                <el-option label="_blank" value="_blank"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="顺序" :label-width="formLabelWidth" prop="sequence">
+                            <el-input v-model="form.sequence" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="区域" :label-width="formLabelWidth" prop="area">
+                            <el-select v-model="form.area" placeholder="请选择显示区域">
+                                <el-option label="顶部导航" value="main"></el-option>
+                                <el-option label="底部链接" value="bottom"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="是否显示" :label-width="formLabelWidth">
+                            <el-switch
+                                    v-model="form.state">
+                            </el-switch>
+                            <!--<el-input v-model="form.state" auto-complete="off"></el-input>-->
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="submitForm">确 定</el-button>
+                    </div>
+                </el-dialog>
             </el-main>
         </el-container>
     </div>
 </template>
 
 <script>
+    import {check_integer_factory,deepCopy} from "../plugin/tool";
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, Loading, Radio,RadioGroup,RadioButton,Popover,  Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
+    import {Table, TableColumn, Pagination, Loading, Radio,RadioGroup,RadioButton,Button,Popover,  Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
@@ -109,12 +145,43 @@
     Vue.use(RadioGroup);
     Vue.use(Radio);
     Vue.use(RadioButton);
+    Vue.use(Dialog);
+    Vue.use(Form);
+    Vue.use(Button);
+    Vue.use(FormItem);
+    Vue.use(Input);
+    Vue.use(Select);
+    Vue.use(Option);
+    Vue.use(Switch);
     export default {
         name: "main-menu",
         data() {
             return {
                 loading: false,
-                radio:"全部"
+                radio:"全部",
+                //编辑
+                dialogFormVisible: false,
+                form: {},
+                rules: {
+                    area: [
+                        { required: true, message: '请选择显示区域', trigger: 'blur' }
+                    ],
+                    name: [
+                        { required: true, message: '请输入标题', trigger: 'blur' },
+                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
+                    ],
+                    url: [
+                        { required: true, message: '请输入链接', trigger: 'blur' },
+                        { min: 2, max: 32, message: '链接长度在 3 到 256 个字符', trigger: 'blur' }
+                    ],
+                    sequence: [
+                        { required: true, message: '请输入顺序', trigger: 'blur' },
+                        { validator: check_integer_factory('顺序为数字类型'), trigger: 'blur' }
+                    ],
+                    target: [
+                        { required: true, message: '请选择显示区域', trigger: 'blur' }
+                    ],
+                }
             }
         },
 
@@ -135,26 +202,60 @@
                 'filter_data':"menu/filter_data"
             }),
             ...mapActions({
-                'get_lists': 'menu/get_lists'
+                'get_lists': 'menu/get_lists',
+                'add_update':'menu/add_update'
             }),
-            //深拷贝
-            deepCopy:function (p, c){
-                var c = c || {};
-                for (var i in p) {
-                    if (typeof p[i] === 'object') {
-                        c[i] = (p[i].constructor === Array) ? [] : {};
-                        deepCopy(p[i], c[i]);
-                    } else {
-                        c[i] = p[i];
-                    }
-                }
-                return c;
-            },
-            //更改handle状态
-            changeState: function (row) {
-                const _this = this;
 
-                // const obj=this.deepCopy(row);
+            //添加
+            addData:function(){
+                this.form={id:"自动填充"};
+                this.dialogFormVisible = true;
+            },
+            //编辑
+            edit_menu:function (row) {
+                const _this = this;
+                this.dialogFormVisible = true;
+                this.form=row;
+            },
+            submitFn:function(obj){
+                this.add_update(obj).then(result=>{
+                    this.$message.success('更新成功！');
+                    this.get_lists().then(result=> {
+                        this.$message.success('已更新导航列表！');
+                    }).catch((ErrMsg)=>{
+                        console.log(ErrMsg);
+                        this.$message.error('刷新数据失败，请刷新此页！');
+                        //获取数据失败时的处理逻辑
+                    })
+
+                });
+            },
+            //提交
+            submitForm:function(){
+                const _this = this;
+                this.$refs['form'].validate((valid) => {
+                    if (valid) {
+                        let obj=deepCopy(_this.form);
+                        _this.dialogFormVisible = false;
+                        obj.state=obj.state?1:0;
+                        obj.id=obj.id=='自动填充'?"":obj.id;
+                        _this.submitFn(obj);
+
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //开关、上线下线
+            changeState: function (row,s) {
+                let obj=deepCopy(row);
+                if(s){
+                    obj.state=row.state?1:0;
+                }else{
+                    obj.state=row.state?0:1;
+                }
+                this.submitFn(obj);
                 // obj.is_handling=row.is_handling?1:0;
                 // this.set_feed_state(obj).then(result=>{
                 //     _this.$message.success("更新成功");
@@ -170,10 +271,6 @@
                     case "底部链接":param=2;break;
                 }
                 this.filter_data(param);
-                // this.set_feed_state(s);
-                // this.get_lists().then(result=> {
-                //     _this.loading=false;
-                // });
 
             }
         },
@@ -182,6 +279,9 @@
             var _this=this;
             this.get_lists().then(result=> {
                 _this.$message.success('成功获取导航列表！');
+            }).catch((ErrMsg)=>{
+                _this.$message.error('获取数据失败，请刷新此页！');
+                //获取数据失败时的处理逻辑
             })
         }
     }
