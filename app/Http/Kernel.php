@@ -19,7 +19,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-        \App\Http\Middleware\EnableCrossDomain::class,
+//        \App\Http\Middleware\EnableCrossDomain::class,
     ];
 
     /**
@@ -41,7 +41,6 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:30000,1',
             'bindings',
-            'cross'
         ],
     ];
 
@@ -61,6 +60,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'cross' => \App\Http\Middleware\EnableCrossDomain::class
+//        'cross' => \App\Http\Middleware\EnableCrossDomain::class
     ];
 }
