@@ -213,7 +213,6 @@
             },
             //编辑
             edit_menu:function (row) {
-                const _this = this;
                 this.dialogFormVisible = true;
                 this.form=row;
             },
@@ -221,6 +220,7 @@
                 this.add_update(obj).then(result=>{
                     this.$message.success('更新成功！');
                     this.get_lists().then(result=> {
+                        this.filterData(this.radio);
                         this.$message.success('已更新导航列表！');
                     }).catch((ErrMsg)=>{
                         console.log(ErrMsg);
@@ -256,10 +256,6 @@
                     obj.state=row.state?0:1;
                 }
                 this.submitFn(obj);
-                // obj.is_handling=row.is_handling?1:0;
-                // this.set_feed_state(obj).then(result=>{
-                //     _this.$message.success("更新成功");
-                // });
             },
             //筛选处理未处理
             filterData:function (state) {
