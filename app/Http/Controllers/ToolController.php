@@ -51,10 +51,10 @@ class ToolController extends Controller
         }
 
         $form = [
-            'title' => $request->input('name'),
-            'description' => $request->input('url'),
-            'image' => $request->input('target'),
-            'tag' => $request->input('area'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'image' => $request->input('image'),
+            'tag' => $request->input('tag'),
             'sequence' => $request->input('sequence'),
             'state' => $request->input('state'),
         ];

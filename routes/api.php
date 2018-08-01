@@ -22,22 +22,26 @@ Route::get('/jiedu', 'Api\CalendarController@getjiedu');
 Route::get('/kx', 'Api\KuaixunController@getkx');
 Route::get('/bkx', 'Api\KuaixunController@getBlockKx');
 Route::get('/ukx', 'Api\KuaixunController@getUnionKx');
+//意见反馈
 Route::post('/addFeedback', 'Api\FeedbackController@addFeedback');
-
 Route::get('feedback/getList', 'Api\FeedbackController@getList');
+//快讯
 Route::post('kuaixun/addKuaiXun', 'KuaiXunController@addKuaiXun');
 Route::get('kuaixun/getList', 'KuaiXunController@getList');
 Route::get('kuaixun/pagelist', 'KuaiXunController@getPageList');
-
+//菜单
 Route::post('menu/add', 'MenuController@add');
 Route::get('menu/list', 'MenuController@getList');
-
+//投资工具
 Route::post('tool/add', 'ToolController@add');
 Route::get('tool/list', 'ToolController@getList');
 
-
+//财经日历
 Route::post('calendar/add', 'CalendarController@add');
 Route::get('calendar/list', 'CalendarController@getList');
-
-Route::post('event/add', 'CalendarEvent@add');
-Route::get('event/list', 'CalendarEvent@getList');
+//财经事件
+Route::post('event/add', 'CalendarEventController@add');
+Route::get('event/list', 'CalendarEventController@getList');
+//财经假期
+Route::post('holiday/add', 'CalendarHolidayController@add');
+Route::get('holiday/list', 'CalendarHolidayController@getList');

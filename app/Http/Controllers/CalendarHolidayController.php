@@ -10,9 +10,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\EconomicEvent;
+use App\Models\EconomicHoliday;
 
-class CalendarEvent extends Controller
+/**
+ * 财经假日
+ * @package App\Http\Controllers
+ */
+class CalendarHolidayController extends Controller
 {
 
     protected function validator(array $data)
@@ -20,24 +24,24 @@ class CalendarEvent extends Controller
         $messages = [
             'country.required' => '请输入国家',
             'time.required' => '请输入发布时间',
-            'city.required' => '请输入城市',
-            'importance.required' => '请输入重要性',
-            'event.required' => '请输入事件',
-            'date.required' => '请输入事件日期'
+            'market.required' => '请输入市场',
+            'holiday_name.required' => '请输入假期名称',
+            'detail.required' => '请输入假期详情',
+            'date.required' => '请输入假期时间'
         ];
 
         $rules = [
             'country' => 'required',
             'time' => 'required',
-            'city' => 'required',
-            'importance' => 'required',
-            'event' => 'required',
+            'market' => 'required',
+            'holiday_name' => 'required',
+            'detail' => 'required',
             'date' => 'required'
         ];
         return Validator::make($data, $rules, $messages);
     }
 
-    /** 添加财经事件
+    /** 添加财经假期
      * @param Request $request
      * @return array
      */
@@ -51,19 +55,19 @@ class CalendarEvent extends Controller
 
         $form = [
             'country' => $request->input('country'),
-            'time' => $request->input('quota_name'),
-            'city' => $request->input('publish_time'),
-            'importance' => $request->input('importance'),
-            'event' => $request->input('former_value'),
-            'date' => $request->input('predicted_value'),
-            'source_id' => $request->input('published_value')
+            'time' => $request->input('time'),
+            'market' => $request->input('market'),
+            'holiday_name' => $request->input('importance'),
+            'detail' => $request->input('event'),
+            'date' => $request->input('date'),
+            'source_id' => $request->input('source_id')
         ];
 
         $id = $request->input('id');
         if (!is_null($id)) {
-            EconomicCalendar::where('id', $id)->update($form);
+            EconomicHoliday::where('id', $id)->update($form);
         } else {
-            $info = new EconomicCalendar($form);
+            $info = new EconomicHoliday($form);
             $info->save();
             $id = $info->id;
         }
@@ -71,7 +75,7 @@ class CalendarEvent extends Controller
     }
 
     /**
-     * 获取财经事件
+     * 获取财经假期
      * @param Request $request
      * @return array
      */
@@ -79,8 +83,8 @@ class CalendarEvent extends Controller
     {
         $page = $request->input('page');
         $pageSize = $request->input('pageSize');
-        $count = EconomicEvent::count();
-        $value = EconomicEvent::orderBy('id', 'DESC')
+        $count = EconomicHoliday::count();
+        $value = EconomicHoliday::orderBy('id', 'DESC')
             ->forPage($page, $pageSize)
             ->get();
 
