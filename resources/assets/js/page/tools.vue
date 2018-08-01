@@ -246,7 +246,7 @@
                     this.$message.success('更新成功！');
                     this.get_lists().then(result=> {
                         this.filterData(this.radio);
-                        this.$message.success('已更新导航列表！');
+                        this.$message.success('已更新列表！');
                     }).catch((ErrMsg)=>{
                         console.log(ErrMsg);
                         this.$message.error('刷新数据失败，请刷新此页！');
@@ -308,7 +308,7 @@
             },
         },
         mounted(){
-            //获取导航列表
+            //获取列表
             var _this=this;
             this.get_lists().then(result=> {
                 _this.$message.success('成功获取投资工具列表！');
