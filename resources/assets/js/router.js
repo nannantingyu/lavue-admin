@@ -103,6 +103,11 @@ export default new VueRouter({
             name: "template",
             path: '/template',
             component: resolve =>void(require(['./page/template.vue'], resolve))
+        },
+        {
+            name: "tools",
+            path: '/tools',
+            component: resolve =>void(require(['./page/tools.vue'], resolve))
         }
     ]
 })

@@ -2,17 +2,17 @@
     <div>
         <el-container>
             <el-header>
-                <h5>jujin8导航管理</h5>
-                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加导航</el-button>
+                <h5>jujin8投资工具管理</h5>
+                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加工具</el-button>
                 <el-radio-group v-model="radio" style="float: right;padding-bottom: 10px" @change="filterData">
-                <el-radio-button label="全部"></el-radio-button>
-                <el-radio-button label="顶部导航"></el-radio-button>
-                <el-radio-button label="底部链接"></el-radio-button>
+                    <el-radio-button label="全部"></el-radio-button>
+                    <el-radio-button label="已上线"></el-radio-button>
+                    <el-radio-button label="已下线"></el-radio-button>
                 </el-radio-group>
             </el-header>
             <el-main>
                 <el-table
-                        :data="menu_lists"
+                        :data="lists"
                         border
                         style="width: 100%"
                         v-loading="loading">
@@ -23,34 +23,37 @@
                             width="50">
                     </el-table-column>
                     <el-table-column
-                            prop="name"
-                            :label="columns['name']['title']"
-                            v-if="columns['name']['show']"
+                            prop="title"
+                            :label="columns['title']['title']"
+                            v-if="columns['title']['show']"
                             width="100">
                     </el-table-column>
                     <el-table-column
-                        prop="url"
-                        :label="columns['url']['title']"
-                        v-if="columns['url']['show']"
-                        width="150">
-                </el-table-column>
-                    <el-table-column
-                            prop="target"
-                            :label="columns['target']['title']"
-                            v-if="columns['target']['show']"
-                            width="100">
-                    </el-table-column>
-                    <el-table-column
-                            prop="area"
-                            :label="columns['area']['title']"
-                            v-if="columns['area']['show']"
+                            prop="description"
+                            :label="columns['description']['title']"
+                            v-if="columns['description']['show']"
                             width="150">
+                    </el-table-column>
+                    <el-table-column
+                            prop="image"
+                            :label="columns['image']['title']"
+                            v-if="columns['image']['show']"
+                            width="200">
+                        <template slot-scope="scope">
+                            <img width="160" :src="transfer(scope.row.image)" :alt="scope.row.image">
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="tag"
+                            :label="columns['tag']['title']"
+                            v-if="columns['tag']['show']"
+                            width="100">
                     </el-table-column>
                     <el-table-column
                             prop="state"
                             :label="columns['state']['title']"
                             v-if="columns['state']['show']"
-                            width="120">
+                            width="100">
                         <template slot-scope="scope">
                             <el-switch v-model="scope.row.state"
                                        :disabled="!user_module_permission['feedback-delete']"
@@ -86,36 +89,42 @@
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
                                     :disabled="!user_module_permission['hot-banner-delete']"
-                                    @click="edit_menu(scope.row)">编辑</el-button>
+                                    @click="edit_row(scope.row)">编辑</el-button>
                         </template>
                     </el-table-column>
 
                 </el-table>
-                <el-dialog title="编辑导航" :visible.sync="dialogFormVisible">
+                <el-dialog title="编辑投资工具" :visible.sync="dialogFormVisible">
                     <el-form :model="form" :rules="rules" ref="form">
                         <el-form-item label="ID" :label-width="formLabelWidth">
                             <el-input v-model="form.id" disabled="disabled" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="标题" :label-width="formLabelWidth" prop="name">
-                            <el-input v-model="form.name" auto-complete="off"></el-input>
+                        <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
+                            <el-input v-model="form.title" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="链接" :label-width="formLabelWidth" prop="url">
-                            <el-input v-model="form.url" auto-complete="off"></el-input>
+                        <el-form-item label="描述" :label-width="formLabelWidth" prop="description">
+                            <el-input v-model="form.description" auto-complete="off" type="textarea"
+                                      :rows="3"></el-input>
                         </el-form-item>
-                        <el-form-item label="target" :label-width="formLabelWidth" prop="target">
-                            <el-select v-model="form.target" placeholder="请选择target">
-                                <el-option label="_self" value="_self"></el-option>
-                                <el-option label="_blank" value="_blank"></el-option>
-                            </el-select>
+                        <el-form-item label="二维码" :label-width="formLabelWidth" prop="image">
+                            <el-upload
+                                    class="avatar-uploader"
+                                    :limit="1"
+                                    action="/uploads_image"
+                                    name="fileDataFileName"
+                                    list-type="picture-card"
+                                    :headers="headers"
+                                    :file-list="fileimgs"
+                                    :on-success="handleSuccess"
+                                    :on-remove="handleRemove">
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="标签" :label-width="formLabelWidth" prop="tag">
+                            <el-input v-model="form.tag" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="顺序" :label-width="formLabelWidth" prop="sequence">
                             <el-input v-model="form.sequence" auto-complete="off"></el-input>
-                        </el-form-item>
-                        <el-form-item label="区域" :label-width="formLabelWidth" prop="area">
-                            <el-select v-model="form.area" placeholder="请选择显示区域">
-                                <el-option label="顶部导航" value="main"></el-option>
-                                <el-option label="底部链接" value="bottom"></el-option>
-                            </el-select>
                         </el-form-item>
                         <el-form-item label="是否显示" :label-width="formLabelWidth">
                             <el-switch
@@ -153,8 +162,9 @@
     Vue.use(Select);
     Vue.use(Option);
     Vue.use(Switch);
+    Vue.use(Upload);
     export default {
-        name: "main-menu",
+        name: "tools",
         data() {
             return {
                 loading: false,
@@ -163,24 +173,28 @@
                 dialogFormVisible: false,
                 form: {},
                 rules: {
-                    area: [
-                        { required: true, message: '请选择显示区域', trigger: 'blur' }
+                    image: [
+                        { required: true, message: '请上传图片', trigger: 'blur' }
                     ],
-                    name: [
+                    title: [
                         { required: true, message: '请输入标题', trigger: 'blur' },
                         { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
                     ],
-                    url: [
-                        { required: true, message: '请输入链接', trigger: 'blur' },
-                        { min: 2, max: 32, message: '链接长度在 3 到 256 个字符', trigger: 'blur' }
+                    description: [
+                        { required: true, message: '请输入描述', trigger: 'blur' },
+                    ],
+                    title: [
+                        { required: true, message: '请输入标题', trigger: 'blur' },
+                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
+                    ],
+                    tag: [
+                        { required: true, message: '请输入标签', trigger: 'blur' },
+                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
                     ],
                     sequence: [
                         { required: true, message: '请输入顺序', trigger: 'blur' },
                         { validator: check_integer_factory('顺序为数字类型'), trigger: 'blur' }
-                    ],
-                    target: [
-                        { required: true, message: '请选择显示target', trigger: 'blur' }
-                    ],
+                    ]
                 }
             }
         },
@@ -188,22 +202,29 @@
         computed: {
             ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
-                'columns': state=>state.menu.columns,
-                'menu_lists': state=>state.menu.menu_lists,
+                'columns': state=>state.tools.columns,
+                'lists': state=>state.tools.lists,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'current_page':state=>state.menu.currentPage,
-                'total':state=>state.menu.total
-            })
+                'current_page':state=>state.tools.currentPage,
+                'total':state=>state.tools.total
+            }),
+            fileimgs:function() {
+                let imgs = [];
+                if(this.form.image){
+                    imgs.push({url: 'http://images.jujin8.com'+this.form.image.replace('/uploads/crawler', '/uploads')});
+                }
+                return imgs;
+            }
         },
         methods:{
             ...mapMutations({
-                'set_state':'menu/set_state',
-                'set_feed_state': "menu/set_feed_state",
-                'filter_data':"menu/filter_data"
+                'set_state':'tools/set_state',
+                'set_feed_state': "tools/set_feed_state",
+                'filter_data':"tools/filter_data"
             }),
             ...mapActions({
-                'get_lists': 'menu/get_lists',
-                'add_update':'menu/add_update'
+                'get_lists': 'tools/get_lists',
+                'add_update':'tools/add_update'
             }),
 
             //添加
@@ -212,17 +233,20 @@
                 this.dialogFormVisible = true;
             },
             //编辑
-            edit_menu:function (row) {
-                this.dialogFormVisible = true;
+            edit_row:function (row) {
+                // console.log(this.$refs['form'],"LLLLL")
+                // this.$refs['form'].resetFields();
                 let obj=deepCopy(row);
                 this.form=obj;
+                console.log(this.form);
+                this.dialogFormVisible = true;
             },
             submitFn:function(obj){
                 this.add_update(obj).then(result=>{
                     this.$message.success('更新成功！');
                     this.get_lists().then(result=> {
                         this.filterData(this.radio);
-                        this.$message.success('已更新导航列表！');
+                        this.$message.success('已更新列表！');
                     }).catch((ErrMsg)=>{
                         console.log(ErrMsg);
                         this.$message.error('刷新数据失败，请刷新此页！');
@@ -264,23 +288,36 @@
                 let param="";
                 switch (state){
                     case "全部":param=0;break;
-                    case "顶部导航":param=1;break;
-                    case "底部链接":param=2;break;
+                    case "已上线":param=1;break;
+                    case "已下线":param=2;break;
                 }
                 this.filter_data(param);
 
-            }
+            },
+            //图片
+            transfer: function(img) {
+                return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
+            },
+            handleSuccess: function(response, file, fileList) {
+                if(response.success) {
+                    this.form.image=response.file_path
+                }
+            },
+            handleRemove: function() {
+                this.form.image=null
+            },
         },
         mounted(){
-            //获取导航列表
+            //获取列表
             var _this=this;
             this.get_lists().then(result=> {
-                _this.$message.success('成功获取导航列表！');
+                _this.$message.success('成功获取投资工具列表！');
             }).catch((ErrMsg)=>{
                 _this.$message.error('获取数据失败，请刷新此页！');
                 //获取数据失败时的处理逻辑
             })
         }
+
     }
 </script>
 
