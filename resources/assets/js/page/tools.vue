@@ -297,10 +297,10 @@
                 return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
             },
             handleSuccess: function(response, file, fileList) {
-                console.log(response, file, fileList,"$$$$");
-                // if(response.success) {
-                //     this.set_form_value({key: 'image', value: response.file_path})
-                // }
+                // console.log(response, file, fileList,"$$$$");
+                if(response.success) {
+                    this.form.image=response.file_path
+                }
             },
             handleRemove: function() {
                 // this.set_form_value({key: 'image', value: null})
