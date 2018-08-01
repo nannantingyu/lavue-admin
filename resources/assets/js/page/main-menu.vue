@@ -179,7 +179,7 @@
                         { validator: check_integer_factory('顺序为数字类型'), trigger: 'blur' }
                     ],
                     target: [
-                        { required: true, message: '请选择显示区域', trigger: 'blur' }
+                        { required: true, message: '请选择显示target', trigger: 'blur' }
                     ],
                 }
             }
@@ -214,7 +214,8 @@
             //编辑
             edit_menu:function (row) {
                 this.dialogFormVisible = true;
-                this.form=row;
+                let obj=deepCopy(row);
+                this.form=obj;
             },
             submitFn:function(obj){
                 this.add_update(obj).then(result=>{
