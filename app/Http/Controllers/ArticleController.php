@@ -191,10 +191,10 @@ class ArticleController extends Controller {
 
         // 生成静态页
         if($type == 'update') {
-            $this->template_updater->delete_page('read/'.$id);
+            $this->template_updater->update_page('read/'.$id);
         }
         elseif($type == 'delete') {
-            $this->template_updater->update_page('read/'.$id);
+            $this->template_updater->delete_page('read/'.$id);
         }
 
         $article = Article::with('categories')
