@@ -77,6 +77,6 @@ class ToolController extends Controller
      */
     public function getList(Request $request)
     {
-        return ['success' => 1, 'data' => Tool::orderBy('sequence', 'DESC')->get()];
+        return ['success' => 1, 'data' => Tool::orderBy('id', 'DESC')->get()];
     }
 }

@@ -45,3 +45,7 @@ Route::get('event/list', 'CalendarEventController@getList');
 //财经假期
 Route::post('holiday/add', 'CalendarHolidayController@add');
 Route::get('holiday/list', 'CalendarHolidayController@getList');
+//Banner活动
+Route::post('banner/add', 'BannerController@add');
+Route::post('banner/setState', 'BannerController@setState');
+Route::get('banner/list', 'BannerController@getList');

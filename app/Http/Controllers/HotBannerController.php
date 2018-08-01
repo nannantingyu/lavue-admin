@@ -1,15 +1,19 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\HotBanner;
 
-class HotBannerController extends Controller {
+class HotBannerController extends Controller
+{
     /**
      * 获取热门广告列表
      * @return array
      */
-    public function lists () {
-        return ['success'=>1, 'data'=>HotBanner::orderBy('sequence', 'asc')->get()];
+    public function lists()
+    {
+        return ['success' => 1, 'data' => HotBanner::orderBy('sequence', 'asc')->get()];
     }
 
     /**
@@ -18,14 +22,15 @@ class HotBannerController extends Controller {
      * @param $key string 根据key获取
      * @return array
      */
-    public function info (Request $request) {
+    public function info(Request $request)
+    {
         $id = $request->input('id');
         $key = $request->input('key');
 
-        if(!is_null($id) && \numcheck::is_int($id))
-            return ['success'=>1, 'data'=>HotBanner::find($id)];
+        if (!is_null($id) && \numcheck::is_int($id))
+            return ['success' => 1, 'data' => HotBanner::find($id)];
 
-        return ['success'=>0];
+        return ['success' => 0];
     }
 
     /**
@@ -34,11 +39,12 @@ class HotBannerController extends Controller {
      * @param $key string 根据key获取
      * @param $form array 表单数据
      */
-    public function addHotBanner(Request $request) {
+    public function addHotBanner(Request $request)
+    {
         //验证表单
         $validate = $this->validateForm($request);
-        if(!$validate['success']) {
-            return response()->json(['success'=>0, "errors"=>$validate['msg']]);
+        if (!$validate['success']) {
+            return response()->json(['success' => 0, "errors" => $validate['msg']]);
         }
 
         //添加或者更新数据
@@ -51,10 +57,9 @@ class HotBannerController extends Controller {
         ];
 
         $id = $request->input('id');
-        if(!is_null($id)) {
+        if (!is_null($id)) {
             HotBanner::where('id', $id)->update($form);
-        }
-        else {
+        } else {
             $hotbanner = new HotBanner($form);
             $hotbanner->save();
             $id = $hotbanner->id;
@@ -62,7 +67,7 @@ class HotBannerController extends Controller {
 
         // 更新静态页
         $this->updateHotBannerTemplate();
-        return ['success'=>1, 'data'=>['id'=>$id]];
+        return ['success' => 1, 'data' => ['id' => $id]];
     }
 
     /**
@@ -70,7 +75,8 @@ class HotBannerController extends Controller {
      * @param Request $request
      * @return array
      */
-    private function validateForm(Request $request) {
+    private function validateForm(Request $request)
+    {
         $messages = [
             'title.required' => '请输入标题',
             'title.max' => '标题长度不能超过32个字符',
@@ -91,33 +97,34 @@ class HotBannerController extends Controller {
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
-        if($validator->fails()) {
-            return ['success'=>0, 'msg'=>$validator->errors()];
+        if ($validator->fails()) {
+            return ['success' => 0, 'msg' => $validator->errors()];
         }
 
-        return ['success'=>1];
+        return ['success' => 1];
     }
 
     /**
      * 根据id设置hotbanner状态
-     * @param Request $request
      */
-    public function setHotBannerState(Request $request) {
+    public function setHotBannerState(Request $request)
+    {
         $id = $request->input('id');
-        if(!is_null($id) and \numcheck::is_int($id)) {
+        if (!is_null($id) and \numcheck::is_int($id)) {
             $state = $request->input('state');
-            $state = $state === 1?$state:0;
+            $state = $state === 1 ? $state : 0;
 
-            HotBanner::where('id', $id)->update(['state'=>$state]);
+            HotBanner::where('id', $id)->update(['state' => $state]);
             // 更新静态页
             $this->updateHotBannerTemplate();
-            return ['success'=>1];
+            return ['success' => 1];
         }
 
-        return ['success'=>0];
+        return ['success' => 0];
     }
 
-    private function updateHotBannerTemplate() {
+    private function updateHotBannerTemplate()
+    {
         $this->template_updater->update_page('index');
     }
 }

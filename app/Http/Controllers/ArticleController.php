@@ -233,7 +233,7 @@ class ArticleController extends Controller {
             'hits.integer' => '点击量不正确',
             'source_type.required' => '原创类型不能为空',
             'publish_time.require' => '发布日期不能为空',
-            'publish_time.data' => '发布时间不正确'
+            'publish_time.date' => '发布时间不正确'
         ];
         $rules = [
             'title' => 'required|max:32|min:2',

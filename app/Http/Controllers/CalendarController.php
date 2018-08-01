@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\EconomicCalendar;
 
-class CalendarController extends Controller
+    class CalendarController extends Controller
 {
 
     protected function validator(array $data)
