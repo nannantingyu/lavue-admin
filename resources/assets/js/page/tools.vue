@@ -114,6 +114,7 @@
                                     name="fileDataFileName"
                                     list-type="picture-card"
                                     :headers="headers"
+                                    :file-list="fileimgs"
                                     :on-success="handleSuccess"
                                     :on-remove="handleRemove">
                                 <i class="el-icon-plus"></i>
@@ -208,11 +209,10 @@
                 'total':state=>state.tools.total
             }),
             fileimgs:function() {
-                console.log(this.formData);
                 let imgs = [];
-                // if(this.form.image){
-                //     imgs.push({url: 'http://images.jujin8.com'+this.form.image.replace('/uploads/crawler', '/uploads')});
-                // }
+                if(this.form.image){
+                    imgs.push({url: 'http://images.jujin8.com'+this.form.image.replace('/uploads/crawler', '/uploads')});
+                }
                 return imgs;
             }
         },
@@ -234,6 +234,8 @@
             },
             //编辑
             edit_row:function (row) {
+                // console.log(this.$refs['form'],"LLLLL")
+                // this.$refs['form'].resetFields();
                 let obj=deepCopy(row);
                 this.form=obj;
                 console.log(this.form);
@@ -297,13 +299,12 @@
                 return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
             },
             handleSuccess: function(response, file, fileList) {
-                // console.log(response, file, fileList,"$$$$");
                 if(response.success) {
                     this.form.image=response.file_path
                 }
             },
             handleRemove: function() {
-                // this.set_form_value({key: 'image', value: null})
+                this.form.image=null
             },
         },
         mounted(){
