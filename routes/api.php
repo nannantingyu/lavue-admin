@@ -49,3 +49,7 @@ Route::get('holiday/list', 'CalendarHolidayController@getList');
 Route::post('banner/add', 'BannerController@add');
 Route::post('banner/setState', 'BannerController@setState');
 Route::get('banner/list', 'BannerController@getList');
+//Banner活动
+Route::post('banner/addCategory', 'BannerCategoryController@add');
+Route::post('banner/setCategoryState', 'BannerCategoryController@setState');
+Route::get('banner/listCategory', 'BannerCategoryController@getList');
