@@ -22,6 +22,8 @@ Route::get('/jiedu', 'Api\CalendarController@getjiedu');
 Route::get('/kx', 'Api\KuaixunController@getkx');
 Route::get('/bkx', 'Api\KuaixunController@getBlockKx');
 Route::get('/ukx', 'Api\KuaixunController@getUnionKx');
+Route::get('article/more-list', 'Api\ArticleController@moreList');
+
 //意见反馈
 Route::post('/addFeedback', 'Api\FeedbackController@addFeedback');
 Route::get('feedback/getList', 'Api\FeedbackController@getList');
@@ -53,3 +55,5 @@ Route::get('banner/list', 'BannerController@getList');
 Route::post('banner/addCategory', 'BannerCategoryController@add');
 Route::post('banner/setCategoryState', 'BannerCategoryController@setState');
 Route::get('banner/listCategory', 'BannerCategoryController@getList');
+
+
