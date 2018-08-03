@@ -771,3 +771,90 @@ CREATE TABLE `jujin8_wallstreetcn_kuaixun` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for jujin8_block_coin
+-- ----------------------------
+DROP TABLE IF EXISTS `jujin8_block_coin`;
+CREATE TABLE `jujin8_block_coin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `coin_id` varchar(16) NOT NULL,
+  `coin_name` varchar(16) NOT NULL COMMENT '币名称',
+  `symble` varchar(16) NOT NULL COMMENT '代号',
+  `state` tinyint(4) NOT NULL,
+  `sequemce` int(11) NOT NULL COMMENT '顺序',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_coin_id` (`coin_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for jujin8_block_finance
+-- ----------------------------
+DROP TABLE IF EXISTS `jujin8_block_finance`;
+CREATE TABLE `jujin8_block_finance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `coin_id` varchar(64) DEFAULT NULL,
+  `price` float DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_coin` (`coin_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for jujin8_block_info
+-- ----------------------------
+DROP TABLE IF EXISTS `jujin8_block_info`;
+CREATE TABLE `jujin8_block_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `coin_id` varchar(64) NOT NULL COMMENT '英文编号-行情图查询使用',
+  `symbol` varchar(64) DEFAULT NULL COMMENT '标识（BTC）',
+  `cn_name` varchar(64) DEFAULT NULL COMMENT '中文名称',
+  `en_name` varchar(64) DEFAULT NULL COMMENT '英文名称',
+  `coin_name` varchar(32) DEFAULT NULL,
+  `consensus` varchar(32) DEFAULT NULL,
+  `finance_buy_usd` decimal(30,15) DEFAULT NULL,
+  `finance_in_usd` decimal(30,15) DEFAULT NULL,
+  `finance_sell_usd` decimal(30,15) DEFAULT NULL,
+  `available_supply` varchar(30) DEFAULT NULL COMMENT '流通数量\n',
+  `total_supply` varchar(30) DEFAULT NULL,
+  `max_supply` varchar(30) DEFAULT NULL COMMENT '最大供给量',
+  `available_price` decimal(30,15) DEFAULT NULL COMMENT '流通市值',
+  `market_cap_usd` decimal(30,15) DEFAULT NULL,
+  `volume_usd_24h` decimal(30,15) DEFAULT NULL COMMENT '成交额',
+  `image` varchar(255) DEFAULT NULL COMMENT '货币图标',
+  `release_time` char(11) DEFAULT NULL,
+  `total_market_cap_usd` decimal(30,15) DEFAULT NULL,
+  `trend_image` varchar(255) DEFAULT NULL COMMENT '趋势图片',
+  `min_price_24h` decimal(30,15) DEFAULT NULL COMMENT '24小时最低',
+  `max_price_24h` decimal(30,15) DEFAULT NULL COMMENT '24小时最高',
+  `percent_change_1h` decimal(30,20) DEFAULT NULL,
+  `percent_change_1m` decimal(30,20) DEFAULT NULL,
+  `percent_change_1y` decimal(30,20) DEFAULT NULL,
+  `percent_change_24h` decimal(30,20) DEFAULT NULL,
+  `percent_change_3m` decimal(30,20) DEFAULT NULL,
+  `percent_change_7d` decimal(30,20) DEFAULT NULL,
+  `percent_change_all` decimal(30,20) DEFAULT NULL,
+  `percent_change_today` decimal(30,20) DEFAULT NULL,
+  `price_btc` decimal(30,20) DEFAULT NULL,
+  `price_usd` decimal(30,20) DEFAULT NULL,
+  `rank` int(11) DEFAULT NULL,
+  `volume_rank` int(11) DEFAULT NULL,
+  `founder` varchar(64) DEFAULT NULL COMMENT '创建者',
+  `forum` varchar(512) DEFAULT NULL,
+  `ico_date` varchar(32) DEFAULT NULL COMMENT 'ico时间',
+  `ico_price` varchar(32) DEFAULT NULL COMMENT 'ico价格',
+  `ico_price_usd` varchar(32) DEFAULT NULL COMMENT 'ico价格美元',
+  `icon` varchar(255) DEFAULT NULL COMMENT '图标',
+  `repository` varchar(255) DEFAULT NULL COMMENT 'github地址',
+  `mineable` tinyint(4) DEFAULT NULL COMMENT '是否可以挖矿',
+  `algorithm` varchar(32) DEFAULT NULL COMMENT '算法',
+  `explorer` varchar(512) DEFAULT NULL COMMENT '网址',
+  `websites` varchar(512) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_coin_id` (`coin_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
