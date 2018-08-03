@@ -15,7 +15,6 @@ use App\Models\Menu;
 
 class MenuController extends Controller
 {
-
     protected function validator(array $data)
     {
         $messages = [
@@ -24,6 +23,9 @@ class MenuController extends Controller
             'area.required' => '请输入显示区域',
             'sequence.required' => '请输入排序',
             'state.required' => '是否启用',
+            'title.required' => 'seo标题必填',
+            'keywords.required' => 'seo标题必填',
+            'description.required' => 'description必填',
         ];
 
         $rules = [
@@ -32,6 +34,9 @@ class MenuController extends Controller
             'area' => 'required',
             'sequence' => 'required',
             'state' => 'required',
+            'title' => 'required',
+            'keywords' => 'required',
+            'description' => 'required',
         ];
 
         return Validator::make($data, $rules, $messages);
@@ -56,6 +61,9 @@ class MenuController extends Controller
             'area' => $request->input('area'),
             'sequence' => $request->input('sequence'),
             'state' => $request->input('state'),
+            'title' => $request->input('title'),
+            'keywords' => $request->input('keywords'),
+            'description' => $request->input('description'),
         ];
 
         $id = $request->input('id');
