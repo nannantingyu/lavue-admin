@@ -35,7 +35,7 @@ class ArticleController extends Controller
             $where = "$where and publish_time < '$time'";
         }
 
-        $sql = "SELECT jujin8_article.id,title,publish_time AS created,keywords AS catTitle,description AS metadesc,image AS imgurl,author AS author,source_site AS sourceSite,source_url AS sourceUrl FROM jujin8_article RIGHT JOIN jujin8_article_category ON jujin8_article.id=aid $where ORDER BY publish_time DESC LIMIT $size";
+        $sql = "SELECT distinct jujin8_article.id,title,publish_time AS created,keywords AS catTitle,description AS metadesc,image AS imgurl,author AS author,source_site AS sourceSite,source_url AS sourceUrl FROM jujin8_article RIGHT JOIN jujin8_article_category ON jujin8_article.id=aid $where ORDER BY publish_time DESC LIMIT $size";
         $lists = DB::select($sql);
 
         for ($i = 0; $i < count($lists); $i++) {
