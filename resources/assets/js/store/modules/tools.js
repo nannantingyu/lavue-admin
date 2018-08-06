@@ -7,10 +7,11 @@ const state = {
         description: {title: "描述", show: true},
         image: {title: "二维码", show: true},
         tag: {title: "标签", show: true},
+        url: {title: "url", show: true},
         sequence:{title: "顺序", show: true},
         state:{title: "状态", show: true},
-        created_at: {title: "创建时间", show: true},
-        updated_at: {title: "更新时间", show: true}
+        created_at: {title: "创建时间", show: false},
+        updated_at: {title: "更新时间", show: false}
     },
     lists: [],
     lists_all: [],

@@ -9,6 +9,20 @@
                     <el-radio-button label="已上线"></el-radio-button>
                     <el-radio-button label="已下线"></el-radio-button>
                 </el-radio-group>
+                <el-popover
+                        placement="right"
+                        width="400"
+                        trigger="click">
+                    <ul class="switch-panel">
+                        <li v-for="(i, k) in columns">
+                            <el-switch
+                                    v-model="i.show"
+                                    :active-text="i.title">
+                            </el-switch>
+                        </li>
+                    </ul>
+                    <el-button slot="reference">显示隐藏列</el-button>
+                </el-popover>
             </el-header>
             <el-main>
                 <el-table
@@ -50,6 +64,12 @@
                             width="100">
                     </el-table-column>
                     <el-table-column
+                            prop="url"
+                            :label="columns['url']['title']"
+                            v-if="columns['url']['show']"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
                             prop="state"
                             :label="columns['state']['title']"
                             v-if="columns['state']['show']"
@@ -78,7 +98,7 @@
                     </el-table-column>
                     <el-table-column
                             label="操作"
-                            width="250">
+                            min-width="250">
                         <template slot-scope="scope">
                             <el-button
                                     size="mini"
@@ -122,6 +142,9 @@
                         </el-form-item>
                         <el-form-item label="标签" :label-width="formLabelWidth" prop="tag">
                             <el-input v-model="form.tag" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="url" :label-width="formLabelWidth" prop="url">
+                            <el-input v-model="form.url" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="顺序" :label-width="formLabelWidth" prop="sequence">
                             <el-input v-model="form.sequence" auto-complete="off"></el-input>
