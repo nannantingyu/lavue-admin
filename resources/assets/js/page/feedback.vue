@@ -109,7 +109,8 @@
             ...mapMutations({
                 'page_changeEvent': "feedback/set_current_page",
                 'size_changeEvent': "feedback/set_page_size",
-                'set_state':'feedback/set_state'
+                'set_state':'feedback/set_state',
+                'set_feed_stateM': "feedback/set_feed_state"
             }),
             ...mapActions({
                 'get_feed_lists': 'feedback/get_feed_lists',
@@ -153,7 +154,7 @@
                        default:s=-1;
                    }
                 this.loading=true;
-                this.set_feed_state(s);
+                this.set_feed_stateM(s);
                 this.get_feed_lists().then(result=> {
                     _this.loading=false;
                 });
