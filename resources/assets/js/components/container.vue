@@ -131,16 +131,16 @@
                     </el-menu-item-group>
                 </el-submenu>
                 <el-submenu
-                    v-if="user_module_permission['company-read']"
-                    index="/crawl">
+                        v-if="user_module_permission['company-read']"
+                        index="/crawl">
                     <template slot="title">
                         <i class="el-icon-loading"></i>
                         <span slot="title">爬虫</span>
                     </template>
                     <el-menu-item-group>
                         <el-menu-item
-                            v-if="user_module_permission['company-read']"
-                            index="/category-map">
+                                v-if="user_module_permission['company-read']"
+                                index="/category-map">
                             <i class="el-icon-goods"></i>
                             <span slot="title">分类转化</span>
                         </el-menu-item>
@@ -164,34 +164,49 @@
                     <i class="el-icon-question"></i>
                     <span slot="title">意见列表</span>
                 </el-menu-item>
-                <el-menu-item
+                <el-submenu
                         v-if="user_module_permission['activity-read']"
                         index="/activity">
-                    <i class="el-icon-time"></i>
-                    <span slot="title">活动管理</span>
-                </el-menu-item>
-
+                    <template slot="title">
+                        <i class="el-icon-time"></i>
+                        <span slot="title">活动管理</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item
+                                v-if="user_module_permission['activity-read']"
+                                index="/activity">
+                            <i class="el-icon-time"></i>
+                            <span slot="title">活动列表</span>
+                        </el-menu-item>
+                        <el-menu-item
+                                v-if="user_module_permission['category-activity-read']"
+                                index="/category-activity">
+                            <i class="el-icon-plus"></i>
+                            <span slot="title">活动分类</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
                 <!--<el-submenu-->
-                        <!--v-if="user_module_permission['live-read']"-->
-                        <!--index="/live">-->
-                    <!--<template slot="title">-->
-                        <!--<i class="el-icon-news"></i>-->
-                        <!--<span slot="title">快讯管理</span>-->
-                    <!--</template>-->
-                    <!--<el-menu-item-group>-->
-                        <!--<el-menu-item-->
-                                <!--v-if="user_module_permission['live-read']"-->
-                                <!--index="/live">-->
-                            <!--<i class="el-icon-news"></i>-->
-                            <!--<span slot="title">快讯列表</span>-->
-                        <!--</el-menu-item>-->
-                        <!--<el-menu-item-->
-                                <!--v-if="user_module_permission['live-add-read']"-->
-                                <!--index="/live-add">-->
-                            <!--<i class="el-icon-plus"></i>-->
-                            <!--<span slot="title">快讯添加</span>-->
-                        <!--</el-menu-item>-->
-                    <!--</el-menu-item-group>-->
+                <!--v-if="user_module_permission['live-read']"-->
+                <!--index="/live">-->
+                <!--<template slot="title">-->
+                <!--<i class="el-icon-news"></i>-->
+                <!--<span slot="title">快讯管理</span>-->
+                <!--</template>-->
+                <!--<el-menu-item-group>-->
+                <!--<el-menu-item-->
+                <!--v-if="user_module_permission['live-read']"-->
+                <!--index="/live">-->
+                <!--<i class="el-icon-news"></i>-->
+                <!--<span slot="title">快讯列表</span>-->
+                <!--</el-menu-item>-->
+                <!--<el-menu-item-->
+                <!--v-if="user_module_permission['live-add-read']"-->
+                <!--index="/live-add">-->
+                <!--<i class="el-icon-plus"></i>-->
+                <!--<span slot="title">快讯添加</span>-->
+                <!--</el-menu-item>-->
+                <!--</el-menu-item-group>-->
                 <!--</el-submenu>-->
                 <el-submenu
                         v-if="user_module_permission['job-read']"
@@ -247,6 +262,7 @@
     import Vue from 'vue'
     import {mapState, mapActions} from 'vuex'
     import {Popover} from "element-ui"
+
     Vue.use(Popover)
 
     export default {
@@ -259,8 +275,8 @@
         },
         computed: {
             ...mapState({
-                'login_user': state=>state.user.login_user,
-                'user_module_permission': state=>state.user.user_module_permission
+                'login_user': state => state.user.login_user,
+                'user_module_permission': state => state.user.user_module_permission
             })
         },
         methods: {
@@ -270,15 +286,16 @@
         },
         beforeCreate() {
             const userid = getCookie('userid'), nickname = getCookie('nickname');
-            if(userid && nickname) {
+            if (userid && nickname) {
                 this.$store.commit('user/set_login_user', {
                     user_id: userid,
                     nick_name: nickname
                 })
 
                 this.$store.dispatch('user/get_user_module_permission')
-                    .then(result=> {})
-                    .catch(error=> {
+                    .then(result => {
+                    })
+                    .catch(error => {
                         this.$message.error(error)
                     })
             }
@@ -293,6 +310,7 @@
     .header-row {
         line-height: 38px;
     }
+
     .user-panel {
         text-align: center;
     }
