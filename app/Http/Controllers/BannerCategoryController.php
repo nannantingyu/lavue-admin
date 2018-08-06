@@ -71,7 +71,7 @@ class BannerCategoryController extends Controller
      */
     public function getList(Request $request)
     {
-        return ['success' => 0, 'data' => BannerCategory::orderBy('id', 'desc')->get()];
+        return ['success' => 1, 'data' => BannerCategory::orderBy('id', 'desc')->get()];
     }
 
     /**
