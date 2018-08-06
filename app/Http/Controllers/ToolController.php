@@ -57,6 +57,7 @@ class ToolController extends Controller
             'tag' => $request->input('tag'),
             'sequence' => $request->input('sequence'),
             'state' => $request->input('state'),
+            'url' => $request->input('url'),
         ];
 
         $id = $request->input('id');
