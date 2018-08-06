@@ -4,14 +4,11 @@ const state = {
     columns: {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
-        description: {title: "描述", show: true},
-        image: {title: "二维码", show: true},
-        tag: {title: "标签", show: true},
-        url: {title: "url", show: true},
+        pid: {title: "PID", show: true},
         sequence:{title: "顺序", show: true},
         state:{title: "状态", show: true},
-        created_at: {title: "创建时间", show: false},
-        updated_at: {title: "更新时间", show: false}
+        created_at: {title: "创建时间", show: true},
+        updated_at: {title: "更新时间", show: true}
     },
     lists: [],
     lists_all: [],
@@ -60,20 +57,9 @@ const mutations = {
 };
 
 const actions = {
-    // set_feed_state({commit}, row)  {
-    //     return new Promise((resolve, reject)=> {
-    //         axios.post('/api/tool/add', row)
-    //             .then(function(result) {
-    //                 if(result.data.success === 1){
-    //                     resolve()
-    //                 }
-    //                 else reject()
-    //             });
-    //     })
-    // },
     add_update:({commit, state},form) => {
         return new Promise((resolve, reject) => {
-            axios.post('/api/tool/add',form).then(result=> {
+            axios.post('/api/banner/addCategory',form).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
                     resolve(data);

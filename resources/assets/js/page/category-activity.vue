@@ -37,36 +37,15 @@
                             width="50">
                     </el-table-column>
                     <el-table-column
-                            prop="title"
+                            prop="pid"
+                            :label="columns['pid']['title']"
+                            v-if="columns['pid']['show']"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            prop="name"
                             :label="columns['title']['title']"
                             v-if="columns['title']['show']"
-                            width="100">
-                    </el-table-column>
-                    <el-table-column
-                            prop="description"
-                            :label="columns['description']['title']"
-                            v-if="columns['description']['show']"
-                            width="150">
-                    </el-table-column>
-                    <el-table-column
-                            prop="image"
-                            :label="columns['image']['title']"
-                            v-if="columns['image']['show']"
-                            width="200">
-                        <template slot-scope="scope">
-                            <img width="160" :src="transfer(scope.row.image)" :alt="scope.row.image">
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                            prop="tag"
-                            :label="columns['tag']['title']"
-                            v-if="columns['tag']['show']"
-                            width="100">
-                    </el-table-column>
-                    <el-table-column
-                            prop="url"
-                            :label="columns['url']['title']"
-                            v-if="columns['url']['show']"
                             width="100">
                     </el-table-column>
                     <el-table-column
@@ -119,32 +98,11 @@
                         <el-form-item label="ID" :label-width="formLabelWidth">
                             <el-input v-model="form.id" disabled="disabled" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
-                            <el-input v-model="form.title" auto-complete="off"></el-input>
+                        <el-form-item label="PID" :label-width="formLabelWidth" prop="description">
+                            <el-input v-model="form.pid" auto-complete="off" ></el-input>
                         </el-form-item>
-                        <el-form-item label="描述" :label-width="formLabelWidth" prop="description">
-                            <el-input v-model="form.description" auto-complete="off" type="textarea"
-                                      :rows="3"></el-input>
-                        </el-form-item>
-                        <el-form-item label="图片" :label-width="formLabelWidth" prop="image">
-                            <el-upload
-                                    class="avatar-uploader"
-                                    :limit="1"
-                                    action="/uploads_image"
-                                    name="fileDataFileName"
-                                    list-type="picture-card"
-                                    :headers="headers"
-                                    :file-list="fileimgs"
-                                    :on-success="handleSuccess"
-                                    :on-remove="handleRemove">
-                                <i class="el-icon-plus"></i>
-                            </el-upload>
-                        </el-form-item>
-                        <el-form-item label="标签" :label-width="formLabelWidth" prop="tag">
-                            <el-input v-model="form.tag" auto-complete="off"></el-input>
-                        </el-form-item>
-                        <el-form-item label="url" :label-width="formLabelWidth" prop="url">
-                            <el-input v-model="form.url" auto-complete="off"></el-input>
+                        <el-form-item label="标题" :label-width="formLabelWidth" prop="name">
+                            <el-input v-model="form.name" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="顺序" :label-width="formLabelWidth" prop="sequence">
                             <el-input v-model="form.sequence" auto-complete="off"></el-input>
@@ -197,23 +155,13 @@
                 dialogFormVisible: false,
                 form: {},
                 rules: {
-                    image: [
-                        { required: true, message: '请上传图片', trigger: 'blur' }
-                    ],
-                    title: [
+                    name: [
                         { required: true, message: '请输入标题', trigger: 'blur' },
                         { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
                     ],
-                    description: [
-                        { required: true, message: '请输入描述', trigger: 'blur' },
-                    ],
-                    title: [
-                        { required: true, message: '请输入标题', trigger: 'blur' },
-                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
-                    ],
-                    tag: [
-                        { required: true, message: '请输入标签', trigger: 'blur' },
-                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
+                    pid:[
+                        { required: true, message: '请输入PID', trigger: 'blur' },
+                        { validator: check_integer_factory('PID为数字类型'), trigger: 'blur' }
                     ],
                     sequence: [
                         { required: true, message: '请输入顺序', trigger: 'blur' },
@@ -231,14 +179,7 @@
                 'user_module_permission': state=>state.user.user_module_permission,
                 'current_page':state=>state.category_activity.currentPage,
                 'total':state=>state.category_activity.total
-            }),
-            fileimgs:function() {
-                let imgs = [];
-                if(this.form.image){
-                    imgs.push({url: 'http://images.jujin8.com'+this.form.image.replace('/uploads/crawler', '/uploads')});
-                }
-                return imgs;
-            }
+            })
         },
         methods:{
             ...mapMutations({
@@ -258,8 +199,6 @@
             },
             //编辑
             edit_row:function (row) {
-                // console.log(this.$refs['form'],"LLLLL")
-                // this.$refs['form'].resetFields();
                 let obj=deepCopy(row);
                 this.form=obj;
                 console.log(this.form);
@@ -317,25 +256,13 @@
                 }
                 this.filter_data(param);
 
-            },
-            //图片
-            transfer: function(img) {
-                return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
-            },
-            handleSuccess: function(response, file, fileList) {
-                if(response.success) {
-                    this.form.image=response.file_path
-                }
-            },
-            handleRemove: function() {
-                this.form.image=null
-            },
+            }
         },
         mounted(){
             //获取列表
             var _this=this;
             this.get_lists().then(result=> {
-                _this.$message.success('成功获取投资工具列表！');
+                _this.$message.success('成功获取活动分类列表！');
             }).catch((ErrMsg)=>{
                 _this.$message.error('获取数据失败，请刷新此页！');
                 //获取数据失败时的处理逻辑
