@@ -92,7 +92,7 @@ class BannerController extends Controller
      */
     public function getList(Request $request)
     {
-        return ['success' => 0, 'data' => Banner::orderBy('id', 'desc')->get()];
+        return ['success' => 1, 'data' => Banner::orderBy('id', 'desc')->get()];
     }
 
     /**
