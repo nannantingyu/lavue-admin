@@ -164,6 +164,12 @@
                     <i class="el-icon-question"></i>
                     <span slot="title">意见列表</span>
                 </el-menu-item>
+                <el-menu-item
+                        v-if="user_module_permission['activity-read']"
+                        index="/activity">
+                    <i class="el-icon-view"></i>
+                    <span slot="title">活动管理</span>
+                </el-menu-item>
 
                 <!--<el-submenu-->
                         <!--v-if="user_module_permission['live-read']"-->

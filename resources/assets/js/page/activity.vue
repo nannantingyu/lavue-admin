@@ -2,8 +2,8 @@
     <div>
         <el-container>
             <el-header>
-                <h5>jujin8投资工具管理</h5>
-                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加工具</el-button>
+                <h5>jujin8活动管理</h5>
+                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加活动</el-button>
                 <el-radio-group v-model="radio" style="float: right;padding-bottom: 10px" @change="filterData">
                     <el-radio-button label="全部"></el-radio-button>
                     <el-radio-button label="已上线"></el-radio-button>
@@ -37,16 +37,16 @@
                             width="50">
                     </el-table-column>
                     <el-table-column
+                            prop="cid"
+                            :label="columns['cid']['title']"
+                            v-if="columns['cid']['show']"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
                             prop="title"
                             :label="columns['title']['title']"
                             v-if="columns['title']['show']"
                             width="100">
-                    </el-table-column>
-                    <el-table-column
-                            prop="description"
-                            :label="columns['description']['title']"
-                            v-if="columns['description']['show']"
-                            width="150">
                     </el-table-column>
                     <el-table-column
                             prop="image"
@@ -59,14 +59,14 @@
                     </el-table-column>
                     <el-table-column
                             prop="tag"
-                            :label="columns['tag']['title']"
-                            v-if="columns['tag']['show']"
+                            :label="columns['page']['title']"
+                            v-if="columns['page']['show']"
                             width="100">
                     </el-table-column>
                     <el-table-column
-                            prop="url"
-                            :label="columns['url']['title']"
-                            v-if="columns['url']['show']"
+                            prop="link"
+                            :label="columns['link']['title']"
+                            v-if="columns['link']['show']"
                             width="100">
                     </el-table-column>
                     <el-table-column
@@ -85,6 +85,11 @@
                             :label="columns['sequence']['title']"
                             v-if="columns['sequence']['show']"
                             width="100">
+                    </el-table-column>
+                    <el-table-column
+                            prop="expire_time"
+                            :label="columns['expire_time']['title']"
+                            v-if="columns['expire_time']['show']">
                     </el-table-column>
                     <el-table-column
                             prop="created_at"
@@ -187,7 +192,7 @@
     Vue.use(Switch);
     Vue.use(Upload);
     export default {
-        name: "tools",
+        name: "activity",
         data() {
             return {
                 loading: false,
@@ -225,11 +230,11 @@
         computed: {
             ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
-                'columns': state=>state.tools.columns,
-                'lists': state=>state.tools.lists,
+                'columns': state=>state.activity.columns,
+                'lists': state=>state.activity.lists,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'current_page':state=>state.tools.currentPage,
-                'total':state=>state.tools.total
+                'current_page':state=>state.activity.currentPage,
+                'total':state=>state.activity.total
             }),
             fileimgs:function() {
                 let imgs = [];
@@ -241,13 +246,13 @@
         },
         methods:{
             ...mapMutations({
-                'set_state':'tools/set_state',
-                'set_feed_state': "tools/set_feed_state",
-                'filter_data':"tools/filter_data"
+                'set_state':'activity/set_state',
+                'set_feed_state': "activity/set_feed_state",
+                'filter_data':"activity/filter_data"
             }),
             ...mapActions({
-                'get_lists': 'tools/get_lists',
-                'add_update':'tools/add_update'
+                'get_lists': 'activity/get_lists',
+                'add_update':'activity/add_update'
             }),
 
             //添加
@@ -257,8 +262,6 @@
             },
             //编辑
             edit_row:function (row) {
-                // console.log(this.$refs['form'],"LLLLL")
-                // this.$refs['form'].resetFields();
                 let obj=deepCopy(row);
                 this.form=obj;
                 console.log(this.form);
