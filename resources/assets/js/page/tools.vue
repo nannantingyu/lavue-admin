@@ -126,7 +126,7 @@
                             <el-input v-model="form.description" auto-complete="off" type="textarea"
                                       :rows="3"></el-input>
                         </el-form-item>
-                        <el-form-item label="二维码" :label-width="formLabelWidth" prop="image">
+                        <el-form-item label="图片" :label-width="formLabelWidth" prop="image">
                             <el-upload
                                     class="avatar-uploader"
                                     :limit="1"
@@ -186,6 +186,7 @@
     Vue.use(Option);
     Vue.use(Switch);
     Vue.use(Upload);
+    Vue.use(Popover);
     export default {
         name: "tools",
         data() {

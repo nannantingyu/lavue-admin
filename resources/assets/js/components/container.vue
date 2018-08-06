@@ -167,7 +167,7 @@
                 <el-menu-item
                         v-if="user_module_permission['activity-read']"
                         index="/activity">
-                    <i class="el-icon-view"></i>
+                    <i class="el-icon-time"></i>
                     <span slot="title">活动管理</span>
                 </el-menu-item>
 

@@ -3,14 +3,14 @@ import $ from 'jquery'
 const state = {
     columns: {
         id: {title: "ID", show: true},
-        cid: {title: "CID", show: true},
+        cid: {title: "CID(分类ID)", show: true},
         title: {title: "标题", show: true},
         image: {title: "图片", show: true},
         page: {title: "page", show: true},
         link: {title: "链接", show: true},
         sequence:{title: "顺序", show: true},
         state:{title: "状态", show: true},
-        hits: {title: "点击量", show: true},
+        hits: {title: "点击量", show: false},
         expire_time: {title: "过期时间", show: true},
         created_at: {title: "创建时间", show: false},
         updated_at: {title: "更新时间", show: false}
@@ -63,8 +63,9 @@ const mutations = {
 
 const actions = {
     add_update:({commit, state},form) => {
+        console.log(form,"jjjjj")
         return new Promise((resolve, reject) => {
-            axios.post('/api/tool/add',form).then(result=> {
+            axios.post('/api/banner/add',form).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
                     resolve(data);
