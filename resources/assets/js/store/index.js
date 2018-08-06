@@ -15,6 +15,7 @@ import template_generate from './modules/template'
 import feedback from './modules/feedback'
 import menu from './modules/menu'
 import tools from './modules/tools'
+import category_map from './modules/category_map'
 Vue.use(Vuex)
 import actions from "./actions"
 import mutations from "./mutations"
@@ -36,6 +37,7 @@ export default new Vuex.Store({
         feedback,
         menu,
         tools,
+        category_map,
         template: template_generate
     },
     state: {

@@ -30,6 +30,12 @@ Route::get('/categoryInfo', 'CategoryController@info');
 Route::post('/setCategoryState', 'CategoryController@setCategoryState');
 Route::post('/addCategory', 'CategoryController@addCategory');
 
+// 爬虫分类转化
+Route::get('/categoryMapLists', 'CategoryMapController@lists');
+Route::get('/categoryMapInfo', 'CategoryMapController@info');
+Route::post('/setCategoryMapState', 'CategoryMapController@setCategoryMapState');
+Route::post('/addCategoryMap', 'CategoryMapController@addCategoryMap');
+
 // 系统配置
 Route::get('/configLists', 'ConfigController@lists');
 Route::get('/configInfo', 'ConfigController@info');

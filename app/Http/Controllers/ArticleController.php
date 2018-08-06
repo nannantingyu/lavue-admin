@@ -191,10 +191,10 @@ class ArticleController extends Controller {
 
         // 生成静态页
         if($type == 'update') {
-            $this->template_updater->delete_page('read/'.$id);
+            $this->template_updater->update_page('read/'.$id);
         }
         elseif($type == 'delete') {
-            $this->template_updater->update_page('read/'.$id);
+            $this->template_updater->delete_page('read/'.$id);
         }
 
         $article = Article::with('categories')
@@ -233,7 +233,7 @@ class ArticleController extends Controller {
             'hits.integer' => '点击量不正确',
             'source_type.required' => '原创类型不能为空',
             'publish_time.require' => '发布日期不能为空',
-            'publish_time.data' => '发布时间不正确'
+            'publish_time.date' => '发布时间不正确'
         ];
         $rules = [
             'title' => 'required|max:32|min:2',

@@ -1,6 +1,6 @@
 <?php
 /**
- * 财经日历
+ * 财经解读
  * User: yangji
  * Date: 2018/7/30
  * Time: 上午11:11
@@ -16,9 +16,8 @@ use App\Models\EconomicHoliday;
  * 财经假日
  * @package App\Http\Controllers
  */
-class CalendarHolidayController extends Controller
+class CalendarJieDuController extends Controller
 {
-
     protected function validator(array $data)
     {
         $messages = [
