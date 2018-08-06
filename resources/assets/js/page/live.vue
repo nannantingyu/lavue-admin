@@ -23,6 +23,15 @@
                     </ul>
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
+                <el-date-picker
+                        v-model="dateRange"
+                        type="daterange"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd"
+                        @change="filterByDate"
+                >
+                </el-date-picker>
             </el-header>
             <el-main>
                 <el-table
@@ -63,7 +72,9 @@
                             prop="importance"
                             :label="columns['importance']['title']"
                             v-if="columns['importance']['show']"
-                            width="100">
+                            width="100"
+                            sortable
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="source_site"
@@ -127,7 +138,19 @@
                     </el-table-column>
 
                 </el-table>
-                <el-dialog title="编辑投资工具" :visible.sync="dialogFormVisible">
+                <el-pagination
+                        background
+                        @current-change="page_change"
+                        @size-change="size_change"
+                        :current-page="current_page"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total"
+                        style="margin-top: 40px"
+                        v-if="pageshow"
+
+                >
+                </el-pagination>
+                <el-dialog title="编辑快讯信息" :visible.sync="dialogFormVisible">
                     <el-form :model="form" :rules="rules" ref="form">
                         <el-form-item label="ID" :label-width="formLabelWidth">
                             <el-input v-model="form.id" disabled="disabled" auto-complete="off"></el-input>
@@ -136,8 +159,11 @@
                             <el-input v-model="form.title" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="描述" :label-width="formLabelWidth" prop="description">
-                            <el-input v-model="form.description" auto-complete="off" type="textarea"
-                                      :rows="3"></el-input>
+                            <el-input v-model="form.description" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="内容" :label-width="formLabelWidth" prop="body">
+                            <el-input v-model="form.body" auto-complete="off" type="textarea"
+                                      :rows="4"></el-input>
                         </el-form-item>
                         <el-form-item label="图片" :label-width="formLabelWidth" prop="image">
                             <el-upload
@@ -153,14 +179,29 @@
                                 <i class="el-icon-plus"></i>
                             </el-upload>
                         </el-form-item>
-                        <el-form-item label="标签" :label-width="formLabelWidth" prop="tag">
-                            <el-input v-model="form.tag" auto-complete="off"></el-input>
+                        <el-form-item label="重要性" :label-width="formLabelWidth" prop="importance">
+                            <template>
+                                <el-radio v-model="form.importance" label="0">0</el-radio>
+                                <el-radio v-model="form.importance" label="1">1</el-radio>
+                            </template>
                         </el-form-item>
-                        <el-form-item label="url" :label-width="formLabelWidth" prop="url">
-                            <el-input v-model="form.url" auto-complete="off"></el-input>
+                        <el-form-item label="源站" :label-width="formLabelWidth" prop="source_site">
+                            <el-input v-model="form.source_site" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="顺序" :label-width="formLabelWidth" prop="sequence">
-                            <el-input v-model="form.sequence" auto-complete="off"></el-input>
+                        <el-form-item label="源站ID" :label-width="formLabelWidth" prop="source_id">
+                            <el-input v-model="form.source_id" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="分类" :label-width="formLabelWidth" prop="type">
+                            <el-input v-model="form.type" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="发布时间" :label-width="formLabelWidth" prop="publish_time">
+                            <el-date-picker
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    v-model="form.publish_time"
+                                    type="datetime"
+                                    placeholder="选择日期时间"
+                            >
+                            </el-date-picker>
                         </el-form-item>
                         <el-form-item label="是否显示" :label-width="formLabelWidth">
                             <el-switch
@@ -200,38 +241,38 @@
     Vue.use(Switch);
     Vue.use(Upload);
     Vue.use(Popover);
+    Vue.use(DatePicker);
     export default {
         name: "live",
         data() {
             return {
+                pageshow:true,
+                dateRange:"",
                 loading: false,
                 radio:"全部",
                 //编辑
                 dialogFormVisible: false,
                 form: {},
                 rules: {
-                    image: [
-                        { required: true, message: '请上传图片', trigger: 'blur' }
-                    ],
                     title: [
                         { required: true, message: '请输入标题', trigger: 'blur' },
-                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
                     ],
-                    description: [
-                        { required: true, message: '请输入描述', trigger: 'blur' },
+                    body: [
+                        { required: true, message: '请输入内容', trigger: 'blur' },
                     ],
-                    title: [
-                        { required: true, message: '请输入标题', trigger: 'blur' },
-                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
+                    importance: [
+                        { required: true, message: '重要性不能为空', trigger: 'blur' },
                     ],
-                    tag: [
-                        { required: true, message: '请输入标签', trigger: 'blur' },
-                        { min: 2, max: 32, message: '标题长度在 3 到 64 个字符', trigger: 'blur' }
+                    source_site: [
+                        { required: true, message: '请输入源网站', trigger: 'blur' },
                     ],
-                    sequence: [
-                        { required: true, message: '请输入顺序', trigger: 'blur' },
-                        { validator: check_integer_factory('顺序为数字类型'), trigger: 'blur' }
-                    ]
+                    source_id: [
+                        { required: true, message: '请输入source_id', trigger: 'blur' },
+                        { validator: check_integer_factory('source_id为数字类型'), trigger: 'blur' }
+                    ],
+                    publish_time: [
+                        { required: true, message: '请输入publish_time', trigger: 'blur' }
+                    ],
                 }
             }
         },
@@ -255,13 +296,16 @@
         },
         methods:{
             ...mapMutations({
+                'page_changeEvent': "live/set_current_page",
+                'size_changeEvent': "live/set_page_size",
                 'set_state':'live/set_state',
-                'set_feed_state': "live/set_feed_state",
-                'filter_data':"live/filter_data"
+                'filter_data':"live/filter_data",
+                'set_date_range':"live/set_date_range"
             }),
             ...mapActions({
                 'get_lists': 'live/get_lists',
-                'add_update':'live/add_update'
+                'add_update':'live/add_update',
+                'get_lists_date':"live/get_lists_date"
             }),
 
             //添加
@@ -275,7 +319,6 @@
                 // this.$refs['form'].resetFields();
                 let obj=deepCopy(row);
                 this.form=obj;
-                console.log(this.form);
                 this.dialogFormVisible = true;
             },
             submitFn:function(obj){
@@ -343,6 +386,41 @@
             handleRemove: function() {
                 this.form.image=null
             },
+
+            //下一页上一页
+            page_change:function (state) {
+                let _this=this;
+                this.loading=true;
+                this.page_changeEvent(state);
+                this.get_lists().then(result=> {
+                    _this.loading=false;
+                });
+            },
+            //分页size
+            size_change:function (state) {
+                let _this=this;
+                this.loading=true;
+                this.size_changeEvent(state);
+                this.get_lists().then(result=> {
+                    _this.loading=false;
+                });
+            },
+            //日期筛选
+            filterByDate:function() {
+                let _this=this;
+                if(this.dateRange&&this.dateRange.length>0){
+                    this.loading=true;
+                    this.pageshow=false;
+                    this.set_date_range(this.dateRange);
+                    this.get_lists_date().then(result=>{
+                        _this.loading=false;
+                    });
+                }
+                else{
+                    this.get_lists();
+                    this.pageshow=true;
+                }
+             }
         },
         mounted(){
             //获取列表

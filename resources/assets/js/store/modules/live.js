@@ -12,7 +12,7 @@ const state = {
         source_id:{title: "源站ID", show: false},
         type:{title: "分类", show: true},
         state:{title: "状态", show: true},
-        publish_time: {title: "入库时间", show: false},
+        publish_time: {title: "发布时间", show: false},
         created_at: {title: "创建时间", show: false},
         updated_at: {title: "更新时间", show: false}
     },
@@ -21,17 +21,32 @@ const state = {
     pageSize:10,
     currentPage:1,
     total:0,
-    state:-1
+    state:-1,
+    startTime:"",
+    endTime:""
 };
 
 const mutations = {
+    set_date_range: (state, arr) => {
+        state.startTime = arr[0];
+        state.endTime = arr[1];
+    },
+    set_current_page: (state, current_page) => {
+        state.currentPage = current_page;
+    },
+    set_page_size: (state, pageSize) => {
+        state.pageSize = pageSize
+    },
+    set_total: (state, total) => {
+        state.total = total;
+    },
     set_lists_all: (state, list) => {
         state.lists_all = list
     },
     set_list: (state, list) => {
         state.lists = list
     },
-    set_feed_state:(state, r)=>{
+    set_state:(state, r)=>{
         state.state = r
     },
     filter_data:(state, r)=>{
@@ -75,9 +90,45 @@ const actions = {
         })
     },
     get_lists: ({commit, state}) => {
+
         return new Promise((resolve, reject) => {
-            axios.get('/api/kuaixun/getList?type=kuaixun&startTime=2018-07-23&endTime=2018-07-27').then(result=> {
-                if(result.data.success === 0) {
+            axios.get('/api/kuaixun/pagelist', {
+                params: {
+                    type:"kuaixun",
+                    order:"publish_time",
+                    isDesc:true,
+                    page:(state.currentPage-1),
+                    pageSize:state.pageSize
+                }}).then(result=> {
+                if(result.data.success === 1) {
+                    let data = result.data.data;
+                    for(let o of data.value) {
+                        if(o.state==0){
+                            o.state=false;
+                        }
+                        else if(o.state==1){
+                            o.state=true;
+                        }
+                    }
+                    commit('set_list', data.value);
+                    commit('set_lists_all', data.value);
+                    commit('set_total', data.count);
+                    resolve(data);
+                }
+                else reject(result)
+            })
+        })
+    },
+    get_lists_date: ({commit, state}) => {
+
+        return new Promise((resolve, reject) => {
+            axios.get('/api/kuaixun/getList', {
+                params: {
+                    type:"kuaixun",
+                    startTime:state.startTime,
+                    endTime:state.endTime
+                }}).then(result=> {
+                if(result.data.success === 1) {
                     let data = result.data.data;
                     for(let o of data) {
                         if(o.state==0){
@@ -87,12 +138,12 @@ const actions = {
                             o.state=true;
                         }
                     }
-                    console.log(data);
                     commit('set_list', data);
                     commit('set_lists_all', data);
+                    console.log(data)
                     resolve(data);
                 }
-                else reject(data)
+                else reject(result)
             })
         })
     }

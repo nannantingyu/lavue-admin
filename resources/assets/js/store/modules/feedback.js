@@ -21,6 +21,9 @@ const mutations = {
     set_current_page: (state, current_page) => {
         state.currentPage = current_page;
     },
+    set_total: (state, total) => {
+        state.total = total;
+    },
     set_page_size: (state, pageSize) => {
         state.pageSize = pageSize
     },
@@ -58,7 +61,7 @@ const actions = {
                                 o.is_handling=true;
                             }
                     }
-                    state.total = data.count;
+                    commit('set_total', data.count);
                     commit('set_feedback_list', data.list);
                     resolve(data);
                 }
