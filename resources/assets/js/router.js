@@ -108,6 +108,11 @@ export default new VueRouter({
             name: "tools",
             path: '/tools',
             component: resolve =>void(require(['./page/tools.vue'], resolve))
+        },
+        {
+            name: "category-map",
+            path: '/category-map',
+            component: resolve =>void(require(['./page/category-map.vue'], resolve))
         }
     ]
 })
