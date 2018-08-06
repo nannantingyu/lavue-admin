@@ -9,8 +9,11 @@ const state = {
         area: {title: "区域", show: true},
         sequence:{title: "顺序", show: true},
         state:{title: "状态", show: true},
-        created_at: {title: "创建时间", show: true},
-        updated_at: {title: "更新时间", show: true}
+        title:{title: "title(SEO)", show: true},
+        keywords:{title: "keywords(SEO)", show: false},
+        description:{title: "description(SEO)", show: false},
+        created_at: {title: "创建时间", show: false},
+        updated_at: {title: "更新时间", show: false}
     },
     menu_lists: [],
     menu_lists_all: [],
@@ -83,7 +86,7 @@ const actions = {
                     let data = result.data.data;
                     resolve(data);
                 }
-                else reject(data)
+                else reject(result.data.msg)
             })
         })
     },
