@@ -9,6 +9,20 @@
                 <el-radio-button label="顶部导航"></el-radio-button>
                 <el-radio-button label="底部链接"></el-radio-button>
                 </el-radio-group>
+                <el-popover
+                        placement="right"
+                        width="400"
+                        trigger="click">
+                    <ul class="switch-panel">
+                        <li v-for="(i, k) in columns">
+                            <el-switch
+                                    v-model="i.show"
+                                    :active-text="i.title">
+                            </el-switch>
+                        </li>
+                    </ul>
+                    <el-button slot="reference">显示隐藏列</el-button>
+                </el-popover>
             </el-header>
             <el-main>
                 <el-table
@@ -64,6 +78,24 @@
                             width="100">
                     </el-table-column>
                     <el-table-column
+                            prop="title"
+                            :label="columns['title']['title']"
+                            v-if="columns['title']['show']"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
+                            prop="description"
+                            :label="columns['description']['title']"
+                            v-if="columns['description']['show']"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
+                            prop="keywords"
+                            :label="columns['keywords']['title']"
+                            v-if="columns['keywords']['show']"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
                             prop="created_at"
                             :label="columns['created_at']['title']"
                             v-if="columns['created_at']['show']">
@@ -75,7 +107,7 @@
                     </el-table-column>
                     <el-table-column
                             label="操作"
-                            width="250">
+                            min-width="200">
                         <template slot-scope="scope">
                             <el-button
                                     size="mini"
@@ -110,6 +142,15 @@
                         </el-form-item>
                         <el-form-item label="顺序" :label-width="formLabelWidth" prop="sequence">
                             <el-input v-model="form.sequence" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="title" :label-width="formLabelWidth" prop="title">
+                            <el-input v-model="form.title" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="description" :label-width="formLabelWidth" prop="description">
+                            <el-input v-model="form.description" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="keywords" :label-width="formLabelWidth" prop="keywords">
+                            <el-input v-model="form.keywords" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="区域" :label-width="formLabelWidth" prop="area">
                             <el-select v-model="form.area" placeholder="请选择显示区域">
@@ -181,6 +222,15 @@
                     target: [
                         { required: true, message: '请选择显示target', trigger: 'blur' }
                     ],
+                    // title: [
+                    //     { required: true, message: 'seo标题必填', trigger: 'blur' }
+                    // ],
+                    // description: [
+                    //     { required: true, message: 'description必填', trigger: 'blur' }
+                    // ],
+                    // keywords: [
+                    //     { required: true, message: 'keywords 必填', trigger: 'blur' }
+                    // ],
                 }
             }
         },
