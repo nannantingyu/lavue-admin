@@ -23,8 +23,8 @@ class MenuController extends Controller
             'area.required' => '请输入显示区域',
             'sequence.required' => '请输入排序',
             'state.required' => '是否启用',
-            'title.required' => 'seo标题必填',
-            'keywords.required' => 'seo标题必填',
+            'title.required' => 'title必填',
+            'keywords.required' => 'keywords必填',
             'description.required' => 'description必填',
         ];
 
