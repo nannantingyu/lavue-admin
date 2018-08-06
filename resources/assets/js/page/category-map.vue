@@ -83,12 +83,12 @@
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['category_map-delete']"
+                            :disabled="!user_module_permission['category-map-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['category_map-delete']"
+                            :disabled="!user_module_permission['category-map-delete']"
                             @click="editcategory_map(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
