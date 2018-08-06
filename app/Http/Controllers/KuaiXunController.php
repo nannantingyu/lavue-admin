@@ -45,7 +45,7 @@ class KuaiXunController extends Controller
         $endTime = $request->input('endTime');
         $kain = new Kuaixun();
         $list = $kain->getList($type, $startTime, $endTime);
-        return ['success' => 0, 'data' => $list];
+        return ['success' => 1, 'data' => $list];
     }
 
 
@@ -105,6 +105,7 @@ class KuaiXunController extends Controller
             'country' => $request->input('country'),
             'influnce' => $request->input('influnce'),
             'star' => $request->input('star'),
+            'status' => $request->input('state'),
         ];
 
 

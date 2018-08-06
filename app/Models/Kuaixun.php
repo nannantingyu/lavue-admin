@@ -13,7 +13,7 @@ class Kuaixun extends Model
     protected $fillable = ['title', 'description', 'keywords', 'body',
         'source_id', 'publish_time', 'importance', 'more_link',
         'image', 'type', 'former_value', 'predicted_value',
-        'published_value', 'country', 'influnce', 'star',
+        'published_value', 'country', 'influnce', 'star','status'
     ];
 
 
@@ -30,7 +30,7 @@ class Kuaixun extends Model
     {
         $qTable = " FROM jujin8_$type ";
         $orderBy = ' ORDER BY ' . $order . ' ' . ($isDesc ? 'DESC' : 'ASC') . ' ';
-        $columns = " id,title,description,body,image,source_id,publish_time,type,importance,created_at,`status`,updated_at,'$type' AS source_site ";
+        $columns = " id,title,description,body,image,source_id,publish_time,type,importance,created_at,`status` as state,updated_at,'$type' AS source_site ";
 
         $limit = ' limit ' . ($page * $pageSize) . ' , ' . $pageSize;
         $sql = "select $columns $qTable $orderBy $limit";
@@ -73,7 +73,7 @@ class Kuaixun extends Model
 
         $qTable = " FROM jujin8_$type ";
         $orderBy = ' ORDER BY ' . $order . ' ' . ($isDesc ? 'DESC' : 'ASC') . ' ';
-        $columns = " id,title,description,body,image,source_id,publish_time,type,importance,created_at,`status`,updated_at,'$type' AS source_site ";
+        $columns = " id,title,description,body,image,source_id,publish_time,type,importance,created_at,`status` as state,updated_at,'$type' AS source_site ";
         $where = " WHERE publish_time BETWEEN '$startTime' AND '$endTime' ";
         $sql = "select $columns $qTable $where $orderBy";
         $ret = DB::connection()->select($sql);
