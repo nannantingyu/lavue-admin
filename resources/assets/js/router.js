@@ -113,6 +113,11 @@ export default new VueRouter({
             name: "category-map",
             path: '/category-map',
             component: resolve =>void(require(['./page/category-map.vue'], resolve))
+        },
+        {
+            name: "activity",
+            path: '/activity',
+            component: resolve =>void(require(['./page/activity.vue'], resolve))
         }
     ]
 })

@@ -2,8 +2,8 @@
     <div>
         <el-container>
             <el-header>
-                <h5>jujin8投资工具管理</h5>
-                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加工具</el-button>
+                <h5>jujin8活动管理</h5>
+                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加活动</el-button>
                 <el-radio-group v-model="radio" style="float: right;padding-bottom: 10px" @change="filterData">
                     <el-radio-button label="全部"></el-radio-button>
                     <el-radio-button label="已上线"></el-radio-button>
@@ -37,16 +37,16 @@
                             width="50">
                     </el-table-column>
                     <el-table-column
+                            prop="cid"
+                            :label="columns['cid']['title']"
+                            v-if="columns['cid']['show']"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
                             prop="title"
                             :label="columns['title']['title']"
                             v-if="columns['title']['show']"
                             width="100">
-                    </el-table-column>
-                    <el-table-column
-                            prop="description"
-                            :label="columns['description']['title']"
-                            v-if="columns['description']['show']"
-                            width="150">
                     </el-table-column>
                     <el-table-column
                             prop="image"
@@ -58,16 +58,22 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                            prop="tag"
-                            :label="columns['tag']['title']"
-                            v-if="columns['tag']['show']"
+                            prop="page"
+                            :label="columns['page']['title']"
+                            v-if="columns['page']['show']"
                             width="100">
                     </el-table-column>
                     <el-table-column
-                            prop="url"
-                            :label="columns['url']['title']"
-                            v-if="columns['url']['show']"
+                            prop="link"
+                            :label="columns['link']['title']"
+                            v-if="columns['link']['show']"
                             width="100">
+                    </el-table-column>
+                    <el-table-column
+                            prop="hits"
+                            :label="columns['hits']['title']"
+                            v-if="columns['hits']['show']"
+                            width="50">
                     </el-table-column>
                     <el-table-column
                             prop="state"
@@ -84,7 +90,12 @@
                             prop="sequence"
                             :label="columns['sequence']['title']"
                             v-if="columns['sequence']['show']"
-                            width="100">
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            prop="expire_time"
+                            :label="columns['expire_time']['title']"
+                            v-if="columns['expire_time']['show']">
                     </el-table-column>
                     <el-table-column
                             prop="created_at"
@@ -114,17 +125,16 @@
                     </el-table-column>
 
                 </el-table>
-                <el-dialog title="编辑投资工具" :visible.sync="dialogFormVisible">
+                <el-dialog title="编辑活动" :visible.sync="dialogFormVisible">
                     <el-form :model="form" :rules="rules" ref="form">
                         <el-form-item label="ID" :label-width="formLabelWidth">
                             <el-input v-model="form.id" disabled="disabled" auto-complete="off"></el-input>
                         </el-form-item>
+                        <el-form-item label="CID(分类ID)" :label-width="formLabelWidth">
+                            <el-input v-model="form.cid" auto-complete="off"></el-input>
+                        </el-form-item>
                         <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
                             <el-input v-model="form.title" auto-complete="off"></el-input>
-                        </el-form-item>
-                        <el-form-item label="描述" :label-width="formLabelWidth" prop="description">
-                            <el-input v-model="form.description" auto-complete="off" type="textarea"
-                                      :rows="3"></el-input>
                         </el-form-item>
                         <el-form-item label="图片" :label-width="formLabelWidth" prop="image">
                             <el-upload
@@ -140,14 +150,27 @@
                                 <i class="el-icon-plus"></i>
                             </el-upload>
                         </el-form-item>
-                        <el-form-item label="标签" :label-width="formLabelWidth" prop="tag">
-                            <el-input v-model="form.tag" auto-complete="off"></el-input>
+                        <el-form-item label="page" :label-width="formLabelWidth" prop="page">
+                            <el-input v-model="form.page" auto-complete="off"
+                                      :rows="3"></el-input>
                         </el-form-item>
-                        <el-form-item label="url" :label-width="formLabelWidth" prop="url">
-                            <el-input v-model="form.url" auto-complete="off"></el-input>
+                        <el-form-item label="链接" :label-width="formLabelWidth" prop="link">
+                            <el-input v-model="form.link" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="顺序" :label-width="formLabelWidth" prop="sequence">
                             <el-input v-model="form.sequence" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="过期时间" :label-width="formLabelWidth" prop="expire_time">
+                            <el-date-picker
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    v-model="form.expire_time"
+                                    type="datetime"
+                                    placeholder="选择日期时间"
+                                    >
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="点击量" :label-width="formLabelWidth" prop="点击量">
+                            <el-input v-model="form.hits" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="是否显示" :label-width="formLabelWidth">
                             <el-switch
@@ -155,6 +178,7 @@
                             </el-switch>
                             <!--<el-input v-model="form.state" auto-complete="off"></el-input>-->
                         </el-form-item>
+
                     </el-form>
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -186,9 +210,9 @@
     Vue.use(Option);
     Vue.use(Switch);
     Vue.use(Upload);
-    Vue.use(Popover);
+    Vue.use(DatePicker);
     export default {
-        name: "tools",
+        name: "activity",
         data() {
             return {
                 loading: false,
@@ -226,11 +250,11 @@
         computed: {
             ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
-                'columns': state=>state.tools.columns,
-                'lists': state=>state.tools.lists,
+                'columns': state=>state.activity.columns,
+                'lists': state=>state.activity.lists,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'current_page':state=>state.tools.currentPage,
-                'total':state=>state.tools.total
+                'current_page':state=>state.activity.currentPage,
+                'total':state=>state.activity.total
             }),
             fileimgs:function() {
                 let imgs = [];
@@ -242,13 +266,13 @@
         },
         methods:{
             ...mapMutations({
-                'set_state':'tools/set_state',
-                'set_feed_state': "tools/set_feed_state",
-                'filter_data':"tools/filter_data"
+                'set_state':'activity/set_state',
+                'set_feed_state': "activity/set_feed_state",
+                'filter_data':"activity/filter_data"
             }),
             ...mapActions({
-                'get_lists': 'tools/get_lists',
-                'add_update':'tools/add_update'
+                'get_lists': 'activity/get_lists',
+                'add_update':'activity/add_update'
             }),
 
             //添加
@@ -258,11 +282,8 @@
             },
             //编辑
             edit_row:function (row) {
-                // console.log(this.$refs['form'],"LLLLL")
-                // this.$refs['form'].resetFields();
                 let obj=deepCopy(row);
                 this.form=obj;
-                console.log(this.form);
                 this.dialogFormVisible = true;
             },
             submitFn:function(obj){
@@ -329,13 +350,13 @@
             },
             handleRemove: function() {
                 this.form.image=null
-            },
+            }
         },
         mounted(){
             //获取列表
             var _this=this;
             this.get_lists().then(result=> {
-                _this.$message.success('成功获取投资工具列表！');
+                _this.$message.success('成功获取活动列表！');
             }).catch((ErrMsg)=>{
                 _this.$message.error('获取数据失败，请刷新此页！');
                 //获取数据失败时的处理逻辑
