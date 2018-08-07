@@ -101,9 +101,16 @@
                             width="100">
                         <template slot-scope="scope">
                             <el-switch v-model="scope.row.state"
-                                       :disabled="!user_module_permission['feedback-delete']"
+                                       :disabled="!user_module_permission['live-delete']"
                                        @change="changeState(scope.row,'switch')"></el-switch>
                         </template>
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="description"
+                            :label="columns['description']['title']"
+                            v-if="columns['description']['show']"
+                            width="100">
                     </el-table-column>
                     <el-table-column
                             prop="publish_time"
@@ -127,12 +134,12 @@
                             <el-button
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
-                                    :disabled="!user_module_permission['hot-banner-delete']"
+                                    :disabled="!user_module_permission['live-delete']"
                                     @click="changeState(scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                             <el-button
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
-                                    :disabled="!user_module_permission['hot-banner-delete']"
+                                    :disabled="!user_module_permission['live-delete']"
                                     @click="edit_row(scope.row)">编辑</el-button>
                         </template>
                     </el-table-column>

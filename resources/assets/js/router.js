@@ -119,11 +119,17 @@ export default new VueRouter({
             path: '/activity',
             component: resolve =>void(require(['./page/activity.vue'], resolve))
         },
+
         {
             name: "category-activity",
             path: '/category-activity',
             component: resolve =>void(require(['./page/category-activity.vue'], resolve))
-        }
+        },
+        {
+            name: "article-filter",
+            path: '/article-filter',
+            component: resolve =>void(require(['./page/article-filter.vue'], resolve))
+        },
 
     ]
 })
