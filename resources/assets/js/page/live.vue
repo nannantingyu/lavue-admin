@@ -88,12 +88,12 @@
                             v-if="columns['source_id']['show']"
                             width="100">
                     </el-table-column>
-                    <el-table-column
-                            prop="type"
-                            :label="columns['type']['title']"
-                            v-if="columns['type']['show']"
-                            width="100">
-                    </el-table-column>
+                    <!--<el-table-column-->
+                            <!--prop="type"-->
+                            <!--:label="columns['type']['title']"-->
+                            <!--v-if="columns['type']['show']"-->
+                            <!--width="100">-->
+                    <!--</el-table-column>-->
                     <el-table-column
                             prop="state"
                             :label="columns['state']['title']"
@@ -191,9 +191,9 @@
                         <el-form-item label="源站ID" :label-width="formLabelWidth" prop="source_id">
                             <el-input v-model="form.source_id" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="分类" :label-width="formLabelWidth" prop="type">
-                            <el-input v-model="form.type" auto-complete="off"></el-input>
-                        </el-form-item>
+                        <!--<el-form-item label="分类" :label-width="formLabelWidth" prop="type">-->
+                            <!--<el-input v-model="form.type" auto-complete="off"></el-input>-->
+                        <!--</el-form-item>-->
                         <el-form-item label="发布时间" :label-width="formLabelWidth" prop="publish_time">
                             <el-date-picker
                                     value-format="yyyy-MM-dd HH:mm:ss"
@@ -268,7 +268,6 @@
                     ],
                     source_id: [
                         { required: true, message: '请输入source_id', trigger: 'blur' },
-                        { validator: check_integer_factory('source_id为数字类型'), trigger: 'blur' }
                     ],
                     publish_time: [
                         { required: true, message: '请输入publish_time', trigger: 'blur' }
