@@ -27,9 +27,10 @@ class KuaiXunController extends Controller
         $page = $request->input('page');
         $order = $request->input('order');
         $isDesc = $request->input('isDesc');
+        $state = $request->input('state');
 
         $kain = new Kuaixun();
-        $value = $kain->getPageList($type, $page, $pageSize, $order, $isDesc);
+        $value = $kain->getPageList($type, $page, $pageSize,$state, $order, $isDesc);
         return ['success' => 0, 'data' => $value];
     }
 

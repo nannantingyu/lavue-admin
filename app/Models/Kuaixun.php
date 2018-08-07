@@ -13,7 +13,7 @@ class Kuaixun extends Model
     protected $fillable = ['title', 'description', 'keywords', 'body',
         'source_id', 'publish_time', 'importance', 'more_link',
         'image', 'type', 'former_value', 'predicted_value',
-        'published_value', 'country', 'influnce', 'star','status'
+        'published_value', 'country', 'influnce', 'star', 'status'
     ];
 
 
@@ -26,14 +26,22 @@ class Kuaixun extends Model
      * @param bool $isDesc 是否正序 还是倒叙
      * @return array
      */
-    public function getPageList($type = 'kuaixun', $page = 0, $pageSize = 10, $order = 'publish_time', $isDesc = true)
+    public function getPageList($type = 'kuaixun', $page = 0, $pageSize = 10, $state, $order = 'publish_time', $isDesc = true)
     {
         $qTable = " FROM jujin8_$type ";
         $orderBy = ' ORDER BY ' . $order . ' ' . ($isDesc ? 'DESC' : 'ASC') . ' ';
         $columns = " id,title,description,body,image,source_id,publish_time,type,importance,created_at,`status` as state,updated_at,'$type' AS source_site ";
+        $where = ' ';
+        if (!is_null($state)) {
+            if ($state == 0) {
+                $where = ' status = 0 ';
+            } else {
+                $where = ' status = 1 ';
+            }
+        }
 
         $limit = ' limit ' . ($page * $pageSize) . ' , ' . $pageSize;
-        $sql = "select $columns $qTable $orderBy $limit";
+        $sql = "select $columns $qTable $where $orderBy $limit";
         $ret = DB::connection()->select($sql);
 
         $count = DB::connection()->selectOne("select count(id) AS count $qTable");
@@ -44,7 +52,6 @@ class Kuaixun extends Model
             'page' => $page,
             'pageSize' => $pageSize
         ];
-        return $ret;
     }
 
 
