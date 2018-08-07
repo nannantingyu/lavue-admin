@@ -21,7 +21,7 @@ const state = {
     pageSize:10,
     currentPage:1,
     total:0,
-    state:-1,
+    state:"",
     startTime:"",
     endTime:""
 };
@@ -98,7 +98,8 @@ const actions = {
                     order:"publish_time",
                     isDesc:true,
                     page:(state.currentPage-1),
-                    pageSize:state.pageSize
+                    pageSize:state.pageSize,
+                    state:state.state
                 }}).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;

@@ -324,14 +324,14 @@
             submitFn:function(obj){
                 this.add_update(obj).then(result=>{
                     this.$message.success('更新成功！');
-                    this.get_lists().then(result=> {
+                    // this.get_lists().then(result=> {
                         this.filterData(this.radio);
                         this.$message.success('已更新列表！');
-                    }).catch((ErrMsg)=>{
-                        console.log(ErrMsg);
-                        this.$message.error('刷新数据失败，请刷新此页！');
-                        //获取数据失败时的处理逻辑
-                    })
+                    // }).catch((ErrMsg)=>{
+                    //     console.log(ErrMsg);
+                    //     this.$message.error('刷新数据失败，请刷新此页！');
+                    //     //获取数据失败时的处理逻辑
+                    // })
 
                 });
             },
@@ -364,14 +364,19 @@
             },
             //筛选处理未处理
             filterData:function (state) {
-                let _this=this;
                 let param="";
                 switch (state){
-                    case "全部":param=0;break;
+                    case "全部":param=-1;break;
                     case "已上线":param=1;break;
-                    case "已下线":param=2;break;
+                    case "已下线":param=0;break;
                 }
-                this.filter_data(param);
+                //清空选择状态
+                this.dateRange="";
+                this.page_changeEvent(1);
+                this.pageshow=true;
+
+                this.set_state(param);
+                this.get_lists();
 
             },
             //图片
