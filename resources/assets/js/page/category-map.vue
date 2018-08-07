@@ -45,10 +45,12 @@
                     v-if="columns['source_category']['show']" width="200">
             </el-table-column>
             <el-table-column
-                    prop="target"
                     :label="columns['target']['title']"
                     v-if="columns['target']['show']"
                     width="*">
+                <template slot-scope="scope">
+                    {{ get_catname(scope.row.target) }}
+                </template>
             </el-table-column>
             <el-table-column
                 prop="source_site"
@@ -250,6 +252,11 @@
                         });
                     else _this.$message.error('请填写完整的信息！');
                 });
+            },
+            get_catname: function(id) {
+                return this.category_list.filter(x=> {
+                    x.id = id;
+                })
             }
         },
         mounted() {
