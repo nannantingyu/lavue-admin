@@ -76,7 +76,7 @@
                             width="100">
                         <template slot-scope="scope">
                             <el-switch v-model="scope.row.state"
-                                       :disabled="!user_module_permission['feedback-delete']"
+                                       :disabled="!user_module_permission['tools-delete']"
                                        @change="changeState(scope.row,'switch')"></el-switch>
                         </template>
                     </el-table-column>
@@ -103,12 +103,12 @@
                             <el-button
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
-                                    :disabled="!user_module_permission['hot-banner-delete']"
+                                    :disabled="!user_module_permission['tools-delete']"
                                     @click="changeState(scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                             <el-button
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
-                                    :disabled="!user_module_permission['hot-banner-delete']"
+                                    :disabled="!user_module_permission['tools-delete']"
                                     @click="edit_row(scope.row)">编辑</el-button>
                         </template>
                     </el-table-column>
@@ -243,7 +243,6 @@
         methods:{
             ...mapMutations({
                 'set_state':'tools/set_state',
-                'set_feed_state': "tools/set_feed_state",
                 'filter_data':"tools/filter_data"
             }),
             ...mapActions({
