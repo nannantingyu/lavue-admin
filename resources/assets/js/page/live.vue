@@ -88,12 +88,12 @@
                             v-if="columns['source_id']['show']"
                             width="100">
                     </el-table-column>
-                    <el-table-column
-                            prop="type"
-                            :label="columns['type']['title']"
-                            v-if="columns['type']['show']"
-                            width="100">
-                    </el-table-column>
+                    <!--<el-table-column-->
+                            <!--prop="type"-->
+                            <!--:label="columns['type']['title']"-->
+                            <!--v-if="columns['type']['show']"-->
+                            <!--width="100">-->
+                    <!--</el-table-column>-->
                     <el-table-column
                             prop="state"
                             :label="columns['state']['title']"
@@ -191,9 +191,9 @@
                         <el-form-item label="源站ID" :label-width="formLabelWidth" prop="source_id">
                             <el-input v-model="form.source_id" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="分类" :label-width="formLabelWidth" prop="type">
-                            <el-input v-model="form.type" auto-complete="off"></el-input>
-                        </el-form-item>
+                        <!--<el-form-item label="分类" :label-width="formLabelWidth" prop="type">-->
+                            <!--<el-input v-model="form.type" auto-complete="off"></el-input>-->
+                        <!--</el-form-item>-->
                         <el-form-item label="发布时间" :label-width="formLabelWidth" prop="publish_time">
                             <el-date-picker
                                     value-format="yyyy-MM-dd HH:mm:ss"
@@ -268,7 +268,6 @@
                     ],
                     source_id: [
                         { required: true, message: '请输入source_id', trigger: 'blur' },
-                        { validator: check_integer_factory('source_id为数字类型'), trigger: 'blur' }
                     ],
                     publish_time: [
                         { required: true, message: '请输入publish_time', trigger: 'blur' }
@@ -324,14 +323,14 @@
             submitFn:function(obj){
                 this.add_update(obj).then(result=>{
                     this.$message.success('更新成功！');
-                    this.get_lists().then(result=> {
+                    // this.get_lists().then(result=> {
                         this.filterData(this.radio);
                         this.$message.success('已更新列表！');
-                    }).catch((ErrMsg)=>{
-                        console.log(ErrMsg);
-                        this.$message.error('刷新数据失败，请刷新此页！');
-                        //获取数据失败时的处理逻辑
-                    })
+                    // }).catch((ErrMsg)=>{
+                    //     console.log(ErrMsg);
+                    //     this.$message.error('刷新数据失败，请刷新此页！');
+                    //     //获取数据失败时的处理逻辑
+                    // })
 
                 });
             },
@@ -364,14 +363,19 @@
             },
             //筛选处理未处理
             filterData:function (state) {
-                let _this=this;
                 let param="";
                 switch (state){
-                    case "全部":param=0;break;
+                    case "全部":param=-1;break;
                     case "已上线":param=1;break;
-                    case "已下线":param=2;break;
+                    case "已下线":param=0;break;
                 }
-                this.filter_data(param);
+                //清空选择状态
+                this.dateRange="";
+                this.page_changeEvent(1);
+                this.pageshow=true;
+
+                this.set_state(param);
+                this.get_lists();
 
             },
             //图片

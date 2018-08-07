@@ -32,11 +32,11 @@ class Kuaixun extends Model
         $orderBy = ' ORDER BY ' . $order . ' ' . ($isDesc ? 'DESC' : 'ASC') . ' ';
         $columns = " id,title,description,body,image,source_id,publish_time,type,importance,created_at,`status` as state,updated_at,'$type' AS source_site ";
         $where = ' ';
-        if (!is_null($state)) {
+        if (!is_null($state)&& $state!=-1) {
             if ($state == 0) {
-                $where = ' status = 0 ';
+                $where = 'WHERE status = 0 OR status IS NULL';
             } else {
-                $where = ' status = 1 ';
+                $where = 'WHERE status = 1 ';
             }
         }
 
@@ -44,7 +44,7 @@ class Kuaixun extends Model
         $sql = "select $columns $qTable $where $orderBy $limit";
         $ret = DB::connection()->select($sql);
 
-        $count = DB::connection()->selectOne("select count(id) AS count $qTable");
+        $count = DB::connection()->selectOne("select count(id) AS count $qTable $where");
 
         return [
             'value' => $ret,

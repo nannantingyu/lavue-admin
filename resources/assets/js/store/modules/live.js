@@ -10,7 +10,7 @@ const state = {
         importance: {title: "重要性", show: true},
         source_site:{title: "源站", show: true},
         source_id:{title: "源站ID", show: false},
-        type:{title: "分类", show: true},
+        // type:{title: "分类", show: true},
         state:{title: "状态", show: true},
         publish_time: {title: "发布时间", show: false},
         created_at: {title: "创建时间", show: false},
@@ -21,7 +21,7 @@ const state = {
     pageSize:10,
     currentPage:1,
     total:0,
-    state:-1,
+    state:"",
     startTime:"",
     endTime:""
 };
@@ -98,7 +98,8 @@ const actions = {
                     order:"publish_time",
                     isDesc:true,
                     page:(state.currentPage-1),
-                    pageSize:state.pageSize
+                    pageSize:state.pageSize,
+                    state:state.state
                 }}).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
