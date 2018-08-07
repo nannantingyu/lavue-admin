@@ -30,6 +30,11 @@ Route::get('/categoryInfo', 'CategoryController@info');
 Route::post('/setCategoryState', 'CategoryController@setCategoryState');
 Route::post('/addCategory', 'CategoryController@addCategory');
 
+// 爬虫单独文章
+Route::get('/crawlArticleLists', 'CrawlArticleController@lists');
+Route::get('/crawlArticleInfo', 'CrawlArticleController@info');
+Route::post('/addCrawlArticle', 'CrawlArticleController@addCrawlArticle');
+
 // 爬虫分类转化
 Route::get('/categoryMapLists', 'CategoryMapController@lists');
 Route::get('/categoryMapInfo', 'CategoryMapController@info');

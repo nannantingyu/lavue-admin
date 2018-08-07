@@ -130,6 +130,10 @@ export default new VueRouter({
             path: '/article-filter',
             component: resolve =>void(require(['./page/article-filter.vue'], resolve))
         },
-
+        {
+            name: "crawl-article",
+            path: '/crawl-article',
+            component: resolve =>void(require(['./page/crawl-article.vue'], resolve))
+        },
     ]
 })

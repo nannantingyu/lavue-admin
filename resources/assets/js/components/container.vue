@@ -151,6 +151,14 @@
                             <span slot="title">分类转化</span>
                         </el-menu-item>
                     </el-menu-item-group>
+                    <el-menu-item-group>
+                        <el-menu-item
+                            v-if="user_module_permission['crawl-article-read']"
+                            index="/crawl-article">
+                            <i class="el-icon-goods"></i>
+                            <span slot="title">爬取单页</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
                 </el-submenu>
                 <el-menu-item
                         v-if="user_module_permission['config-read']"
