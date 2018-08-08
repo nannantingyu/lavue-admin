@@ -23,6 +23,7 @@ Route::post('/addArticle', 'ArticleController@addArticle');
 Route::post('/deleteArticle', 'ArticleController@deleteArticle');
 Route::post('/searchArticle', 'ArticleController@searchArticle');
 Route::get('/articleListsByCategory', 'ArticleController@articleListsByCategory');
+Route::get('/articleSource', 'ArticleController@source');
 
 // 文章分类
 Route::get('/categoryLists', 'CategoryController@lists');

@@ -15,7 +15,17 @@ class ArticleController extends Controller {
     public function lists () {
         return ['success'=>1, 'data'=>Article::orderBy('publish_time', 'desc')->get()];
     }
+    /**
+    *获取文章所有来源
+     * */
+    public function source() {
+        $source = DB::table('article')
+            ->select('source_site')
+            ->groupBy('source_site')
+            ->get();
+            return ['success'=>1, 'data'=>$source];
 
+    }
     /**
      * 根据分类获取文章列表
      */

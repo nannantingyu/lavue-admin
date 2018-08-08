@@ -43,6 +43,12 @@
                             <span slot="title">来源审核</span>
                         </el-menu-item>
                         <el-menu-item
+                                v-if="user_module_permission['article-need-look-read']"
+                                index="/article-need-look">
+                            <i class="el-icon-view"></i>
+                            <span slot="title">待审核文章列表</span>
+                        </el-menu-item>
+                        <el-menu-item
                                 v-if="user_module_permission['article-category-read']"
                                 index="/article-category">
                             <i class="el-icon-circle-plus-outline"></i>

@@ -17,6 +17,35 @@ const state = {
 const mutations = {
     set_list: (state, list) => {
         state.lists = list;
+    },
+    set_lists_all: (state, list) => {
+        state.lists_all = list;
+    },
+    filter_data: (state, r) => {
+        // 0:全部
+        // 1:自动审核
+        // 2:人工审核
+        if(r==0){
+            state.lists = state.lists_all;
+        }
+        else if(r==1){
+            let arr=[];
+            state.lists_all.map((item)=>{
+                if(!item.state){
+                    arr.push(item);
+                }
+            })
+            state.lists = arr;
+        }
+        else if(r==2){
+            let arr=[];
+            state.lists_all.map((item)=>{
+                if(item.state){
+                    arr.push(item);
+                }
+            })
+            state.lists = arr;
+        }
     }
 };
 
@@ -33,21 +62,41 @@ const actions = {
         })
     },
     get_lists: ({commit, state}) => {
+        //获取 网站审核数据 并组装
         return new Promise((resolve, reject) => {
-            axios.get('/api/banner/list').then(result=> {
+            axios.get('/articleSource').then(result=> {
                 if(result.data.success === 1) {
-                    let data = result.data.data;
-                    for(let o of data) {
-                        if(o.state==0){
-                            o.state=false;
+                    let allData = result.data.data;
+                    axios.get('/configInfo',{params: { 'key': 'manualCheck' }}).then(r=> {
+                        if(r.data.success === 1) {
+                            let configData = r.data.data;
+                            if(configData){
+                                let arr=JSON.parse(configData.value);
+                                arr.map((item)=>{
+                                    allData.map((a)=>{
+                                        if(item.site==a.source_site){
+                                            a.state=1;
+                                            a.time=item.time;
+                                        }
+                                    })
+
+                                })
+                                for(let o of allData) {
+                                    if(o.state==0){
+                                        o.state=false;
+                                    }
+                                    else if(o.state==1){
+                                        o.state=true;
+                                    }
+                                }
+                                commit('set_list', allData);
+                                commit('set_lists_all', allData);
+                                resolve(allData);
+                            }
+                            // console.log(r.data.data,"kkhhh")
                         }
-                        else if(o.state==1){
-                            o.state=true;
-                        }
-                    }
-                    commit('set_list', data);
-                    commit('set_lists_all', data);
-                    resolve(data);
+
+                    })
                 }
                 else reject(data)
             })

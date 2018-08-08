@@ -2,12 +2,20 @@
     <div>
         <el-header>
             <h5>jujin8文章来源审核开关</h5>
+            <div style="overflow: hidden">
+                <el-radio-group v-model="radio" style="float: right;" @change="filterData">
+                    <el-radio-button label="全部"></el-radio-button>
+                    <el-radio-button label="自动审核"></el-radio-button>
+                    <el-radio-button label="人工审核"></el-radio-button>
+                </el-radio-group>
+            </div>
+
         </el-header>
         <el-main>
             <template>
                 <el-table
                         ref="multipleTable"
-                        :data="tableData3"
+                        :data="lists"
                         tooltip-effect="dark"
                         style="width: 100%"
                         border
@@ -21,21 +29,21 @@
                             :label="columns['time']['title']"
                             v-if="columns['time']['show']"
                             width="120">
-                        <template slot-scope="scope">{{ scope.row.date }}</template>
+                        <template slot-scope="scope">{{ scope.row.time }}</template>
                     </el-table-column>
                     <el-table-column
-                            prop="name"
+                            prop="source_site"
                             :label="columns['site']['title']"
                             v-if="columns['site']['show']"
-                            width="120">
+                            width="200">
                     </el-table-column>
                     <el-table-column
                             :label="columns['state']['title']"
                             v-if="columns['state']['show']"
-                            min-width="200">
+                            width="120">
                         <template slot-scope="scope">
-                            <div :class="scope.row.state==0?'green':'red'">
-                                {{scope.row.state==0?"自动审核":"人工审核"}}
+                            <div :class="scope.row.state?'red':'green'">
+                                {{scope.row.state?"人工审核":"自动审核"}}
                             </div>
 
                         </template>
@@ -65,33 +73,23 @@
     import {
         Table,
         TableColumn,
+        Radio,
+        RadioGroup,
+        RadioButton
     } from 'element-ui';
 
     Vue.use(Table);
     Vue.use(TableColumn);
+    Vue.use(Radio);
+    Vue.use(RadioGroup);
+    Vue.use(RadioButton);
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
 
     export default {
         name: "article-filter",
         data() {
             return {
-                tableData3: [{
-                    date: '2016-05-03',
-                    name: 'jin10',
-                    state:1
-                }, {
-                    date: '2016-05-02',
-                    name: 'jin10',
-                    state:0
-                }, {
-                    date: '2016-05-04',
-                    name: 'jin10',
-                    state:1
-                }, {
-                    date: '2016-05-01',
-                    name: 'jin10',
-                    state:1
-                }],
+                radio:"全部",
                 multipleSelection: []
             }
         },
@@ -107,10 +105,10 @@
             ...mapMutations({
                 // 'set_state':'menu/set_state',
                 // 'set_feed_state': "menu/set_feed_state",
-                // 'filter_data':"menu/filter_data"
+                'filter_data':"article_filter/filter_data"
             }),
             ...mapActions({
-                // 'get_lists': 'menu/get_lists',
+                'get_lists': 'article_filter/get_lists',
                 // 'add_update':'menu/add_update'
             }),
             handleSelectionChange(val) {
@@ -118,7 +116,25 @@
             },
             changeState(row,index){
                 console.log(row,index,"nnnn")
+            },
+            filterData(state){
+                let param="";
+                switch (state){
+                    case "全部":param=0;break;
+                    case "自动审核":param=1;break;
+                    case "人工审核":param=2;break;
+                }
+
+                this.filter_data(param);
             }
+        },
+        mounted(){
+            this.get_lists().then(result=> {
+                this.$message.success('成功获取文章所有来源！');
+            }).catch((ErrMsg)=>{
+                this.$message.error('获取数据失败，请刷新此页！');
+                //获取数据失败时的处理逻辑
+            })
         }
     }
 
