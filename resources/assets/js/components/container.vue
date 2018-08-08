@@ -1,5 +1,5 @@
 <template>
-    <el-container>
+    <el-container style="height: 100%;">
         <el-aside width="*">
             <el-switch
                     v-model="isCollapse"
