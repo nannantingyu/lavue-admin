@@ -25,10 +25,10 @@
                 </el-radio-group>
             </el-col>
             <el-col :span="2">
-                <el-button @click="add_category_map">添加文章分类</el-button>
+                <el-button @click="add_crawl_article">添加文章分类</el-button>
             </el-col>
         </el-row>
-        <el-table :data="category_map_lists.slice((current_page-1)*per_page, current_page*per_page)"
+        <el-table :data="crawl_article_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
                   style="width: 100%">
             <el-table-column
@@ -39,24 +39,18 @@
                     width="80">
             </el-table-column>
             <el-table-column
-                    prop="source_category"
+                    prop="url"
                     sortable
-                    :label="columns['source_category']['title']"
-                    v-if="columns['source_category']['show']" width="200">
+                    :label="columns['url']['title']"
+                    v-if="columns['url']['show']" width="200">
             </el-table-column>
             <el-table-column
-                    :label="columns['target']['title']"
-                    v-if="columns['target']['show']"
+                    :label="columns['user_id']['title']"
+                    v-if="columns['user_id']['show']"
                     width="*">
                 <template slot-scope="scope">
                     {{ get_catname(scope.row.target) }}
                 </template>
-            </el-table-column>
-            <el-table-column
-                prop="source_site"
-                :label="columns['source_site']['title']"
-                v-if="columns['source_site']['show']"
-                width="*">
             </el-table-column>
             <el-table-column
                     prop="state"
@@ -85,13 +79,13 @@
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['category-map-delete']"
+                            :disabled="!user_module_permission['crawl-article-delete']"
                             @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['category-map-delete']"
-                            @click="editcategory_map(scope.$index, scope.row)">编辑</el-button>
+                            :disabled="!user_module_permission['crawl-article-delete']"
+                            @click="editcrawl_article(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -103,26 +97,10 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
         </el-pagination>
-        <el-dialog title="添加文章分类" :visible.sync="dialog_visible">
+        <el-dialog title="添加爬取文章链接" :visible.sync="dialog_visible">
             <el-form ref="form" :model="form" :rules="rules">
-                <el-form-item :label-width="formLabelWidth" label="分类名称" prop="source_category">
-                    <el-input v-model="form.source_category"></el-input>
-                </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="源网站" prop="source_site">
-                    <el-input v-model="form.source_site"></el-input>
-                </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="目标分类" prop="target">
-                    <el-select v-model="form.target" placeholder="请选择分类">
-                        <el-option
-                            v-for="item in category_list"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item :label-width="formLabelWidth" label="状态" prop="state">
-                    <el-switch v-model="form.state">启用</el-switch>
+                <el-form-item :label-width="formLabelWidth" label="链接" prop="url">
+                    <el-input v-model="form.url"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-col :offset="4" :span="8">
@@ -155,74 +133,66 @@
     Vue.use(Dialog);
 
     export default {
-        name: "category_map",
+        name: "crawl_article",
         computed: {
             ...mapState({
-                'category_map_lists': state=>state.category_map.category_map_lists,
-                'category_list': state=>state.category_map.category_list,
-                'columns': state=>state.category_map.columns,
-                'loading': state=>state.category_map.loading,
-                'current_page': state=>state.category_map.current_page,
-                'per_page': state=>state.category_map.per_page,
-                'total': state=>state.category_map.total,
+                'crawl_article_lists': state=>state.crawl_article.crawl_article_lists,
+                'category_list': state=>state.crawl_article.category_list,
+                'columns': state=>state.crawl_article.columns,
+                'loading': state=>state.crawl_article.loading,
+                'current_page': state=>state.crawl_article.current_page,
+                'per_page': state=>state.crawl_article.per_page,
+                'total': state=>state.crawl_article.total,
                 'user_module_permission': state=>state.user.user_module_permission,
-                'form': state=>state.category_map.form,
-                'rules': state=>state.category_map.rules,
+                'form': state=>state.crawl_article.form,
+                'rules': state=>state.crawl_article.rules,
                 'formLabelWidth': state=>state.formLabelWidth,
-                'row_index': state=>state.category_map.row_index,
+                'row_index': state=>state.crawl_article.row_index,
             }),
             dialog_visible: {
                 get() {
-                    return this.$store.state.category_map.dialog_visible
+                    return this.$store.state.crawl_article.dialog_visible
                 },
                 set(value) {
-                    this.$store.commit('category_map/set_dialog_visible', value)
+                    this.$store.commit('crawl_article/set_dialog_visible', value)
                 }
             },
             show_type: {
                 get() {
-                    return this.$store.state.category_map.show_type
+                    return this.$store.state.crawl_article.show_type
                 },
                 set(value) {
-                    this.$store.commit('category_map/set_show_type', value)
+                    this.$store.commit('crawl_article/set_show_type', value)
                     this.filte_data()
                 }
             },
         },
         methods: {
             ...mapMutations({
-                'set_current_page': "category_map/set_current_page",
-                'set_per_page': "category_map/set_per_page",
-                'filte_data': "category_map/filte_data",
-                'set_dialog_visible': "category_map/set_dialog_visible",
-                'set_form': "category_map/set_form",
-                'set_row_index': "category_map/set_row_index",
-                'set_form_value': "category_map/set_form_value",
-                'update_category_map_list_by_index': "category_map/update_category_map_list_by_index",
-                'append_category_map_list': "category_map/append_category_map_list",
-                'set_default_form': "category_map/set_default_form",
-                'set_category_list': "category_map/set_category_list"
+                'set_current_page': "crawl_article/set_current_page",
+                'set_per_page': "crawl_article/set_per_page",
+                'filte_data': "crawl_article/filte_data",
+                'set_dialog_visible': "crawl_article/set_dialog_visible",
+                'set_form': "crawl_article/set_form",
+                'set_row_index': "crawl_article/set_row_index",
+                'set_form_value': "crawl_article/set_form_value",
+                'update_crawl_article_list_by_index': "crawl_article/update_crawl_article_list_by_index",
+                'append_crawl_article_list': "crawl_article/append_crawl_article_list",
+                'set_default_form': "crawl_article/set_default_form",
+                'set_category_list': "crawl_article/set_category_list"
             }),
             ...mapActions({
-                'get_category_map_lists': 'category_map/get_category_map_lists',
-                'get_category_map': "category_map/get_category_map",
-                'add_or_update_category_map': "category_map/add_or_update_category_map",
-                'set_category_map_state': "category_map/set_category_map_state"
+                'get_crawl_article_lists': 'crawl_article/get_crawl_article_lists',
+                'get_crawl_article': "crawl_article/get_crawl_article",
+                'add_or_update_crawl_article': "crawl_article/add_or_update_crawl_article",
+                'set_crawl_article_state': "crawl_article/set_crawl_article_state"
             }),
-            editcategory_map: function(index, row) {
+            editcrawl_article: function(index, row) {
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
             },
-            changeState: function (row) {
-                const _this = this;
-                this.set_category_map_state({id:row.id, state:row.state}).then(result=>{
-                    let message = row.state?"上线成功":"下线成功";
-                    _this.filte_data()
-                    _this.$message.success(message);
-                });
-            },
-            add_category_map: function() {
+            add_crawl_article: function() {
                 this.set_default_form();
                 this.set_dialog_visible(true);
             },
@@ -230,10 +200,10 @@
                 const _this = this;
                 this.$refs['form'].validate((valid) => {
                     if (valid)
-                        _this.add_or_update_category_map(this.form).then(function(result){
+                        _this.add_or_update_crawl_article(this.form).then(function(result){
                             if(_this.form.id) {
                                 for(let key in _this.form) {
-                                    _this.update_category_map_list_by_index({
+                                    _this.update_crawl_article_list_by_index({
                                         index: _this.row_index,
                                         key: key,
                                         value: _this.form[key]
@@ -243,7 +213,7 @@
                             }
                             else {
                                 _this.set_form_value({key: 'id', value: result.id});
-                                _this.append_category_map_list(_this.form);
+                                _this.append_crawl_article_list(_this.form);
                                 _this.$message.success("添加成功");
                             }
 
@@ -261,7 +231,7 @@
         },
         mounted() {
             const _this = this;
-            this.get_category_map_lists().then(result=> {
+            this.get_crawl_article_lists().then(result=> {
                 _this.$message.success('成功获取文章分类！');
             });
             if(this.category_list.length === 0) {
