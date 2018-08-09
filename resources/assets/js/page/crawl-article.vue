@@ -102,6 +102,16 @@
                 <el-form-item :label-width="formLabelWidth" label="链接" prop="url">
                     <el-input v-model="form.url"></el-input>
                 </el-form-item>
+                <el-form-item :label-width="formLabelWidth" label="分类" prop="categories">
+                    <el-select v-model="form.categories" multiple placeholder="请选择分类">
+                        <el-option
+                            v-for="item in article_categories"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item>
                     <el-col :offset="4" :span="8">
                         <el-button type="primary" @click="submitForm()">{{ form.id?"更新":"添加" }}</el-button>
@@ -148,6 +158,7 @@
                 'rules': state=>state.crawl_article.rules,
                 'formLabelWidth': state=>state.formLabelWidth,
                 'row_index': state=>state.crawl_article.row_index,
+                'article_categories': state=>state.article.article_categories,
             }),
             dialog_visible: {
                 get() {
@@ -179,7 +190,8 @@
                 'update_crawl_article_list_by_index': "crawl_article/update_crawl_article_list_by_index",
                 'append_crawl_article_list': "crawl_article/append_crawl_article_list",
                 'set_default_form': "crawl_article/set_default_form",
-                'set_category_list': "crawl_article/set_category_list"
+                'set_category_list': "crawl_article/set_category_list",
+                'set_article_categories': "article/set_article_categories"
             }),
             ...mapActions({
                 'get_crawl_article_lists': 'crawl_article/get_crawl_article_lists',
@@ -234,11 +246,16 @@
             this.get_crawl_article_lists().then(result=> {
                 _this.$message.success('成功获取文章分类！');
             });
+
             if(this.category_list.length === 0) {
                 this.$store.dispatch('category/get_category_lists').then(result=> {
                     _this.set_category_list(result);
-                    console.log(123)
-                    console.log(_this.category_list)
+                })
+            }
+
+            if(this.article_categories.length <= 0) {
+                this.$store.dispatch("category/get_category_lists").then(result=> {
+                    _this.set_article_categories(result);
                 })
             }
         }

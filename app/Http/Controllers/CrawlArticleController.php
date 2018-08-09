@@ -53,12 +53,17 @@ class CrawlArticleController extends Controller
 
         //添加或者更新数据
         $url = $request->input('url');
+        $categories = $request->input('categories');
+        $categories = implode(',', $categories);
+
         $form = [
             'url' => $url,
+            'categories' => $categories,
             'user_id' => Auth::user()->id,
         ];
 
         $id = $request->input('id');
+
         if (!is_null($id)) {
             CrawlArticle::where('id', $id)->update($form);
         } else {

@@ -8,6 +8,7 @@
                 <el-radio-button label="全部"></el-radio-button>
                 <el-radio-button label="顶部导航"></el-radio-button>
                 <el-radio-button label="底部链接"></el-radio-button>
+                <el-radio-button label="SEO"></el-radio-button>
                 </el-radio-group>
                 <el-popover
                         placement="right"
@@ -156,6 +157,7 @@
                             <el-select v-model="form.area" placeholder="请选择显示区域">
                                 <el-option label="顶部导航" value="main"></el-option>
                                 <el-option label="底部链接" value="bottom"></el-option>
+                                <el-option label="SEO" value="seo"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="是否显示" :label-width="formLabelWidth">
