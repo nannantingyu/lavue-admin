@@ -9,6 +9,8 @@ class CategoryMapController extends Controller {
      * @return array
      */
     public function lists () {
+//        $data = [];
+//        return ['success'=>1, 'data'=>$data];
         return ['success'=>1, 'data'=>CategoryMap::orderBy('updated_at', 'desc')->get()];
     }
 

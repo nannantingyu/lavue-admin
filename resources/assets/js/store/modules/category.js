@@ -141,8 +141,8 @@ const actions = {
                         }
                     }
 
-                    commit('set_category_list', category_lists);
-                    commit('set_back_data', category_lists)
+                    // commit('set_category_list', category_lists);
+                    // commit('set_back_data', category_lists)
                     resolve(category_lists)
                 }
                 else reject()
