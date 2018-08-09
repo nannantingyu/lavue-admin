@@ -42,7 +42,7 @@
                     prop="url"
                     sortable
                     :label="columns['url']['title']"
-                    v-if="columns['url']['show']" width="200">
+                    v-if="columns['url']['show']" width="*">
             </el-table-column>
             <el-table-column
                     :label="columns['user_id']['title']"

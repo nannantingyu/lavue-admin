@@ -68,7 +68,7 @@ class CrawlArticleController extends Controller
         }
 
         // 更新静态页
-        $this->startCrawlJob($url);
+        $this->addCrawlJob($url);
         return ['success' => 1, 'data' => ['id' => $id]];
     }
 
@@ -96,7 +96,7 @@ class CrawlArticleController extends Controller
         return ['success' => 1];
     }
 
-    private function startCrawlJob($url)
+    private function addCrawlJob($url)
     {
         $this->kafka->produce('crawl_single_article', $url);
     }
