@@ -74,7 +74,6 @@ const mutations = {
         state.dialog_visible = value;
     },
     set_category_list: (state, value) => {
-        console.log(value)
         state.category_list = value;
     },
     set_form: (state, form) => {
@@ -176,28 +175,9 @@ const actions = {
     }
 };
 
-const getters = {
-    fileimgs: state=> {
-        let imgs = [];
-        if(state.form.logo)
-            imgs.push({url: 'http://images.jujin8.com'+state.form.logo.replace('/uploads/crawler', '/uploads')});
-
-        return imgs;
-    },
-    type_filter: state=> {
-        let types = [];
-        for(let ar of state.category_list) {
-            types.push({text: ar['name'], value: ar['id']});
-        }
-
-        return types;
-    }
-};
-
 export default {
     namespaced: true,
     state,
-    getters,
     actions,
     mutations
 }

@@ -42,12 +42,12 @@
                     prop="url"
                     sortable
                     :label="columns['url']['title']"
-                    v-if="columns['url']['show']" width="200">
+                    v-if="columns['url']['show']" width="*">
             </el-table-column>
             <el-table-column
                     :label="columns['user_id']['title']"
                     v-if="columns['user_id']['show']"
-                    width="*">
+                    width="120">
                 <template slot-scope="scope">
                     {{ get_catname(scope.row.target) }}
                 </template>
