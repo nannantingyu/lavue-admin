@@ -34,25 +34,25 @@
                             prop="id"
                             :label="columns['id']['title']"
                             v-if="columns['id']['show']"
-                            width="50">
+                            min-width="50">
                     </el-table-column>
                     <el-table-column
                             prop="title"
                             :label="columns['title']['title']"
                             v-if="columns['title']['show']"
-                            width="100">
+                            min-width="100">
                     </el-table-column>
                     <el-table-column
                             prop="description"
                             :label="columns['description']['title']"
                             v-if="columns['description']['show']"
-                            width="150">
+                            min-width="150">
                     </el-table-column>
                     <el-table-column
                             prop="image"
                             :label="columns['image']['title']"
                             v-if="columns['image']['show']"
-                            width="200">
+                            min-width="200">
                         <template slot-scope="scope">
                             <img width="160" :src="transfer(scope.row.image)" :alt="scope.row.image">
                         </template>
@@ -61,19 +61,19 @@
                             prop="tag"
                             :label="columns['tag']['title']"
                             v-if="columns['tag']['show']"
-                            width="100">
+                            min-width="100">
                     </el-table-column>
                     <el-table-column
                             prop="url"
                             :label="columns['url']['title']"
                             v-if="columns['url']['show']"
-                            width="100">
+                            min-width="100">
                     </el-table-column>
                     <el-table-column
                             prop="state"
                             :label="columns['state']['title']"
                             v-if="columns['state']['show']"
-                            width="100">
+                            min-width="100">
                         <template slot-scope="scope">
                             <el-switch v-model="scope.row.state"
                                        :disabled="!user_module_permission['tools-delete']"
@@ -84,7 +84,7 @@
                             prop="sequence"
                             :label="columns['sequence']['title']"
                             v-if="columns['sequence']['show']"
-                            width="100">
+                            min-width="100">
                     </el-table-column>
                     <el-table-column
                             prop="created_at"
