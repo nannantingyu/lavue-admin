@@ -25,7 +25,7 @@
                 </el-radio-group>
             </el-col>
             <el-col :span="2">
-                <el-button @click="add_crawl_article">添加文章分类</el-button>
+                <el-button @click="add_crawl_article">添加爬取文章链接</el-button>
             </el-col>
         </el-row>
         <el-table :data="crawl_article_lists.slice((current_page-1)*per_page, current_page*per_page)"
