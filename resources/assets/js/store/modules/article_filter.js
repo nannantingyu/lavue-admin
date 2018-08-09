@@ -117,7 +117,6 @@ const actions = {
             axios.get('/articleSource').then(result=> {
                 if(result.data.success === 1) {
                     let allData = result.data.data;
-                    console.log(result.data.data,"KKk");
                     commit('set_allData', allData);
                     axios.get('/configInfo',{params: { 'key': 'manualCheck' }}).then(r=> {
                         if(r.data.success === 1) {

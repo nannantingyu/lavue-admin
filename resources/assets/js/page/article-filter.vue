@@ -21,16 +21,19 @@
                         style="width: 100%"
                         border
                         stripe
+                        height="480"
+                        :default-sort = "{prop: 'time'}"
                         @selection-change="handleSelectionChange">
                     <el-table-column
                             type="selection"
                             width="*">
                     </el-table-column>
                     <el-table-column
+                            sortable
+                            prop="time"
                             :label="columns['time']['title']"
                             v-if="columns['time']['show']"
                             min-width="150">
-                        <template slot-scope="scope">{{ scope.row.time }}</template>
                     </el-table-column>
                     <el-table-column
                             prop="source_site"
@@ -63,8 +66,8 @@
                 </el-table>
             </template>
             <el-row style="margin-top: 20px">
-            <el-button type="danger" round>批量修改为人工审核</el-button>
-            <el-button type="success" round>批量修改为自动审核</el-button>
+            <el-button type="danger" round @click="updateMany(0)" :disabled="!user_module_permission['article-filter-delete']">批量修改为人工审核</el-button>
+            <el-button type="success" round @click="updateMany(1)" :disabled="!user_module_permission['article-filter-delete']">批量修改为自动审核</el-button>
              </el-row>
         </el-main>
     </div>
@@ -122,8 +125,9 @@
             }),
             handleSelectionChange(val) {
                 this.multipleSelection = val;
+                // console.log(val);
             },
-            changeState(row,index){
+            changeState(row){
                 //人工审核=》自动审核（修改config表中的数组）
                 if(row.state==true){
                     //删除configValue项
@@ -133,9 +137,11 @@
                            configValue.splice(index,1);
                            this.change_config(configValue).then((result)=>{
                                this.$message.success('更新成功！');
+                               this.filterData(this.radio);
                            }).catch((ErrMsg)=>{
                                this.$message.error('更新失败！');
                                this.get_lists();
+                               this.filterData(this.radio);
                                //获取数据失败时的处理逻辑
                            });
                            return false;
@@ -153,16 +159,14 @@
                     configValue.push(obj);
                     this.change_config(configValue).then((result)=>{
                         this.$message.success('更新为人工审核成功！');
+                        this.filterData(this.radio);
                     }).catch((ErrMsg)=>{
                         this.$message.error('更新失败！');
                         this.get_lists();
+                        this.filterData(this.radio);
                         //获取数据失败时的处理逻辑
-                    });;
+                    });
                 }
-
-                // this.change_config(row);
-                // console.log(row,index,"nnnn");
-                // console.log(this.configValue);
             },
             filterData(state){
                 let param="";
@@ -173,6 +177,50 @@
                 }
 
                 this.filter_data(param);
+            },
+            updateMany(state){
+                //state0 =》改为人工审核
+                //state1 =》改为自动审核
+                if(this.multipleSelection.length==0){
+                    this.$message.warning('请选择更新的数据！');
+                    return false;
+                }
+                let [...configValue]=this.configValue;
+                this.multipleSelection.map(item=>{
+                    if(state==0){
+                       //添加配置项
+                        let flag=true;
+                        this.configValue.map(i=>{
+                            if(item.source_site==i.site){
+                                flag=false;
+                                return false;
+                            }
+                        })
+                        let obj={
+                            site:item.source_site,
+                            time:dateFtt("yyyy-MM-dd hh:mm:ss",new Date())
+                        }
+                        configValue.push(obj);
+                    }else{
+                        //删除配置项
+                        configValue.map((i,index)=> {
+                            if (item.source_site == i.site) {
+                                configValue.splice(index, 1);
+                            }
+                        })
+
+                    }
+                })
+                this.change_config(configValue).then((result)=>{
+                    this.$message.success('批量更新成功！');
+                    this.filterData(this.radio);
+                }).catch((ErrMsg)=>{
+                    this.$message.error('批量更新失败！');
+                    this.get_lists();
+                    this.filterData(this.radio);
+                    //获取数据失败时的处理逻辑
+                });
+
             }
         },
         mounted(){
