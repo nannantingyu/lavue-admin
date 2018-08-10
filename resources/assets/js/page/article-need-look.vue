@@ -28,12 +28,7 @@
                     </ul>
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
-                <el-button type="success" round @click="updateMany(1)" :disabled="!user_module_permission['article-filter-delete']">批量审核通过</el-button>
-                <!--<el-radio-group v-model="radio" style="float: right;" @change="filterData">-->
-                <!--<el-radio-button label="全部"></el-radio-button>-->
-                <!--<el-radio-button label="自动审核"></el-radio-button>-->
-                <!--<el-radio-button label="人工审核"></el-radio-button>-->
-                <!--</el-radio-group>-->
+                <el-button type="success" round @click="updateMany()" :disabled="!user_module_permission['article-filter-delete']">批量审核通过</el-button>
             </div>
         </el-header>
         <el-main>
@@ -227,6 +222,7 @@
                 'get_options': 'article_need_look/get_options',
                 'get_lists': 'article_need_look/get_lists',
                 'set_article_state': 'article_need_look/set_article_state',
+                'update_many_state':'article_need_look/supdateMany'
                 // 'add_update':'menu/add_update'
             }),
             handleSelectionChange(val) {
@@ -239,6 +235,24 @@
                     }).catch(()=>{
                     this.$message.error("更新失败");
                 })
+            },
+            updateMany(){
+                let idStr="";
+                if(this.multipleSelection.length==0){
+                    this.$message.warning("请选择审核条目");
+                    return false;
+                }
+                this.multipleSelection.map(item=>{
+                    idStr+=item.id+","
+                })
+                idStr=idStr.slice(0,idStr.length-1)
+                console.log(idStr);
+                this.update_many_state(idStr).then(result=>{
+                    this.$message.success("更新成功");
+                    this.get_lists().then(result => {
+                        this.$message.success("未审核文章列表获取成功")
+                    });
+                });
             },
             drop_article: function (index, row) {
                 const _this = this;
@@ -291,6 +305,8 @@
                 this.set_site_info(result[0]);
                 this.get_lists().then(result => {
                     this.$message.success("未审核文章列表获取成功")
+                }).catch(msg=>{
+                    this.$message.error(msg+"错误")
                 });
             });
 

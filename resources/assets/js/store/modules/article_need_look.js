@@ -119,9 +119,9 @@ const actions = {
                 });
         })
     },
-    add_update:({commit, state},form) => {
+    updateMany:({commit, state},idStr) => {
         return new Promise((resolve, reject) => {
-            axios.post('/api/banner/add',form).then(result=> {
+            axios.post('/api/banner/add',{id:idStr}).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
                     resolve(data);
