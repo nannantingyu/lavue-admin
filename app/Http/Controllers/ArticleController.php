@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleBody;
@@ -7,31 +9,37 @@ use App\Models\ArticleCategory;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 
-class ArticleController extends Controller {
+class ArticleController extends Controller
+{
     /**
      * 获取文章列表
      * @return array
      */
-    public function lists () {
-        return ['success'=>1, 'data'=>Article::orderBy('publish_time', 'desc')->get()];
+    public function lists()
+    {
+        return ['success' => 1, 'data' => Article::orderBy('publish_time', 'desc')->get()];
     }
+
     /**
-    *获取文章所有来源
+     *获取文章所有来源
      * */
-    public function source() {
+    public function source()
+    {
         $source = DB::table('article')
             ->select('source_site')
             ->groupBy('source_site')
             ->get();
-            return ['success'=>1, 'data'=>$source];
+        return ['success' => 1, 'data' => $source];
 
     }
+
     /**
      * 根据分类获取文章列表
      */
-    public function articleListsByCategory(Request $request) {
+    public function articleListsByCategory(Request $request)
+    {
         $categories = $request->input('categories');
-        if(!is_null($categories)) {
+        if (!is_null($categories)) {
             $articles = DB::table('article_category')
                 ->join('article', 'article_category.aid', '=', 'article.id')
                 ->whereIn('article_category.cid', explode(',', $categories))
@@ -39,62 +47,64 @@ class ArticleController extends Controller {
                 ->orderBy('article.publish_time', 'desc')
                 ->get();
 
-            return ['success'=>1, 'data'=>$articles];
+            return ['success' => 1, 'data' => $articles];
         }
 
-        return ['success'=>0];
+        return ['success' => 0];
     }
 
     /**
      * 获取单个文章详情
      */
-    public function info(Request $request) {
+    public function info(Request $request)
+    {
         $id = $request->input('id');
-        if(!is_null($id)) {
+        if (!is_null($id)) {
             $article = Article::with('body')->with('categories')->find($id);
-            return ['success'=>1, 'data'=>$article];
+            return ['success' => 1, 'data' => $article];
         }
 
-        return ['success'=>0];
+        return ['success' => 0];
     }
 
     /**
      * 删除文章
      * @param id 文章id
      */
-    public function deleteArticle(Request $request) {
+    public function deleteArticle(Request $request)
+    {
         $id = $request->input('id');
-        if(!is_null($id) and \numcheck::is_int($id)) {
+        if (!is_null($id) and \numcheck::is_int($id)) {
             Article::where('id', $id)->delete();
 
             $this->updateArticleTemplate($id, 'delete');
-            return ['success'=>1];
+            return ['success' => 1];
         }
 
-        return ['success'=>0];
+        return ['success' => 0];
     }
 
     /**
      * 搜索文章
      * @param keyword 关键词
      */
-    public function searchArticle(Request $request) {
+    public function searchArticle(Request $request)
+    {
         $keywords = $request->input('keywords');
-        if(!is_null($keywords)) {
+        if (!is_null($keywords)) {
 
             $articles = Article::where('state', 1);
-            if(\numcheck::is_int($keywords)) {
+            if (\numcheck::is_int($keywords)) {
                 $articles = $articles->where('id', 'like', $keywords);
-            }
-            else {
-                $articles = $articles->where('title', 'like', '%'.$keywords.'%');
+            } else {
+                $articles = $articles->where('title', 'like', '%' . $keywords . '%');
             }
 
             $articles = $articles->select('id', 'title', 'image', 'url')
                 ->orderBy('publish_time', 'desc')
                 ->get();
 
-            return ['success'=>1, 'data'=>$articles];
+            return ['success' => 1, 'data' => $articles];
         }
     }
 
@@ -102,32 +112,34 @@ class ArticleController extends Controller {
      * 设置文章发布状态
      * @param Request $request
      */
-    public function setArticleState(Request $request) {
+    public function setArticleState(Request $request)
+    {
         $id = $request->input('id');
-        if(!is_null($id) and \numcheck::is_int($id)) {
+        if (!is_null($id) and \numcheck::is_int($id)) {
             $state = $request->input('state');
-            $state = $state == 1?1:0;
+            $state = $state == 1 ? 1 : 0;
 
-            $this->updateArticleTemplate($id, $state==1?'update':'delete');
+            $this->updateArticleTemplate($id, $state == 1 ? 'update' : 'delete');
             Article::where('id', $id)->update([
-                'state'=>$state
+                'state' => $state
             ]);
 
-            return ['success'=>1];
+            return ['success' => 1];
         }
 
-        return ['success'=>0];
+        return ['success' => 0];
     }
 
     /**
      * 添加或者更新文章
      * @param Request $request
      */
-    public function addArticle(Request $request) {
+    public function addArticle(Request $request)
+    {
         //验证表单
         $validate = $this->validateForm($request);
-        if(!$validate['success']) {
-            return response()->json(['success'=>0, "errors"=>$validate['msg']]);
+        if (!$validate['success']) {
+            return response()->json(['success' => 0, "errors" => $validate['msg']]);
         }
 
         $form = [
@@ -146,40 +158,38 @@ class ArticleController extends Controller {
         ];
 
         $id = $request->input('id');
-        if(is_null($id)) {
+        if (is_null($id)) {
             $article = new Article($form);
             $article->save();
-            $article->url = '/article_'.$article->id;
+            $article->url = '/article_' . $article->id;
             $article->save();
-        }
-        else {
+        } else {
             $article = Article::find($id);
             $article->update($form);
         }
 
         $body = $request->input('body');
         $articleBody = ArticleBody::where('aid', $article->id)->first();
-        if(is_null($articleBody)) {
+        if (is_null($articleBody)) {
             $articleBody = new ArticleBody([
-                'aid'=> $article->id,
-                'body'=> $body
+                'aid' => $article->id,
+                'body' => $body
             ]);
 
             $articleBody->save();
-        }
-        else {
+        } else {
             ArticleBody::where('aid', $article->id)->update([
-               'body' => $body
+                'body' => $body
             ]);
         }
 
         //更新分类
         $categories = $request->input('categories', []);
-        if(is_array($categories) and count($categories) > 0) {
+        if (is_array($categories) and count($categories) > 0) {
             ArticleCategory::where('aid', $article->id)->delete();
             $all_cats = [];
             foreach ($categories as $val) {
-                array_push($all_cats, ['aid'=> $article->id, 'cid'=>$val]);
+                array_push($all_cats, ['aid' => $article->id, 'cid' => $val]);
             }
 
             ArticleCategory::insert($all_cats);
@@ -187,33 +197,33 @@ class ArticleController extends Controller {
 
         $this->updateArticleTemplate($article->id);
 
-        return ['success'=>1];
+        return ['success' => 1];
     }
 
     /**
      * 更新相关静态页
      * @param $id
      */
-    private function updateArticleTemplate($id, $type='update') {
-        if(!\numcheck::is_int($id)) {
+    private function updateArticleTemplate($id, $type = 'update')
+    {
+        if (!\numcheck::is_int($id)) {
             return;
         }
 
         // 生成静态页
-        if($type == 'update') {
-            $this->template_updater->update_page('read/'.$id);
-        }
-        elseif($type == 'delete') {
-            $this->template_updater->delete_page('read/'.$id);
+        if ($type == 'update') {
+            $this->template_updater->update_page('read/' . $id);
+        } elseif ($type == 'delete') {
+            $this->template_updater->delete_page('read/' . $id);
         }
 
         $article = Article::with('categories')
             ->find($id);
 
         // 生成列表页
-        if(!is_null($article->categories)) {
+        if (!is_null($article->categories)) {
             foreach ($article->categories as $category) {
-                $this->template_updater->update_page('news/'.$category->ename);
+                $this->template_updater->update_page('news/' . $category->ename);
             }
         }
     }
@@ -223,7 +233,8 @@ class ArticleController extends Controller {
      * @param Request $request
      * @return array
      */
-    private function validateForm(Request $request) {
+    private function validateForm(Request $request)
+    {
         $messages = [
             'title.required' => '请输入标题',
             'title.max' => '标题长度不能超过32个字符',
@@ -260,10 +271,40 @@ class ArticleController extends Controller {
             'source_type' => 'required'
         ];
         $validator = \Validator::make($request->all(), $rules, $messages);
-        if($validator->fails()) {
-            return ['success'=>0, 'msg'=>$validator->errors()];
+        if ($validator->fails()) {
+            return ['success' => 0, 'msg' => $validator->errors()];
         }
 
-        return ['success'=>1];
+        return ['success' => 1];
     }
+
+    public function listBySite(Request $request)
+    {
+        $pageSize = $request->input('size');
+        is_null($pageSize) && !is_numeric($pageSize) && $pageSize = 10;
+
+        $time = $request->input('time');
+        $site = $request->input('site');
+        $page = $request->input('page');
+
+
+        $res = DB::table('article')
+            ->where('source_site', '=', $site)
+            ->where('state', '=', 0)
+            ->where('created_at', '>=', $time);
+
+        $count = $res->count();
+
+        return [
+            'success' => 1,
+            'value' => [
+                "list" => $res->forPage($page, $pageSize)->orderBy('created_at')->get(),
+                'count' => $count,
+                'page' => $page,
+                'pageSize' => $pageSize
+            ]
+        ];
+    }
+
+
 }
