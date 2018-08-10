@@ -254,22 +254,29 @@
                 });
             },
             get_catname: function(id) {
-                return this.category_list.filter(x=> {
-                    x.id = id;
+                const cate = this.category_list.filter(x=> {
+                    return x.id === id;
+                })
+
+                return cate[0].name;
+            },
+            get_table_data: function() {
+                const _this = this;
+                this.get_category_map_lists().then(result=> {
+                    _this.$message.success('成功获取分类对应表！');
                 })
             }
         },
         mounted() {
             const _this = this;
-            this.get_category_map_lists().then(result=> {
-                _this.$message.success('成功获取文章分类！');
-            });
             if(this.category_list.length === 0) {
-                this.$store.dispatch('category/get_category_lists').then(result=> {
-                    _this.set_category_list(result);
-                    console.log(123)
-                    console.log(_this.category_list)
+                this.$store.dispatch('category/get_category_lists').then(cates=> {
+                    _this.set_category_list(cates);
+                    _this.get_table_data();
                 })
+            }
+            else {
+                _this.get_table_data();
             }
         }
     }

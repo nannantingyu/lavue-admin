@@ -40,6 +40,7 @@
         </el-row>
         <el-table :data="article_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
+                  @sort-change="changeTableSort"
                   style="width: 100%">
             <el-table-column
                     prop="id"
@@ -48,8 +49,9 @@
                     v-if="columns['id']['show']"
                     width="80">
             </el-table-column>
-            <el-table-column :label="columns['title']['title']"
-                             v-if="columns['title']['show']" width="*">
+            <el-table-column
+                :label="columns['title']['title']"
+                v-if="columns['title']['show']" width="*">
                 <template slot-scope="scope">
                     <a target="_blank" v-bind:href="scope.row.url">{{ scope.row.title }}</a>
                 </template>
@@ -143,19 +145,29 @@
             </el-table-column>
             <el-table-column
                     prop="created_at"
+                    sortable
                     :label="columns['created_at']['title']"
                     v-if="columns['created_at']['show']"
                     width="120">
             </el-table-column>
             <el-table-column
                     prop="updated_at"
+                    sortable
                     :label="columns['updated_at']['title']"
                     v-if="columns['updated_at']['show']"
                     width="120">
             </el-table-column>
-            <el-table-column prop="author" :label="columns['author']['title']"
-                             v-if="columns['author']['show']" width="180"></el-table-column>
-            <el-table-column prop="publish_time" label="发布时间" width="180"></el-table-column>
+            <el-table-column prop="author"
+                             :label="columns['author']['title']"
+                             v-if="columns['author']['show']" width="180">
+            </el-table-column>
+            <el-table-column
+                prop="publish_time"
+                sortable
+                label="发布时间"
+                width="180">
+            </el-table-column>
+
             <el-table-column label="操作" fixed="right" width="140">
                 <template slot-scope="scope">
                     <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">编辑</router-link>
@@ -302,8 +314,6 @@
                         message: '已取消删除'
                     });
                 });
-
-
             },
             filterHandler: function(value, row, column) {
                 const property = column['property'];
@@ -317,6 +327,22 @@
             },
             transfer: function(img) {
                 return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
+            },
+            changeTableSort: function(column) {
+                const new_article_lists = this.article_lists.sort(function(x, y) {
+                    const value1 = x[column['prop']], value2 = y[column['prop']];
+                    let ret = 1;
+                    if (/^\d+$/.test(value1)) {
+                        ret = value1 - value2;
+                    }
+                    else {
+                        ret = value1 > value2?1:-1;
+                    }
+
+                    return column['order'] === "ascending"?ret:-ret;
+                });
+
+                this.$store.commit('article/set_article_list', new_article_lists);
             }
         }
     }

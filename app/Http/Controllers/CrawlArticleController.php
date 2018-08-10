@@ -53,12 +53,17 @@ class CrawlArticleController extends Controller
 
         //添加或者更新数据
         $url = $request->input('url');
+        $categories = $request->input('categories');
+        $categories = implode(',', $categories);
+
         $form = [
             'url' => $url,
+            'categories' => $categories,
             'user_id' => Auth::user()->id,
         ];
 
         $id = $request->input('id');
+
         if (!is_null($id)) {
             CrawlArticle::where('id', $id)->update($form);
         } else {
@@ -68,7 +73,7 @@ class CrawlArticleController extends Controller
         }
 
         // 更新静态页
-        $this->startCrawlJob($url);
+        $this->addCrawlJob($url);
         return ['success' => 1, 'data' => ['id' => $id]];
     }
 
@@ -96,7 +101,7 @@ class CrawlArticleController extends Controller
         return ['success' => 1];
     }
 
-    private function startCrawlJob($url)
+    private function addCrawlJob($url)
     {
         $this->kafka->produce('crawl_single_article', $url);
     }
