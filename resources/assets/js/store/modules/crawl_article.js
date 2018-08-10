@@ -12,6 +12,7 @@ const state = {
     form: {
         id: null,
         url: null,
+        categories: [],
         created_at: '',
         updated_at: ''
     },
@@ -77,6 +78,7 @@ const mutations = {
         state.form = {
             id: null,
             url: null,
+            categories: [],
             created_at: '',
             updated_at: ''
         }
