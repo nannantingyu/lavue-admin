@@ -222,7 +222,7 @@
                 'get_options': 'article_need_look/get_options',
                 'get_lists': 'article_need_look/get_lists',
                 'set_article_state': 'article_need_look/set_article_state',
-                'update_many_state':'article_need_look/supdateMany'
+                'update_many_state':'article_need_look/updateMany'
                 // 'add_update':'menu/add_update'
             }),
             handleSelectionChange(val) {
