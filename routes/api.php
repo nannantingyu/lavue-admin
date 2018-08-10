@@ -58,6 +58,7 @@ Route::get('banner/listCategory', 'BannerCategoryController@getList');
 
 
 Route::get('article/listBySite', 'ArticleController@listBySite');
+Route::post('article/setStates', 'ArticleController@setState');
 
 
 
