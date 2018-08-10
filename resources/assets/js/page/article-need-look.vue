@@ -4,7 +4,8 @@
             <h5>jujin8待审核文章管理</h5>
             <div style="overflow: hidden">
                 <template>
-                    <el-select v-model="optionValue" placeholder="请选择网站来源" value-key="site" filterable  style="float: right;">
+                    <el-select v-model="optionValue" placeholder="请选择网站来源" value-key="site" filterable
+                               style="float: right;" @change="changeSite">
                         <el-option
                                 v-for="(item,index) in options"
                                 :key="'option'+index"
@@ -27,18 +28,25 @@
                     </ul>
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
+                <el-button type="success" round @click="updateMany(1)" :disabled="!user_module_permission['article-filter-delete']">批量审核通过</el-button>
                 <!--<el-radio-group v-model="radio" style="float: right;" @change="filterData">-->
-                    <!--<el-radio-button label="全部"></el-radio-button>-->
-                    <!--<el-radio-button label="自动审核"></el-radio-button>-->
-                    <!--<el-radio-button label="人工审核"></el-radio-button>-->
+                <!--<el-radio-button label="全部"></el-radio-button>-->
+                <!--<el-radio-button label="自动审核"></el-radio-button>-->
+                <!--<el-radio-button label="人工审核"></el-radio-button>-->
                 <!--</el-radio-group>-->
             </div>
         </el-header>
         <el-main>
-            <el-table :data="article_lists.slice((current_page-1)*per_page, current_page*per_page)"
-                      v-loading="loading"
-                      @sort-change="changeTableSort"
-                      style="width: 100%">
+            <el-table
+                    :data="lists"
+                    v-loading="loading"
+                    @selection-change="handleSelectionChange"
+                    border
+                    style="width: 100%">
+                <el-table-column
+                        type="selection"
+                        width="*">
+                </el-table-column>
                 <el-table-column
                         prop="id"
                         sortable
@@ -47,11 +55,12 @@
                         width="80">
                 </el-table-column>
                 <el-table-column
+                        prop="title"
                         :label="columns['title']['title']"
-                        v-if="columns['title']['show']" width="*">
-                    <template slot-scope="scope">
-                        <a target="_blank" v-bind:href="scope.row.url">{{ scope.row.title }}</a>
-                    </template>
+                        v-if="columns['title']['show']" min-width="200">
+                    <!--<template slot-scope="scope">-->
+                        <!--<a target="_blank" v-bind:href="scope.row.url">{{ scope.row.title }}</a>-->
+                    <!--</template>-->
                 </el-table-column>
                 <el-table-column
                         prop="image"
@@ -63,23 +72,14 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                        prop="url"
-                        :label="columns['url']['title']"
-                        v-if="columns['url']['show']"
-                        width="140">
-                    <template slot-scope="scope">
-                        <a target="_blank" v-bind:href="scope.row.url">{{ scope.row.url }}</a>
-                    </template>
-                </el-table-column>
-                <el-table-column
                         prop="state"
                         sortable
                         :label="columns['state']['title']"
                         v-if="columns['state']['show']"
-                        width="80">
+                        min-width="80">
                     <template slot-scope="scope">
                         <el-switch
-                                :disabled="!user_module_permission['article-delete']"
+                                :disabled="!user_module_permission['article-need-look-delete']"
                                 v-model="scope.row.state"
                                 @change="changeState(scope.$index, scope.row)"></el-switch>
                     </template>
@@ -88,36 +88,36 @@
                         prop="source_type"
                         :label="columns['source_type']['title']"
                         v-if="columns['source_type']['show']"
-                        width="80">
+                        min-width="80">
                 </el-table-column>
                 <el-table-column
                         prop="source_url"
                         :label="columns['source_url']['title']"
                         v-if="columns['source_url']['show']"
-                        width="80">
+                        min-width="80">
                     <template slot-scope="scope">
-                        <a target="_blank" v-bind:href="scope.row.source_url">来源</a>
+                        <a target="_blank" v-bind:href="scope.row.source_url">原文链接</a>
                     </template>
                 </el-table-column>
                 <el-table-column
                         prop="source_site"
                         :label="columns['source_site']['title']"
                         v-if="columns['source_site']['show']"
-                        width="80">
+                        min-width="100">
                 </el-table-column>
                 <el-table-column
                         prop="created_at"
                         sortable
                         :label="columns['created_at']['title']"
                         v-if="columns['created_at']['show']"
-                        width="120">
+                        min-width="120">
                 </el-table-column>
                 <el-table-column
                         prop="updated_at"
                         sortable
                         :label="columns['updated_at']['title']"
                         v-if="columns['updated_at']['show']"
-                        width="120">
+                        min-width="120">
                 </el-table-column>
                 <el-table-column prop="author"
                                  :label="columns['author']['title']"
@@ -127,17 +127,25 @@
                         prop="publish_time"
                         sortable
                         label="发布时间"
-                        width="180">
+                        min-width="180">
                 </el-table-column>
 
-                <el-table-column label="操作" fixed="right" width="140">
+                <el-table-column label="操作" fixed="right" min-width="240">
                     <template slot-scope="scope">
-                        <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">编辑</router-link>
                         <el-button
                                 size="mini"
-                                :type="scope.row.state?'success':'danger'"
-                                :disabled="!user_module_permission['article-delete']"
-                                @click="drop_article(scope.$index, scope.row)">删除</el-button>
+                                type="success"
+                                :disabled="!user_module_permission['article-need-look-delete']"
+                                @click="changeState(scope.$index, scope.row)">审核通过
+                        </el-button>
+                        <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">
+                            <el-button type="primary" size="mini">编辑</el-button></router-link>
+                        <el-button
+                                size="mini"
+                                type="danger"
+                                :disabled="!user_module_permission['article-need-look-delete']"
+                                @click="drop_article(scope.$index, scope.row)">删除
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -147,7 +155,9 @@
                     @size-change="size_change"
                     :current-page="current_page"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="total">
+                    :total="total"
+                    style="padding-top:20px"
+            >
             </el-pagination>
         </el-main>
     </div>
@@ -163,7 +173,7 @@
         RadioButton,
         Select,
         Option,
-        Pagination, Loading, Popover, Switch, Input,
+        Pagination, Loading, Popover, Switch, Input, MessageBox
     } from 'element-ui';
 
     Vue.use(Table);
@@ -181,25 +191,22 @@
     export default {
         name: "article-need-look",
         data() {
-            var p = this.$store.state.article_need_look.options[0];
             return {
+                loading: false,
                 radio: "全部",
-                optionValue: p.site
+                optionValue: "",
+                multipleSelection:[]
             }
         },
-        computed:{
+        computed: {
             ...mapState(['formLabelWidth']),
             ...mapState({
-                'options':state =>state.article_need_look.options,
+                'options': state => state.article_need_look.options,
                 'columns': state => state.article_need_look.columns,
-                'article_lists': state=>state.article.article_lists,
-                'loading': state=>state.article.loading,
-                'total_page': state=>state.article.total_page,
-                'current_page': state=>state.article.current_page,
-                'per_page': state=>state.article.per_page,
-                'total': state=>state.article.total,
-                'user_module_permission': state=>state.user.user_module_permission,
-                'article_categories': state=>state.article.article_categories,
+                'lists': state => state.article_need_look.lists,
+                'current_page': state => state.article_need_look.current_page,
+                'total': state => state.article_need_look.total,
+                'user_module_permission': state => state.user.user_module_permission,
                 // 'lists': state => state.article_filter.lists,
                 // 'user_module_permission': state => state.user.user_module_permission
             }),
@@ -209,50 +216,38 @@
         },
         methods: {
             ...mapMutations({
+                'page_changeEvent': "article_need_look/set_current_page",
+                'size_changeEvent': "article_need_look/set_page_size",
+                'set_site_info': "article_need_look/set_site_info",
                 // 'set_state':'menu/set_state',
                 // 'set_feed_state': "menu/set_feed_state",
                 // 'filter_data':"menu/filter_data"
             }),
             ...mapActions({
-                'get_options':'article_need_look/get_options',
+                'get_options': 'article_need_look/get_options',
                 'get_lists': 'article_need_look/get_lists',
+                'set_article_state': 'article_need_look/set_article_state',
                 // 'add_update':'menu/add_update'
             }),
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            changeState(row, index) {
-                console.log(row, index, "nnnn")
+            changeState: function(index, row) {
+                this.set_article_state({id: row.id, state: row.state==0?0:1, index: index})
+                    .then(()=>{
+                        this.$message.success("更新成功");
+                    }).catch(()=>{
+                    this.$message.error("更新失败");
+                })
             },
-            filterData(state) {
-                console.log(state)
-            },
-            get_article_list: function() {
-                if(this.article_lists.length <= 0) {
-                    const _this = this;
-                    this.$store.dispatch('article/get_data').then(data => {
-                        _this.$message.success("成功获取文章列表")
-                    })
-                }
-            },
-            // changeState: function(index, row) {
-            //     const state = row.state?1:0;
-            //     const new_state = state, _this = this, msg = new_state == 0?"下线":"上线";
-            //     this.set_article_state({id: row.id, state: new_state, index: index})
-            //         .then((x)=>{
-            //             _this.$message.success(msg + "成功");
-            //         }).catch((x)=>{
-            //         _this.$message.error(msg + "失败");
-            //     })
-            // },
-            drop_article: function(index, row) {
+            drop_article: function (index, row) {
                 const _this = this;
                 MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    _this.delete_article({id: row.id, index: index}).then(result=> {
+                    _this.delete_article({id: row.id, index: index}).then(result => {
                         _this.$message.success("删除成功");
                     })
                 }).catch(() => {
@@ -262,41 +257,42 @@
                     });
                 });
             },
-            filterHandler: function(value, row, column) {
-                const property = column['property'];
-                return row[property] == value;
-            },
-            page_change: function(page) {
-                this.set_current_page(page)
-            },
-            size_change: function(size) {
-                this.set_per_page(size);
-            },
-            transfer: function(img) {
-                return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
-            },
-            changeTableSort: function(column) {
-                const new_article_lists = this.article_lists.sort(function(x, y) {
-                    const value1 = x[column['prop']], value2 = y[column['prop']];
-                    let ret = 1;
-                    if (/^\d+$/.test(value1)) {
-                        ret = value1 - value2;
-                    }
-                    else {
-                        ret = value1 > value2?1:-1;
-                    }
-
-                    return column['order'] === "ascending"?ret:-ret;
+            changeSite: function () {
+                this.set_site_info(this.optionValue)
+                this.get_lists().then(result => {
+                    this.$message.success("未审核文章列表获取成功")
                 });
-
-                this.$store.commit('article/set_article_list', new_article_lists);
+            },
+            //下一页上一页
+            page_change: function (state) {
+                let _this = this;
+                this.loading = true;
+                this.page_changeEvent(state);
+                this.get_lists().then(result => {
+                    _this.loading = false;
+                });
+            },
+            //分页size
+            size_change: function (state) {
+                let _this = this;
+                this.loading = true;
+                this.size_changeEvent(state);
+                this.get_lists().then(result => {
+                    _this.loading = false;
+                });
+            },
+            transfer: function (img) {
+                return img ? 'http://images.jujin8.com' + img.replace('/uploads/crawler', '/uploads') : ''
             }
         },
-        mounted(){
-            this.get_options().then(result=>{
-               this.optionValue=result[0];
+        mounted() {
+            this.get_options().then(result => {
+                this.optionValue = result[0];
+                this.set_site_info(result[0]);
+                this.get_lists().then(result => {
+                    this.$message.success("未审核文章列表获取成功")
+                });
             });
-            this.get_lists()
 
         }
     }

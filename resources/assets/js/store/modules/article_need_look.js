@@ -1,39 +1,13 @@
 import {check_time, check_integer_factory} from '../../plugin/tool'
 const state = {
-    // columns: {
-    //     id: {title: "ID", show: true},
-    //     time: {title: "更新时间", show: true},
-    //     site: {title: "源站", show: true},
-    //     state: {title: "当前状态", show: true}
-    // },
-    options:[{
-        value: '选项1',
-        label: '黄金糕'
-    }, {
-        value: '选项2',
-        label: '双皮奶'
-    }, {
-        value: '选项3',
-        label: '蚵仔煎'
-    }, {
-        value: '选项4',
-        label: '龙须面'
-    }, {
-        value: '选项5',
-        label: '北京烤鸭'
-    }],
+    options:[],
     lists: [],
-    lists_all: [],
     pageSize:10,
     currentPage:1,
     total:0,
+    siteInfo:{},
     state:-1,
-    current_page: 1,
-    per_page: 10,
     loading: false,
-    article_lists: [],
-    back_data: [],
-    show_type: 3,
     article_now: {},
     editor: null,
     columns: {
@@ -42,9 +16,7 @@ const state = {
         image: {title: "封面图", show: true},
         author: {title: "作者", show: true},
         publish_time: {title: "发布时间", show: true},
-        url: {title: "链接", show: false},
         state: {title: "状态", show: true},
-        recommend: {title: "推荐", show: false},
         source_type: {title: "原创类型", show: false},
         source_url: {title: "来源链接", show: true},
         source_site: {title: "来源网站", show: true},
@@ -110,44 +82,43 @@ const state = {
 };
 
 const mutations = {
+    set_current_page: (state, current_page) => {
+        state.currentPage = current_page;
+    },
+    set_total: (state, total) => {
+        state.total = total;
+    },
+    set_page_size: (state, pageSize) => {
+        state.pageSize = pageSize
+    },
     set_options:(state, options) => {
         state.options = options;
+    },
+    set_site_info:(state, obj) => {
+        state.siteInfo = obj;
     },
     set_list: (state, list) => {
         state.lists = list;
     },
     set_lists_all: (state, list) => {
         state.lists_all = list;
-    },
-    filter_data: (state, r) => {
-        // 0:全部
-        // 1:自动审核
-        // 2:人工审核
-        if(r==0){
-            state.lists = state.lists_all;
-        }
-        else if(r==1){
-            let arr=[];
-            state.lists_all.map((item)=>{
-                if(!item.state){
-                    arr.push(item);
-                }
-            })
-            state.lists = arr;
-        }
-        else if(r==2){
-            let arr=[];
-            state.lists_all.map((item)=>{
-                if(item.state){
-                    arr.push(item);
-                }
-            })
-            state.lists = arr;
-        }
     }
 };
 
 const actions = {
+    set_article_state ({commit}, {id, state, index})  {
+        return new Promise((resolve, reject)=> {
+            axios.post('/setArticleState', {id: id, state: state})
+                .then(function(result) {
+                    if(result.data.success === 1) {
+                        resolve(result)
+                    }
+                    else {
+                        reject(result)
+                    }
+                });
+        })
+    },
     add_update:({commit, state},form) => {
         return new Promise((resolve, reject) => {
             axios.post('/api/banner/add',form).then(result=> {
@@ -178,19 +149,20 @@ const actions = {
         })
     },
     get_lists: ({commit, state}) => {
-        //获取 网站审核数据 并组装
+        //获取 未审核文章列表
         return new Promise((resolve, reject) => {
-            axios.get('/api/article/listBySite',{params: { size:10,
-                    page:2,site:"jin10",time:"2015-01-01" }}).then(r=> {
+            axios.get('/api/article/listBySite',{params: {
+                    size:state.pageSize,
+                    page:state.currentPage,
+                    site:state.siteInfo.site,
+                    time:state.siteInfo.time }}).then(r=> {
                 if(r.data.success === 1) {
-                    let data = r.data.data;
+                    let data = r.data.value;
                     if(data){
-                        commit('set_list', data);
+                        commit('set_list', data.list);
                         commit('set_total', data.count);
-                        // commit('set_lists_all', configData);
-                        resolve(configData);
+                        resolve(data);
                     }
-                    // console.log(r.data.data,"kkhhh")
                 }
 
             })
