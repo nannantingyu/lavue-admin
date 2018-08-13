@@ -66,6 +66,18 @@
                             :label="columns['ip']['title']"
                             v-if="columns['ip']['show']">
                     </el-table-column>
+                    <el-table-column
+                            label="操作"
+                            fixed="right"
+                            min-width="100">
+                        <template slot-scope="scope">
+                            <el-button
+                                    size="mini"
+                                    :type="scope.row.is_handling?'danger':'success'"
+                                    :disabled="!user_module_permission['feedback-delete']"
+                                    @click="changeState(scope.row,'button')">{{scope.row.is_handling==1?"未处理":"已处理"}}</el-button>
+                        </template>
+                    </el-table-column>
 
                 </el-table>
                 <el-pagination
@@ -147,12 +159,20 @@
                 this.multipleSelection = val;
             },
             //更改handle状态
-            changeState: function (row) {
+            changeState: function (row,isButton) {
                 const _this = this;
                 const obj=deepCopy(row);
-                obj.is_handling=row.is_handling?1:0;
+                if(isButton){
+                    obj.is_handling=row.is_handling?0:1;
+                }
+                else{
+                    obj.is_handling=row.is_handling?1:0;
+                }
                 this.set_feed_state(obj).then(result=>{
                     _this.$message.success("更新成功");
+                    this.get_feed_lists().then(result=> {
+                        _this.$message.success('成功更新意见反馈列表！');
+                    })
                 });
             },
             //下一页上一页
