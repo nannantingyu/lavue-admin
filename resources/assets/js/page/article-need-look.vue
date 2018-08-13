@@ -61,7 +61,7 @@
                         prop="image"
                         :label="columns['image']['title']"
                         v-if="columns['image']['show']"
-                        width="160">
+                        min-width="140">
                     <template slot-scope="scope">
                         <img width="140" :src="transfer(scope.row.image)" :alt="scope.row.image">
                     </template>
@@ -98,14 +98,14 @@
                         prop="source_site"
                         :label="columns['source_site']['title']"
                         v-if="columns['source_site']['show']"
-                        min-width="100">
+                        min-width="80">
                 </el-table-column>
                 <el-table-column
                         prop="created_at"
                         sortable
                         :label="columns['created_at']['title']"
                         v-if="columns['created_at']['show']"
-                        min-width="120">
+                        min-width="100">
                 </el-table-column>
                 <el-table-column
                         prop="updated_at"
@@ -116,7 +116,7 @@
                 </el-table-column>
                 <el-table-column prop="author"
                                  :label="columns['author']['title']"
-                                 v-if="columns['author']['show']" width="180">
+                                 v-if="columns['author']['show']" min-width="80">
                 </el-table-column>
                 <el-table-column
                         prop="publish_time"
@@ -125,7 +125,7 @@
                         min-width="180">
                 </el-table-column>
 
-                <el-table-column label="操作" fixed="right" min-width="240">
+                <el-table-column label="操作" fixed="right" min-width="200">
                     <template slot-scope="scope">
                         <el-button
                                 size="mini"
@@ -135,12 +135,12 @@
                         </el-button>
                         <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">
                             <el-button type="primary" size="mini">编辑</el-button></router-link>
-                        <el-button
-                                size="mini"
-                                type="danger"
-                                :disabled="!user_module_permission['article-need-look-delete']"
-                                @click="drop_article(scope.$index, scope.row)">删除
-                        </el-button>
+                        <!--<el-button-->
+                                <!--size="mini"-->
+                                <!--type="danger"-->
+                                <!--:disabled="!user_module_permission['article-need-look-delete']"-->
+                                <!--@click="drop_article(scope.$index, scope.row)">删除-->
+                        <!--</el-button>-->
                     </template>
                 </el-table-column>
             </el-table>
@@ -218,6 +218,7 @@
                 'get_options': 'article_need_look/get_options',
                 'get_lists': 'article_need_look/get_lists',
                 'set_article_state': 'article_need_look/set_article_state',
+                'delete_article': "article_need_look/delete_article",
                 'update_many_state':'article_need_look/updateMany'
             }),
             handleSelectionChange(val) {
