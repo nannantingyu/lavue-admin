@@ -134,7 +134,7 @@ class ArticleController extends Controller
     {
         $id = $request->input('id');
         DB::table('article')
-            ->whereIn('id', $id)
+            ->whereIn('id', explode(",",$id))
             ->update(['state' => 1]);
         return [
             'success' => 1
