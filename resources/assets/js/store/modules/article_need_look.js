@@ -141,7 +141,6 @@ const actions = {
                                 commit('set_options', arr);
                                 resolve(arr);
                             }
-                            // console.log(r.data.data,"kkhhh")
                         }
 
                     })
