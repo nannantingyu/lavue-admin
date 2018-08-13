@@ -15,12 +15,10 @@ class TemplateUpdater {
 
     public function produce($topic, $page) {
         if($this->send_to_kafka) {
-            echo "produce";
             $this->kafka->produce($topic, $page);
             return true;
         }
 
-        echo "no produce";
         return false;
     }
 
