@@ -19,6 +19,9 @@ const state = {
     sites: [],
     selected: [],
     is_selected: true,
+    time_key: 'publish_time',
+    st: '',
+    et: '',
     columns: {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
@@ -107,6 +110,15 @@ const mutations = {
     },
     set_category: (state, category) => {
         state.category = category;
+    },
+    set_time_key: (state, time_key) => {
+        state.time_key = time_key;
+    },
+    set_st: (state, st) => {
+        state.st = st;
+    },
+    set_et: (state, et) => {
+        state.et = et;
     },
     set_back_data: (state, back_data) => {
         state.back_data = back_data;
@@ -239,6 +251,11 @@ const actions = {
             if(state.search_key) params['keywords'] = state.search_key
             if(state.sites.length > 0) params['sites'] = state.sites.join(',')
             if(state.category.length > 0) params['category'] = state.category.join(',')
+            if(state.st || state.et) {
+                params['time_key'] = state.time_key
+                state.st && (params['st'] = state.st)
+                state.et && (params['et'] = state.et)
+            }
 
             axios.get("/articleLists", {params: params}).then(function(result){
                 if(result.data.success === 1)

@@ -17,17 +17,17 @@
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="4">
                 <el-radio-group v-model="show_type">
                     <el-radio-button label="3">全部</el-radio-button>
                     <el-radio-button label="1">上线</el-radio-button>
                     <el-radio-button label="0">下线</el-radio-button>
                 </el-radio-group>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="3">
                 <el-popover
                     placement="right"
-                    width="400"
+                    width="600"
                     trigger="click">
                     <el-row class="padding-row-15">
                         <el-input v-model="search_key" placeholder="请输入搜索关键词" @change="get_article_list"></el-input>
@@ -52,10 +52,33 @@
                             </el-option>
                         </el-select>
                     </el-row>
+                    <el-row class="padding-row-15">
+                        <el-col :span="8">
+                            <el-select v-model="time_key" placeholder="请选择分类" @change="changeDate">
+                                <el-option key="publish_time" label="发布时间" value="publish_time"></el-option>
+                                <el-option key="created_time" label="创建时间" value="created_time"></el-option>
+                                <el-option key="updated_time" label="更新时间" value="updated_time"></el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-date-picker type="datetime" placeholder="选择开始时间"
+                                            v-model="st"
+                                            @change="changeDate"
+                                            format="yyyy-MM-dd HH:mm:ss"
+                                            value-format="yyyy-MM-dd HH:mm:ss"
+                                            style="width: 100%;"></el-date-picker>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-date-picker type="datetime" placeholder="选择结束时间"
+                                            v-model="et"
+                                            @change="changeDate"
+                                            format="yyyy-MM-dd HH:mm:ss"
+                                            value-format="yyyy-MM-dd HH:mm:ss"
+                                            style="width: 100%;"></el-date-picker>
+                        </el-col>
+                    </el-row>
                     <el-button slot="reference">筛选</el-button>
                 </el-popover>
-            </el-col>
-            <el-col :span="4">
                 <el-popover
                     placement="right"
                     width="400"
@@ -237,7 +260,7 @@
 
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, MessageBox, Loading, Popover, Switch, RadioGroup, RadioButton, Input, Select, Option} from 'element-ui'
+    import {Table, TableColumn, Pagination, MessageBox, Loading, DatePicker, Popover, Switch, RadioGroup, RadioButton, Input, Select, Option} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
@@ -249,6 +272,7 @@
     Vue.use(Input);
     Vue.use(Select);
     Vue.use(Option);
+    Vue.use(DatePicker);
 
     export default {
         name: "article-list",
@@ -339,6 +363,33 @@
                     this.filte_data()
                 }
             },
+            time_key: {
+                get() {
+                    return this.$store.state.article.time_key
+                },
+                set(value) {
+                    this.$store.commit('article/set_time_key', value)
+                    this.filte_data()
+                }
+            },
+            st: {
+                get() {
+                    return this.$store.state.article.st
+                },
+                set(value) {
+                    this.$store.commit('article/set_st', value)
+                    this.filte_data()
+                }
+            },
+            et: {
+                get() {
+                    return this.$store.state.article.et
+                },
+                set(value) {
+                    this.$store.commit('article/set_et', value)
+                    this.filte_data()
+                }
+            },
         },
         methods: {
             ...mapMutations({
@@ -351,6 +402,9 @@
                 filte_search: "article/filte_search",
                 set_order_by: "article/set_order_by",
                 set_order: "article/set_order",
+                set_time_key: "article/set_time_key",
+                set_st: "article/set_st",
+                set_et: "article/set_et",
                 filter_by_category: "article/filter_by_category"
             }),
             ...mapActions({
@@ -379,6 +433,11 @@
                 });
 
                 this.$store.commit("article/set_selected", st);
+            },
+            changeDate: function() {
+                if(this.st || this.et) {
+                    this.get_article_list()
+                }
             },
             multiOffline: function() {
                 const _this = this;
@@ -431,6 +490,11 @@
                 if(this.search_key) params['keywords'] = this.search_key
                 if(this.sites.length > 0) params['sites'] = this.sites.join(',')
                 if(this.category.length > 0) params['category'] = this.category.join(',')
+                if(this.st || this.et) {
+                    params['st'] = this.st;
+                    params['et'] = this.et;
+                    params['time_key'] = this.time_key;
+                }
 
                 return params;
             },

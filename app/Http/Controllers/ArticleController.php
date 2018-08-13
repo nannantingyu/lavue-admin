@@ -24,11 +24,22 @@ class ArticleController extends Controller
         $state = $request->input('state', 2);
         $category = $request->input('category');
         $keywords = $request->input('keywords');
+        $st = $request->input('st');
+        $et = $request->input('et');
+        $time_key = $request->input('time_key', 'publish_time');
 
         $articles = DB::table('article')->orderBy($order_by, $order);
         if(!is_null($sites)) {
             $sites = explode(',', $sites);
             $articles = $articles->whereIn('source_site', $sites);
+        }
+
+        if(!is_null($st)) {
+            $articles = $articles->where($time_key, ">=", $st);
+        }
+
+        if(!is_null($et)) {
+            $articles = $articles->where($time_key, "<=", $et);
         }
 
         if($state != 2) {
