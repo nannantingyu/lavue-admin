@@ -144,11 +144,12 @@ const actions = {
             })
         })
     },
-    get_config: ({commit, state})=> {
+    get_config: ({commit, state}, {key})=> {
         return new Promise((resolve, reject)=> {
-            axios.get('/configInfo').then(result=> {
+            axios.get('/configInfo?key='+key).then(result=> {
                 if(result.data.success === 1) {
                     commit('set_form', result.data.data)
+                    resolve(result)
                 }
             })
         })

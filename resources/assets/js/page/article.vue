@@ -25,10 +25,18 @@
                 </el-radio-group>
             </el-col>
             <el-col :span="4">
-                <el-input v-model="search_key" @change="filte_search"></el-input>
+                <el-input v-model="search_key" placeholder="请输入搜索关键词" @change="get_article_list"></el-input>
             </el-col>
+            <el-select v-model="sites" multiple placeholder="请选择来源站点" @change="get_article_list">
+                <el-option
+                    v-for="item in source_sites"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name">
+                </el-option>
+            </el-select>
             <el-col :span="4">
-                <el-select v-model="category" multiple placeholder="请选择分类" @change="filter_by_category">
+                <el-select v-model="category" multiple placeholder="请选择分类" @change="get_article_list">
                     <el-option
                             v-for="item in article_categories"
                             :key="item.id"
@@ -218,10 +226,24 @@
             else {
                 _this.get_article_list()
             }
+
+            if(this.source_sites.length == 0) {
+                this.$store.dispatch("config/get_config", {key: 'article_source_site'}).then(result=>{
+                    if(result.data.success === 1) {
+                        let sites = [];
+                        for(let site of result.data.data.value) {
+                            sites.push({'name': site['site']});
+                        }
+
+                        _this.set_source_sites(sites);
+                    }
+                });
+            }
         },
         computed: {
             ...mapState({
                 article_lists: state=>state.article.article_lists,
+                source_sites: state=>state.article.source_sites,
                 loading: state=>state.article.loading,
                 total_page: state=>state.article.total_page,
                 current_page: state=>state.article.current_page,
@@ -240,6 +262,15 @@
                 },
                 set(value) {
                     this.$store.commit('article/set_show_type', value)
+                    this.filte_data()
+                }
+            },
+            sites: {
+                get() {
+                    return this.$store.state.article.sites
+                },
+                set(value) {
+                    this.$store.commit('article/set_sites', value)
                     this.filte_data()
                 }
             },
@@ -265,6 +296,7 @@
         methods: {
             ...mapMutations({
                 set_current_page: "article/set_current_page",
+                set_source_sites: "article/set_source_sites",
                 set_per_page: "article/set_per_page",
                 filte_data: "article/filte_data",
                 set_article_categories: "article/set_article_categories",
@@ -276,17 +308,11 @@
                 set_article_state: "article/set_article_state",
                 delete_article: "article/delete_article"
             }),
-            filter_by_category: function(value) {
-                this.$store.dispatch('article/get_data_by_category').then(result=> {
-                });
-            },
             get_article_list: function() {
-                if(this.article_lists.length <= 0) {
-                    const _this = this;
-                    this.$store.dispatch('article/get_data').then(data => {
-                        _this.$message.success("成功获取文章列表")
-                    })
-                }
+                const _this = this;
+                this.$store.dispatch('article/get_data').then(data => {
+                    _this.$message.success("成功获取文章列表")
+                })
             },
             changeState: function(index, row) {
                 const state = row.state?1:0;

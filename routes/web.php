@@ -24,6 +24,8 @@ Route::post('/deleteArticle', 'ArticleController@deleteArticle');
 Route::post('/searchArticle', 'ArticleController@searchArticle');
 Route::get('/articleListsByCategory', 'ArticleController@articleListsByCategory');
 Route::get('/articleSource', 'ArticleController@source');
+Route::get('/articleSourceSite', 'ArticleController@source_site');
+
 
 // 文章分类
 Route::get('/categoryLists', 'CategoryController@lists');
