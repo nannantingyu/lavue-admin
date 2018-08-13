@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-row>
-            <el-col :span="6">
+            <el-col :span="4">
                 <el-popover
                         placement="right"
                         width="400"
@@ -25,31 +25,68 @@
                 </el-radio-group>
             </el-col>
             <el-col :span="4">
-                <el-input v-model="search_key" placeholder="请输入搜索关键词" @change="get_article_list"></el-input>
+                <el-popover
+                    placement="right"
+                    width="400"
+                    trigger="click">
+                    <el-row class="padding-row-15">
+                        <el-input v-model="search_key" placeholder="请输入搜索关键词" @change="get_article_list"></el-input>
+                    </el-row>
+                    <el-row class="padding-row-15">
+                        <el-select v-model="sites" multiple placeholder="请选择来源站点" @change="get_article_list">
+                            <el-option
+                                v-for="item in source_sites"
+                                :key="item.name"
+                                :label="item.name"
+                                :value="item.name">
+                            </el-option>
+                        </el-select>
+                    </el-row>
+                    <el-row class="padding-row-15">
+                        <el-select v-model="category" multiple placeholder="请选择分类" @change="get_article_list">
+                            <el-option
+                                v-for="item in article_categories"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-row>
+                    <el-button slot="reference">筛选</el-button>
+                </el-popover>
             </el-col>
-            <el-select v-model="sites" multiple placeholder="请选择来源站点" @change="get_article_list">
-                <el-option
-                    v-for="item in source_sites"
-                    :key="item.name"
-                    :label="item.name"
-                    :value="item.name">
-                </el-option>
-            </el-select>
             <el-col :span="4">
-                <el-select v-model="category" multiple placeholder="请选择分类" @change="get_article_list">
-                    <el-option
-                            v-for="item in article_categories"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                    </el-option>
-                </el-select>
+                <el-popover
+                    placement="right"
+                    width="400"
+                    trigger="click">
+                    <el-row class="padding-row-15">
+                        <el-switch
+                            v-model="is_selected"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            active-text="选中的"
+                            inactive-text="全部的">
+                        </el-switch>
+                    </el-row>
+                    <el-row class="padding-row-15">
+                        <el-button @click="multiOffline">批量下线</el-button>
+                        <el-button @click="multiOnline">批量上线</el-button>
+                        <!--<el-button @click="multiDelete">批量删除</el-button>-->
+                    </el-row>
+                    <el-button slot="reference">批量操作</el-button>
+                </el-popover>
             </el-col>
         </el-row>
         <el-table :data="article_lists"
                   v-loading="loading"
+                  @selection-change="changeSelected"
                   @sort-change="changeTableSort"
                   style="width: 100%">
+            <el-table-column
+                type="selection"
+                width="55">
+            </el-table-column>
             <el-table-column
                     prop="id"
                     sortable
@@ -227,7 +264,7 @@
                 _this.get_article_list()
             }
 
-            if(this.source_sites.length == 0) {
+            if(this.source_sites.length === 0) {
                 this.$store.dispatch("config/get_config", {key: 'article_source_site'}).then(result=>{
                     if(result.data.success === 1) {
                         let sites = [];
@@ -250,6 +287,7 @@
                 per_page: state=>state.article.per_page,
                 total: state=>state.article.total,
                 columns: state=>state.article.columns,
+                selected: state=>state.article.selected,
                 user_module_permission: state=>state.user.user_module_permission,
                 article_categories: state=>state.article.article_categories,
             }),
@@ -262,6 +300,15 @@
                 },
                 set(value) {
                     this.$store.commit('article/set_show_type', value)
+                    this.filte_data()
+                }
+            },
+            is_selected: {
+                get() {
+                    return this.$store.state.article.is_selected
+                },
+                set(value) {
+                    this.$store.commit('article/set_is_selected', value)
                     this.filte_data()
                 }
             },
@@ -326,6 +373,67 @@
                     _this.$message.error(msg + "失败");
                 })
             },
+            changeSelected: function(selected) {
+                const st = selected.map(x=>{
+                    return x.id
+                });
+
+                this.$store.commit("article/set_selected", st);
+            },
+            multiOffline: function() {
+                const _this = this;
+                if(this.is_selected && this.selected.length === 0) {
+                    this.$message.error('没有选中任何文章');
+                    return false;
+                }
+
+                _this.$store.dispatch('article/multiOffline', _this.get_params()).then(result=> {
+                    _this.update_article_state(false);
+                    _this.$message.success("成功全部下线")
+                });
+            },
+            multiOnline: function() {
+                const _this = this;
+                if(this.is_selected && this.selected.length === 0) {
+                    this.$message.error('没有选中任何文章');
+                    return false;
+                }
+
+                _this.$store.dispatch('article/multiOnline', _this.get_params()).then(result=> {
+                    _this.update_article_state(true);
+                    _this.$message.success("成功全部上线")
+                });
+            },
+            multiDelete: function() {
+                const _this = this;
+                _this.$store.dispatch('article/multiDelete', _this.get_params()).then(result=> {
+                    _this.$message.success("成功全部删除")
+                });
+            },
+            update_article_state: function(state) {
+                if(this.is_selected) {
+                    for(let id of this.selected) {
+                        this.$store.commit('article/update_article_list_by_id',  {id: id, key: 'state', val: state})
+                    }
+                }
+                else {
+                    for(let index in this.article_lists) {
+                        this.$store.commit('article/update_article_list_by_index',  {index: index, key: 'state', val: state})
+                    }
+                }
+            },
+            get_params: function() {
+                let params = {
+                    is_selected: this.is_selected,
+                    selected: this.selected
+                };
+
+                if(this.search_key) params['keywords'] = this.search_key
+                if(this.sites.length > 0) params['sites'] = this.sites.join(',')
+                if(this.category.length > 0) params['category'] = this.category.join(',')
+
+                return params;
+            },
             drop_article: function(index, row) {
                 const _this = this;
                 MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -368,16 +476,7 @@
 </script>
 
 <style scoped>
-    .router-button {
-        display: inline-block;
-        padding: 7px 15px;
-        color: #fff;
-        background-color: #f36c10;
-        border-color: #f36c10;
-        font-size: 12px;
-        border-radius: 3px;
-        line-height: 12px;
-        border: 1px solid #f36c10;
-        font-weight: 500;
+    .padding-row-15 {
+        padding: 15px;
     }
 </style>

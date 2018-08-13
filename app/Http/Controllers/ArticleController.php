@@ -182,6 +182,101 @@ class ArticleController extends Controller
         ];
     }
 
+    /**
+     * 批量设置文章状态
+     * @param $request
+     * @param $state
+     */
+    private function multiSetState($request, $state) {
+        $is_selected = $request->input('is_selected');
+        $selected = $request->input('selected');
+        if($is_selected == 1) {
+            if(is_array($selected) && count($selected) > 0) {
+                Article::whereIn('id', $selected)->update(['state'=> $state]);
+            }
+        }
+        elseif($is_selected == 0) {
+            $articles = $this->getFilterParams($request);
+            $articles->update([
+                'state' => $state
+            ]);
+        }
+    }
+
+    /**
+     * 批量删除文章
+     * @param $request
+     * @param $state
+     */
+    public function multiDelete($request, $state) {
+        $is_select = $request->input('is_select');
+        $selected = $request->input('selected');
+        if($is_select === 'true') {
+            if(is_array($selected) && count($selected) > 0) {
+                Article::whereIn('id', $selected)->delete();
+            }
+        }
+        else {
+            $articles = $this->getFilterParams($request);
+            $articles->delete();
+        }
+
+        return ['success'=>1];
+    }
+
+    /**
+     * 批量下线文章
+     * @param Request $request
+     */
+    public function multiOffline(Request $request) {
+        $this->multiSetState($request, 0);
+        return ['success'=>1];
+    }
+
+    /**
+     * 批量上线文章
+     * @param Request $request
+     */
+    public function multiOnline(Request $request) {
+        $this->multiSetState($request, 1);
+        return ['success'=>1];
+    }
+
+    /**
+     * 获取筛选的文章
+     * @param $request
+     * @return \Illuminate\Database\Query\Builder
+     */
+    private function getFilterParams($request) {
+        $sites = $request->input('sites');
+        $category = $request->input('category');
+        $keywords = $request->input('keywords');
+
+        $articles = DB::table('article');
+        if(!is_null($sites)) {
+            $sites = explode(',', $sites);
+            $articles = $articles->whereIn('source_site', $sites);
+        }
+
+        if(!is_null($category)) {
+            $articles = $articles->join('article_category', 'article.id', '=', 'article_category.aid')
+                ->whereIn('article_category.cid', explode(',', $category));
+        }
+
+        if(!is_null($keywords)) {
+            if (\numcheck::is_int($keywords)) {
+                $articles = $articles->where('id', '=', $keywords);
+            }
+            else {
+                $articles = $articles->where(function ($query) use ($keywords) {
+                    $query->where('title', 'like', '%'.$keywords.'%')
+                        ->OrWhere('description', 'like', '%'.$keywords.'%');
+                });
+            }
+        }
+
+        return $articles;
+    }
 
     /**
      * 添加或者更新文章
@@ -358,6 +453,4 @@ class ArticleController extends Controller
             ]
         ];
     }
-
-
 }

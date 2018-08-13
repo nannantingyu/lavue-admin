@@ -17,6 +17,8 @@ const state = {
     order: 'asc',
     order_by: 'publish_time',
     sites: [],
+    selected: [],
+    is_selected: true,
     columns: {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
@@ -109,8 +111,14 @@ const mutations = {
     set_back_data: (state, back_data) => {
         state.back_data = back_data;
     },
+    set_is_selected: (state, is_selected) => {
+        state.is_selected = is_selected;
+    },
     set_editor: (state, editor) => {
         state.editor = editor;
+    },
+    set_selected: (state, selected) => {
+        state.selected = selected;
     },
     set_current_page: (state, current_page) => {
         state.current_page = current_page
@@ -163,6 +171,14 @@ const mutations = {
     update_article_list_by_index: (state, prop) => {
         state.article_lists[prop['index']][prop['key']] = prop['val']
     },
+    update_article_list_by_id: (state, prop) => {
+        for(let index in state.article_lists) {
+            if(state.article_lists[index]['id'] === prop['id']) {
+                state.article_lists[index][prop['key']] = prop['val'];
+                break;
+            }
+        }
+    },
     delete_article: (state, index) => {
         state.article_lists.splice(index, 1)
     },
@@ -188,6 +204,8 @@ const mutations = {
     },
     set_form_value: (state, {key, value})=> {
         state.form[key] = value
+    },
+    get_filter_params: (state) => {
     }
 }
 const getters = {
@@ -215,7 +233,7 @@ const actions = {
                 page: state.current_page,
                 num: state.per_page,
                 order: state.order,
-                order_by: state.order_by,
+                order_by: state.order_by
             };
 
             if(state.search_key) params['keywords'] = state.search_key
@@ -273,6 +291,30 @@ const actions = {
                     commit('set_total', result.data.data.length)
                     resolve()
                 }
+                else reject()
+            })
+        })
+    },
+    multiOffline: function({state, commit}, params) {
+        return new Promise((resolve, reject)=> {
+            axios.post("/multiOffline", params).then(result=> {
+                if(result.data.success === 1) resolve()
+                else reject()
+            })
+        })
+    },
+    multiOnline: function({state, commit}, params) {
+        return new Promise((resolve, reject)=> {
+            axios.post("/multiOnline", params).then(result=> {
+                if(result.data.success === 1) resolve()
+                else reject()
+            })
+        })
+    },
+    multiDelete: function({state, commit}, params) {
+        return new Promise((resolve, reject)=> {
+            axios.post("/multiDelete", params).then(result=> {
+                if(result.data.success === 1) resolve()
                 else reject()
             })
         })

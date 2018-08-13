@@ -25,6 +25,9 @@ Route::post('/searchArticle', 'ArticleController@searchArticle');
 Route::get('/articleListsByCategory', 'ArticleController@articleListsByCategory');
 Route::get('/articleSource', 'ArticleController@source');
 Route::get('/articleSourceSite', 'ArticleController@source_site');
+Route::post('/multiOffline', 'ArticleController@multiOffline');
+Route::post('/multiOnline', 'ArticleController@multiOnline');
+Route::post('/multiDelete', 'ArticleController@multiDelete');
 
 
 // 文章分类
