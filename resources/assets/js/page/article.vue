@@ -46,7 +46,7 @@
                 </el-select>
             </el-col>
         </el-row>
-        <el-table :data="article_lists.slice((current_page-1)*per_page, current_page*per_page)"
+        <el-table :data="article_lists"
                   v-loading="loading"
                   @sort-change="changeTableSort"
                   style="width: 100%">
@@ -302,6 +302,8 @@
                 set_article_categories: "article/set_article_categories",
                 set_search_key: "article/set_search_key",
                 filte_search: "article/filte_search",
+                set_order_by: "article/set_order_by",
+                set_order: "article/set_order",
                 filter_by_category: "article/filter_by_category"
             }),
             ...mapActions({
@@ -347,28 +349,19 @@
             },
             page_change: function(page) {
                 this.set_current_page(page)
+                this.get_article_list()
             },
             size_change: function(size) {
                 this.set_per_page(size);
+                this.get_article_list()
             },
             transfer: function(img) {
                 return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
             },
             changeTableSort: function(column) {
-                const new_article_lists = this.article_lists.sort(function(x, y) {
-                    const value1 = x[column['prop']], value2 = y[column['prop']];
-                    let ret = 1;
-                    if (/^\d+$/.test(value1)) {
-                        ret = value1 - value2;
-                    }
-                    else {
-                        ret = value1 > value2?1:-1;
-                    }
-
-                    return column['order'] === "ascending"?ret:-ret;
-                });
-
-                this.$store.commit('article/set_article_list', new_article_lists);
+                this.set_order_by(column['prop']);
+                this.set_order(column['order'] === 'ascending'?'asc':'desc');
+                this.get_article_list()
             }
         }
     }

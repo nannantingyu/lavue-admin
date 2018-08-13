@@ -14,6 +14,8 @@ const state = {
     search_key: '',
     category: [],
     source_sites: [],
+    order: 'asc',
+    order_by: 'publish_time',
     sites: [],
     columns: {
         id: {title: "ID", show: true},
@@ -116,6 +118,12 @@ const mutations = {
     set_source_sites: (state, source_sites) => {
         state.source_sites = source_sites
     },
+    set_order: (state, order) => {
+        state.order = order
+    },
+    set_order_by: (state, order_by) => {
+        state.order_by = order_by
+    },
     set_sites: (state, sites) => {
         state.sites = sites
     },
@@ -203,7 +211,13 @@ const getters = {
 const actions = {
     get_data({ commit, state }) {
         return new Promise((resolve, reject)=> {
-            let params = {};
+            let params = {
+                page: state.current_page,
+                num: state.per_page,
+                order: state.order,
+                order_by: state.order_by,
+            };
+
             if(state.search_key) params['keywords'] = state.search_key
             if(state.sites.length > 0) params['sites'] = state.sites.join(',')
             if(state.category.length > 0) params['category'] = state.category.join(',')
@@ -219,7 +233,6 @@ const actions = {
                         }
                     }
 
-                    console.log(article_lists)
                     commit('set_article_list', article_lists)
                     commit('set_back_data', article_lists)
                     commit('set_current_page', result.data.data.current_page)

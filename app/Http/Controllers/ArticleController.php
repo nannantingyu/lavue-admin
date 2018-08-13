@@ -21,7 +21,7 @@ class ArticleController extends Controller
         $order = $request->input('order', 'asc');
         $order_by = $request->input('order_by', 'publish_time');
         $sites = $request->input('sites');
-        $state = $request->input('num', 2);
+        $state = $request->input('state', 2);
         $category = $request->input('category');
         $keywords = $request->input('keywords');
 
