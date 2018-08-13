@@ -28,12 +28,7 @@
                     </ul>
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
-                <el-button type="success" round @click="updateMany(1)" :disabled="!user_module_permission['article-filter-delete']">批量审核通过</el-button>
-                <!--<el-radio-group v-model="radio" style="float: right;" @change="filterData">-->
-                <!--<el-radio-button label="全部"></el-radio-button>-->
-                <!--<el-radio-button label="自动审核"></el-radio-button>-->
-                <!--<el-radio-button label="人工审核"></el-radio-button>-->
-                <!--</el-radio-group>-->
+                <el-button type="success" round @click="updateMany()" :disabled="!user_module_permission['article-filter-delete']">批量审核通过</el-button>
             </div>
         </el-header>
         <el-main>
@@ -81,7 +76,7 @@
                         <el-switch
                                 :disabled="!user_module_permission['article-need-look-delete']"
                                 v-model="scope.row.state"
-                                @change="changeState(scope.$index, scope.row)"></el-switch>
+                                @change="changeState(scope.$index, scope.row,scope.row.state)"></el-switch>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -134,9 +129,9 @@
                     <template slot-scope="scope">
                         <el-button
                                 size="mini"
-                                type="success"
-                                :disabled="!user_module_permission['article-need-look-delete']"
-                                @click="changeState(scope.$index, scope.row)">审核通过
+                                :type="scope.row.state==0?'success':'info'"
+                                :disabled="!user_module_permission['article-need-look-delete']||scope.row.state==1"
+                                @click="changeState(scope.$index, scope.row,1)">{{scope.row.state==0?"审核通过":"已通过"}}
                         </el-button>
                         <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">
                             <el-button type="primary" size="mini">编辑</el-button></router-link>
@@ -207,8 +202,6 @@
                 'current_page': state => state.article_need_look.current_page,
                 'total': state => state.article_need_look.total,
                 'user_module_permission': state => state.user.user_module_permission,
-                // 'lists': state => state.article_filter.lists,
-                // 'user_module_permission': state => state.user.user_module_permission
             }),
             ...mapGetters({
                 'type_filter': 'article/type_filter'
@@ -219,26 +212,45 @@
                 'page_changeEvent': "article_need_look/set_current_page",
                 'size_changeEvent': "article_need_look/set_page_size",
                 'set_site_info': "article_need_look/set_site_info",
-                // 'set_state':'menu/set_state',
-                // 'set_feed_state': "menu/set_feed_state",
-                // 'filter_data':"menu/filter_data"
+                'set_temp_state':"article_need_look/set_temp_state",
             }),
             ...mapActions({
                 'get_options': 'article_need_look/get_options',
                 'get_lists': 'article_need_look/get_lists',
                 'set_article_state': 'article_need_look/set_article_state',
-                // 'add_update':'menu/add_update'
+                'update_many_state':'article_need_look/updateMany'
             }),
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            changeState: function(index, row) {
-                this.set_article_state({id: row.id, state: row.state==0?0:1, index: index})
+            changeState: function(index, row ,state) {
+                state==0?state=0:state=1;
+                this.set_article_state({id: row.id, state:state, index: index})
                     .then(()=>{
                         this.$message.success("更新成功");
+                        this.get_lists().then(result => {
+                            this.$message.success("未审核文章列表获取成功")
+                        });
                     }).catch(()=>{
                     this.$message.error("更新失败");
                 })
+            },
+            updateMany(){
+                let idStr="";
+                if(this.multipleSelection.length==0){
+                    this.$message.warning("请选择审核条目");
+                    return false;
+                }
+                this.multipleSelection.map(item=>{
+                    idStr+=item.id+","
+                })
+                idStr=idStr.slice(0,idStr.length-1);
+                this.update_many_state(idStr).then(result=>{
+                    this.$message.success("更新成功");
+                    this.get_lists().then(result => {
+                        this.$message.success("未审核文章列表获取成功")
+                    });
+                });
             },
             drop_article: function (index, row) {
                 const _this = this;
@@ -291,6 +303,8 @@
                 this.set_site_info(result[0]);
                 this.get_lists().then(result => {
                     this.$message.success("未审核文章列表获取成功")
+                }).catch(msg=>{
+                    this.$message.error(msg+"错误")
                 });
             });
 

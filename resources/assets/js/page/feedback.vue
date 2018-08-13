@@ -3,18 +3,26 @@
         <el-container>
             <el-header>
                 <h5>jujin8意见反馈列表</h5>
+                <el-button type="danger" round @click="updateMany(0)" :disabled="!user_module_permission['feedback-delete']">批量 修改为未处理</el-button>
+                <el-button type="success" round @click="updateMany(1)" :disabled="!user_module_permission['feedback-delete']">批量修改为已处理</el-button>
                 <el-radio-group v-model="radio" style="float: right;padding-bottom: 10px" @change="filterData">
                     <el-radio-button label="全部"></el-radio-button>
                     <el-radio-button label="未处理"></el-radio-button>
                     <el-radio-button label="已处理"></el-radio-button>
                 </el-radio-group>
+
             </el-header>
             <el-main>
                 <el-table
                         :data="feed_lists"
                         border
+                        @selection-change="handleSelectionChange"
                         style="width: 100%"
                         v-loading="loading">
+                    <el-table-column
+                            type="selection"
+                            width="55">
+                    </el-table-column>
                     <el-table-column
                             prop="id"
                             :label="columns['id']['title']"
@@ -91,7 +99,8 @@
         data() {
             return {
                 loading: false,
-                radio:"全部"
+                radio:"全部",
+                multipleSelection:[]
             }
         },
 
@@ -114,8 +123,29 @@
             }),
             ...mapActions({
                 'get_feed_lists': 'feedback/get_feed_lists',
-                'set_feed_state': "feedback/set_feed_state"
+                'set_feed_state': "feedback/set_feed_state",
+                'update_many_state':'feedback/updateMany'
             }),
+            updateMany(state){
+                let idStr="";
+                if(this.multipleSelection.length==0){
+                    this.$message.warning("请选择处理条目");
+                    return false;
+                }
+                this.multipleSelection.map(item=>{
+                    idStr+=item.id+","
+                })
+                idStr=idStr.slice(0,idStr.length-1);
+                this.update_many_state({idStr,s:state}).then(result=>{
+                    this.$message.success("更新成功");
+                    this.get_feed_lists().then(result => {
+                        this.$message.success("意见反馈列表更新成功")
+                    });
+                });
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
             //更改handle状态
             changeState: function (row) {
                 const _this = this;
@@ -145,6 +175,7 @@
             },
             //筛选处理未处理
             filterData:function (state) {
+                console.log(state);
                 let _this=this;
                 let s=-1;
                    switch (state){

@@ -167,9 +167,21 @@ class ArticleController extends Controller
 
             return ['success' => 1];
         }
-
         return ['success' => 0];
     }
+
+
+    public function setState(Request $request)
+    {
+        $id = $request->input('id');
+        DB::table('article')
+            ->whereIn('id', explode(",",$id))
+            ->update(['state' => 1]);
+        return [
+            'success' => 1
+        ];
+    }
+
 
     /**
      * 添加或者更新文章
