@@ -68,7 +68,18 @@ const actions = {
                 else reject(data)
             })
         })
-    }
+    },
+    updateMany:({commit, state},{idStr,s}) => {
+        return new Promise((resolve, reject) => {
+            axios.post('/api/feedback/setStates',{id:idStr,is_handling:s}).then(result=> {
+                if(result.data.success === 1) {
+                    let data = result.data.data;
+                    resolve(data);
+                }
+                else reject(data)
+            })
+        })
+    },
 };
 
 export default {

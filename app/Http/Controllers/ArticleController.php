@@ -15,9 +15,50 @@ class ArticleController extends Controller
      * 获取文章列表
      * @return array
      */
-    public function lists()
+    public function lists(Request $request)
     {
-        return ['success' => 1, 'data' => Article::orderBy('publish_time', 'desc')->get()];
+        $num = $request->input('num', 10);
+        $order = $request->input('order', 'asc');
+        $order_by = $request->input('order_by', 'publish_time');
+        $sites = $request->input('sites');
+        $state = $request->input('state', 2);
+        $category = $request->input('category');
+        $keywords = $request->input('keywords');
+
+        $articles = DB::table('article')->orderBy($order_by, $order);
+        if(!is_null($sites)) {
+            $sites = explode(',', $sites);
+            $articles = $articles->whereIn('source_site', $sites);
+        }
+
+        if($state != 2) {
+            $articles = $articles->where('state', $state);
+        }
+
+        if(!is_null($category)) {
+            $articles = $articles->join('article_category', 'article.id', '=', 'article_category.aid')
+                ->whereIn('article_category.cid', explode(',', $category));
+        }
+
+        if(!is_null($keywords)) {
+            if (\numcheck::is_int($keywords)) {
+                $articles = $articles->where('id', '=', $keywords);
+            }
+            else {
+                $articles = $articles->where(function ($query) use ($keywords) {
+                    $query->where('title', 'like', '%'.$keywords.'%')
+                        ->OrWhere('description', 'like', '%'.$keywords.'%');
+                });
+            }
+        }
+
+        $articles = $articles->select('article.*')->paginate($num);
+
+        return ['success' => 1, 'data' => $articles];
+    }
+
+    public function source_site() {
+        return ['success'=>1, 'data'=>Article::pluck('source_site')];
     }
 
     /**
@@ -134,7 +175,7 @@ class ArticleController extends Controller
     {
         $id = $request->input('id');
         DB::table('article')
-            ->whereIn('id', $id)
+            ->whereIn('id', explode(",",$id))
             ->update(['state' => 1]);
         return [
             'success' => 1

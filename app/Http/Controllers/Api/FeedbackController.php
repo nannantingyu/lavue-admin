@@ -98,5 +98,28 @@ class FeedbackController extends Controller
         unset($cips);
         return $cip;
     }
+    //批量处理
+    public function setState(Request $request)
+    {
+        $id = $request->input('id');
+        $is_handling = $request->input('is_handling');
+        if (empty($id)) {
+            return [
+                'success' => 0,
+                'msg'=>"id不能为空"
+            ];
+        }
+        if ($is_handling!=0&&$is_handling!=1) {
+            return [
+                'success' => 0,
+                'msg'=>"is_handling参数错误"
+            ];
+
+        }
+        Feedback::whereIn('id', explode(",",$id))->update(['is_handling' => $is_handling]);
+        return [
+            'success' => 1
+        ];
+    }
 
 }

@@ -13,6 +13,10 @@ const state = {
     editor: null,
     search_key: '',
     category: [],
+    source_sites: [],
+    order: 'asc',
+    order_by: 'publish_time',
+    sites: [],
     columns: {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
@@ -111,6 +115,18 @@ const mutations = {
     set_current_page: (state, current_page) => {
         state.current_page = current_page
     },
+    set_source_sites: (state, source_sites) => {
+        state.source_sites = source_sites
+    },
+    set_order: (state, order) => {
+        state.order = order
+    },
+    set_order_by: (state, order_by) => {
+        state.order_by = order_by
+    },
+    set_sites: (state, sites) => {
+        state.sites = sites
+    },
     set_total: (state, total) => {
         state.total = total
     },
@@ -195,10 +211,21 @@ const getters = {
 const actions = {
     get_data({ commit, state }) {
         return new Promise((resolve, reject)=> {
-            axios.get("/articleLists").then(function(result){
+            let params = {
+                page: state.current_page,
+                num: state.per_page,
+                order: state.order,
+                order_by: state.order_by,
+            };
+
+            if(state.search_key) params['keywords'] = state.search_key
+            if(state.sites.length > 0) params['sites'] = state.sites.join(',')
+            if(state.category.length > 0) params['category'] = state.category.join(',')
+
+            axios.get("/articleLists", {params: params}).then(function(result){
                 if(result.data.success === 1)
                 {
-                    let article_lists = result.data.data;
+                    let article_lists = result.data.data.data;
                     for(let obj of article_lists) {
                         for(let o in obj) {
                             if(state.to_strings.includes(o)) obj[o] = obj[o].toString()
@@ -208,8 +235,8 @@ const actions = {
 
                     commit('set_article_list', article_lists)
                     commit('set_back_data', article_lists)
-                    commit('set_current_page', 1)
-                    commit('set_total', article_lists.length)
+                    commit('set_current_page', result.data.data.current_page)
+                    commit('set_total', result.data.data.total)
                     resolve()
                 }
                 else reject()

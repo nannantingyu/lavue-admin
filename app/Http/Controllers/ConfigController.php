@@ -18,16 +18,35 @@ class ConfigController extends Controller {
      * @param $key string 根据key获取
      * @return array
      */
-    public function info (Request $request) {
+    public function info (Request $request)
+    {
         $id = $request->input('id');
         $key = $request->input('key');
 
-        if(!is_null($id) && \numcheck::is_int($id))
-            return ['success'=>1, 'data'=>Config::find($id)];
-        elseif (!is_null($key))
-            return ['success'=>1, 'data'=>Config::where('key', $key)->first()];
+        $config = null;
+        if (!is_null($id) && \numcheck::is_int($id))
+            $config = Config::find($id);
 
-        return ['success'=>0];
+        elseif (!is_null($key))
+            $config = Config::where('key', $key)->first();
+
+        if ($config)
+        {
+            $config->value = $this->handleConfigValue($config->value);
+            return ['success' => 1, 'data' => $config];
+        }
+        else
+            return ['success'=>0];
+    }
+
+    private function handleConfigValue($value) {
+        try {
+            $value = json_decode($value);
+        }
+        catch (\Exception $exception) {
+        }
+
+        return $value;
     }
 
     /**

@@ -14,7 +14,7 @@ const state = {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
         image: {title: "封面图", show: true},
-        author: {title: "作者", show: true},
+        author: {title: "作者", show: false},
         publish_time: {title: "发布时间", show: true},
         state: {title: "状态", show: true},
         source_type: {title: "原创类型", show: false},
@@ -102,10 +102,26 @@ const mutations = {
     },
     set_lists_all: (state, list) => {
         state.lists_all = list;
-    }
+    },
+    delete_article: (state, index) => {
+        state.article_lists.splice(index, 1)
+    },
 };
 
 const actions = {
+    delete_article({ commit, state }, {id, index}) {
+        return new Promise((resolve, reject) => {
+            axios.post("/deleteArticle", {id: id}).then(function(result){
+                if(result.data.success === 1) {
+                    commit("delete_article", index);
+                    resolve()
+                }
+                else {
+                    reject()
+                }
+            });
+        });
+    },
     set_article_state ({commit}, {id, state, index})  {
         return new Promise((resolve, reject)=> {
             axios.post('/setArticleState', {id: id, state: state})
@@ -141,7 +157,6 @@ const actions = {
                                 commit('set_options', arr);
                                 resolve(arr);
                             }
-                            // console.log(r.data.data,"kkhhh")
                         }
 
                     })
