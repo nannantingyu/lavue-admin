@@ -10,6 +10,18 @@ class TemplateUpdater {
         $this->static_topic = config('config.static_topic');
         $this->static_topic_delete = config('config.static_topic_delete');
         $this->static_topic_api = config('config.static_topic_api');
+        $this->send_to_kafka = config('config.send_to_kafka');
+    }
+
+    public function produce($topic, $page) {
+        if($this->send_to_kafka) {
+            echo "produce";
+            $this->kafka->produce($topic, $page);
+            return true;
+        }
+
+        echo "no produce";
+        return false;
     }
 
     /**
@@ -17,8 +29,7 @@ class TemplateUpdater {
      * @param $page 更新的url
      */
     public function update_page($page) {
-        $this->kafka->produce($this->static_topic, $page);
-        return true;
+        return $this->produce($this->static_topic, $page);
     }
 
     /**
@@ -26,8 +37,7 @@ class TemplateUpdater {
      * @param $page 删除的url
      */
     public function delete_page($page) {
-        $this->kafka->produce($this->static_topic_delete, $page);
-        return true;
+        return $this->produce($this->static_topic_delete, $page);
     }
 
     /**
@@ -35,8 +45,7 @@ class TemplateUpdater {
      * @param $page api地址
      */
     public function call_api($page) {
-        $this->kafka->produce($this->static_topic_api, $page);
-        return true;
+        return $this->produce($this->static_topic_api, $page);
     }
 
     /**
