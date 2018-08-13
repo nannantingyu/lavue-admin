@@ -118,7 +118,7 @@
                             <el-button
                                     size="mini"
                                     :type="scope.row.state?'success':'danger'"
-                                    :disabled="!user_module_permission['main-menu-delete']"
+                                    :disabled="!user_module_permission['main-menu-update']"
                                     @click="edit_menu(scope.row)">编辑</el-button>
                         </template>
                     </el-table-column>
