@@ -27,6 +27,7 @@ Route::get('article/more-list', 'Api\ArticleController@moreList');
 //意见反馈
 Route::post('/addFeedback', 'Api\FeedbackController@addFeedback');
 Route::get('feedback/getList', 'Api\FeedbackController@getList');
+Route::post('feedback/setStates', 'Api\FeedbackController@setState');
 //快讯
 Route::post('kuaixun/addKuaiXun', 'KuaiXunController@addKuaiXun');
 Route::get('kuaixun/getList', 'KuaiXunController@getList');
