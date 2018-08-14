@@ -121,8 +121,15 @@ const actions = {
                     axios.get('/configInfo',{params: { 'key': 'manualCheck' }}).then(r=> {
                         if(r.data.success === 1) {
                             let configData = r.data.data;
+                            let arr=[];
                             if(configData){
-                                commit('set_config', JSON.parse(configData.value));
+                                if(typeof configData.value == 'string'){
+                                    arr=JSON.parse(configData.value);
+                                }
+                                else{
+                                    arr=configData.value;
+                                }
+                                commit('set_config', arr);
                                 commit('set_configData', configData);
                                 dispatch('filterData');
 
