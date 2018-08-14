@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Config;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleBody;
@@ -436,6 +437,66 @@ class ArticleController extends Controller
         }
 
         return ['success' => 1];
+    }
+
+    /**
+     * 添加来源网站
+     * @param Request $request
+     */
+    public function addOrUpdateSourceSite(Request $request) {
+        $site = $request->input('name');
+        $old_name = $request->input('old_name');
+        $state = $request->input('state');
+        $name = empty($old_name)?$site:$old_name;
+
+        if(!is_null($site)) {
+            $config = Config::where('key', 'article_source_site')->first();
+            $value = json_decode($config->value, true);
+            $in = false;
+
+            foreach ($value as $key=>$val) {
+                if($val['site'] == $name) {
+                    $value[$key]['state'] = $state;
+                    $value[$key]['site'] = $site;
+                    $in = true;
+                    break;
+                }
+            }
+
+            if(!$in) {
+                $value[] = ['site'=>$site, 'state'=>$state];
+            }
+
+            $config->value = json_encode($value, JSON_UNESCAPED_UNICODE);
+            $config->save();
+
+            return ['success'=>1, 'data'=>$value];
+        }
+    }
+
+    /**
+     * 删除来源网站
+     * @param Request $request
+     */
+    public function removeSourceSite(Request $request) {
+        $site = $request->input('site');
+        if(!is_null($site)) {
+            $config = Config::where('key', 'article_source_site')->first();
+            $value = json_decode($config->value, true);
+            $new_value = [];
+            foreach ($value as $key=>$val) {
+                if($val['site'] !== $site) {
+                    $new_value[] = ['site'=>$val['site'], 'state'=>$val['state']];
+                }
+            }
+
+            $config->value = json_encode($new_value, JSON_UNESCAPED_UNICODE);
+            $config->save();
+
+            return ['success'=>1, 'data'=>$new_value];
+        }
+
+        return ['success'=>0];
     }
 
     public function listBySite(Request $request)

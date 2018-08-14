@@ -28,6 +28,8 @@ Route::get('/articleSourceSite', 'ArticleController@source_site');
 Route::post('/multiOffline', 'ArticleController@multiOffline');
 Route::post('/multiOnline', 'ArticleController@multiOnline');
 Route::post('/multiDelete', 'ArticleController@multiDelete');
+Route::post('/addOrUpdateSourceSite', 'ArticleController@addOrUpdateSourceSite');
+Route::post('/removeSourceSite', 'ArticleController@removeSourceSite');
 
 
 // 文章分类

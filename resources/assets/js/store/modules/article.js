@@ -22,6 +22,8 @@ const state = {
     time_key: 'publish_time',
     st: '',
     et: '',
+    dialog_visible_list: false,
+    dialog_visible_add: false,
     columns: {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
@@ -97,6 +99,17 @@ const state = {
         created_at: '',
         updated_at: ''
     },
+    site_form: {
+        name: '',
+        state: 1,
+        old_name: ''
+    },
+    site_rules: {
+        name: [
+            { required: true, message: '请输入来源网站名称', trigger: 'blur' },
+            { min: 2, max: 32, message: '来源网站名称长度在 3 到 32 个字符', trigger: 'blur' }
+        ],
+    },
     to_strings: [],
     to_booleans: ['state', 'recommend']
 };
@@ -113,6 +126,12 @@ const mutations = {
     },
     set_time_key: (state, time_key) => {
         state.time_key = time_key;
+    },
+    set_dialog_visible_list: (state, dialog_visible_list) => {
+        state.dialog_visible_list = dialog_visible_list;
+    },
+    set_dialog_visible_add: (state, dialog_visible_add) => {
+        state.dialog_visible_add = dialog_visible_add;
     },
     set_st: (state, st) => {
         state.st = st;
@@ -136,7 +155,15 @@ const mutations = {
         state.current_page = current_page
     },
     set_source_sites: (state, source_sites) => {
-        state.source_sites = source_sites
+        let sites = [];
+        for(let site of source_sites) {
+            sites.push({
+                'name': site['site'],
+                'state': site['state'] == 1
+            });
+        }
+
+        state.source_sites = sites
     },
     set_order: (state, order) => {
         state.order = order
@@ -214,11 +241,19 @@ const mutations = {
             updated_at: ''
         }
     },
+    set_default_site_form: (state) => {
+        state.site_form = {
+            name: '',
+            old_name: '',
+            state: false,
+        }
+    },
     set_form_value: (state, {key, value})=> {
         state.form[key] = value
     },
-    get_filter_params: (state) => {
-    }
+    set_site_form_value: (state, {key, value})=> {
+        state.site_form[key] = value
+    },
 }
 const getters = {
     type_filter: state=> {
@@ -379,6 +414,34 @@ const actions = {
                     else {
                         reject();
                     }
+            });
+        })
+    },
+    add_or_update_source_site({ commit, state }) {
+        return new Promise((resolve, reject) => {
+            let form = {
+                name: state.site_form.name,
+                old_name: state.site_form.old_name,
+                state: state.site_form.state?1:0
+            };
+
+            axios.post("/addOrUpdateSourceSite", form).then(function(result){
+                if(result.data.success === 1) {
+                    commit('set_source_sites', result.data.data);
+                    resolve()
+                }
+                else reject()
+            });
+        })
+    },
+    remove_source_site({ commit, state }, site) {
+        return new Promise((resolve, reject) => {
+            axios.post("/removeSourceSite", {site: site}).then(function(result){
+                if(result.data.success === 1) {
+                    commit('set_source_sites', result.data.data);
+                    resolve()
+                }
+                else reject()
             });
         })
     },

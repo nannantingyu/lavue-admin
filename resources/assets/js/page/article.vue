@@ -102,6 +102,9 @@
                     <el-button slot="reference">批量操作</el-button>
                 </el-popover>
             </el-col>
+            <el-col :span="2">
+                <el-button @click="dialog_visible_list=true">查看来源</el-button>
+            </el-col>
         </el-row>
         <el-table :data="article_lists"
                   v-loading="loading"
@@ -262,12 +265,71 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
         </el-pagination>
+        <el-dialog title="来源审核" :visible.sync="dialog_visible_list">
+            <el-table :data="source_sites"
+                      v-loading="loading"
+                      max-height="300"
+                      @selection-change="changeSelected"
+                      @sort-change="changeTableSort"
+                      style="width: 100%">
+                <el-table-column
+                    prop="name"
+                    label="来源网站"
+                    width="*">
+                </el-table-column>
+                <el-table-column
+                    prop="state"
+                    sortable
+                    label="状态"
+                    width="120">
+                    <template slot-scope="scope">
+                        <el-switch
+                            :disabled="!user_module_permission['config-delete']"
+                            v-model="scope.row.state"></el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" fixed="right" width="250">
+                    <template slot-scope="scope">
+                        <el-button
+                            size="mini"
+                            :type="scope.row.state?'success':'danger'"
+                            :disabled="!user_module_permission['article-delete']"
+                            @click="change_source_site(scope.$index, scope.row)">编辑</el-button>
+                        <el-button
+                            size="mini"
+                            :type="scope.row.state?'success':'danger'"
+                            :disabled="!user_module_permission['article-delete']"
+                            @click="remove_source_site(scope.row.name)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-row class="padding-row-15">
+                <el-col :offset="20" :span="4">
+                    <el-button @click="dialog_visible_add=true">添加来源网站</el-button>
+                </el-col>
+            </el-row>
+        </el-dialog>
+        <el-dialog title="来源审核" :visible.sync="dialog_visible_add">
+            <el-form ref="site_form" :model="site_form" :rules="site_rules">
+                <el-form-item label="来源网站" prop="name">
+                    <el-input v-model="site_form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="状态" prop="image">
+                    <el-switch v-model="site_form.state">启用</el-switch>
+                </el-form-item>
+                <el-form-item>
+                    <el-col :offset="4" :span="8">
+                        <el-button type="primary" @click="submitSiteForm()">添加</el-button>
+                    </el-col>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </div>
 </template>
 
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, MessageBox, Loading, DatePicker, Popover, Switch, RadioGroup, RadioButton, Input, Select, Option} from 'element-ui'
+    import {Table, TableColumn, Pagination, MessageBox, Form, FormItem, Dialog, Loading, DatePicker, Popover, Switch, RadioGroup, RadioButton, Input, Select, Option} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
@@ -280,6 +342,9 @@
     Vue.use(Select);
     Vue.use(Option);
     Vue.use(DatePicker);
+    Vue.use(Form);
+    Vue.use(FormItem);
+    Vue.use(Dialog);
 
     export default {
         name: "article-list",
@@ -298,12 +363,7 @@
             if(this.source_sites.length === 0) {
                 this.$store.dispatch("config/get_config", {key: 'article_source_site'}).then(result=>{
                     if(result.data.success === 1) {
-                        let sites = [];
-                        for(let site of result.data.data.value) {
-                            sites.push({'name': site['site']});
-                        }
-
-                        _this.set_source_sites(sites);
+                        _this.set_source_sites(result.data.data.value);
                     }
                 });
             }
@@ -321,6 +381,8 @@
                 selected: state=>state.article.selected,
                 user_module_permission: state=>state.user.user_module_permission,
                 article_categories: state=>state.article.article_categories,
+                site_form: state=>state.article.site_form,
+                site_rules: state=>state.article.site_rules,
             }),
             ...mapGetters({
                 'type_filter': 'article/type_filter'
@@ -331,6 +393,22 @@
                 },
                 set(value) {
                     this.$store.commit('article/set_show_type', value)
+                }
+            },
+            dialog_visible_list: {
+                get() {
+                    return this.$store.state.article.dialog_visible_list
+                },
+                set(value) {
+                    this.$store.commit('article/set_dialog_visible_list', value)
+                }
+            },
+            dialog_visible_add: {
+                get() {
+                    return this.$store.state.article.dialog_visible_add
+                },
+                set(value) {
+                    this.$store.commit('article/set_dialog_visible_add', value)
                 }
             },
             is_selected: {
@@ -415,13 +493,28 @@
             }),
             ...mapActions({
                 set_article_state: "article/set_article_state",
-                delete_article: "article/delete_article"
+                delete_article: "article/delete_article",
+                add_or_update_source_site: "article/add_or_update_source_site"
             }),
             get_article_list: function() {
                 const _this = this;
                 this.$store.dispatch('article/get_data').then(data => {
                     _this.$message.success("成功获取文章列表")
                 })
+            },
+            change_source_site: function(index, row) {
+                const name = row['name'];
+                this.$store.commit('article/set_site_form_value', {key: 'name', value: name});
+                this.$store.commit('article/set_site_form_value', {key: 'state', value: row['state']});
+                this.$store.commit('article/set_site_form_value', {key: 'old_name', value: name});
+                this.dialog_visible_add = true;
+            },
+            remove_source_site: function(site) {
+                const _this = this;
+                console.log(site)
+                this.$store.dispatch('article/remove_source_site', site).then(result=> {
+                    _this.$message.success('删除成功');
+                });
             },
             changeState: function(index, row) {
                 const state = row.need_check?1:row.state?1:0;
@@ -553,6 +646,18 @@
                 this.set_order_by(column['prop']);
                 this.set_order(column['order'] === 'ascending'?'asc':'desc');
                 this.get_article_list()
+            },
+            submitSiteForm: function() {
+                const _this = this;
+                this.$refs['site_form'].validate((valid) => {
+                    if (valid)
+                        _this.add_or_update_source_site(this.site_form).then(function(result){
+                            _this.dialog_visible_add = false;
+                            _this.$store.commit('article/set_default_site_form');
+                            _this.$message.success("添加成功");
+                        });
+                    else _this.$message.error('请填写完整的信息！');
+                });
             }
         }
     }
