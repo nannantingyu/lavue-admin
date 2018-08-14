@@ -376,13 +376,14 @@ class ArticleController extends Controller
             $this->template_updater->delete_page('read/' . $id);
         }
 
-        $article = Article::with('categories')
-            ->find($id);
+        $categories = DB::table('article_category')->join('category', 'article_category.cid', '=', 'category.id')
+            ->where('article_category.aid', $id)
+            ->pluck('category.ename');
 
         // 生成列表页
-        if (!is_null($article->categories)) {
-            foreach ($article->categories as $category) {
-                $this->template_updater->update_page('news/' . $category->ename);
+        if (!is_null($categories)) {
+            foreach ($categories as $category) {
+                $this->template_updater->update_page('news/' . $category);
             }
         }
     }
