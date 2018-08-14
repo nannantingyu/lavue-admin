@@ -119,7 +119,21 @@ export default new VueRouter({
             path: '/activity',
             component: resolve =>void(require(['./page/activity.vue'], resolve))
         },
-
+        {
+            name: "calendar",
+            path: '/calendar',
+            component: resolve =>void(require(['./page/calendar.vue'], resolve))
+        },
+        {
+            name: "event",
+            path: '/event',
+            component: resolve =>void(require(['./page/event.vue'], resolve))
+        },
+        {
+            name: "holiday",
+            path: '/holiday',
+            component: resolve =>void(require(['./page/holiday.vue'], resolve))
+        },
         {
             name: "category-activity",
             path: '/category-activity',
