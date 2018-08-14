@@ -2,10 +2,10 @@
     <el-card class="box-card">
         <el-form ref="login-form" :model="login" :rules="rules">
             <el-form-item :label-width="formLabelWidth" label="用户名" prop="username">
-                <el-input v-model="login.username"></el-input>
+                <el-input v-model="login.username" @keyup.enter.native="user_login"></el-input>
             </el-form-item>
             <el-form-item :label-width="formLabelWidth" label="密码" prop="password">
-                <el-input v-model="login.password" type="password"></el-input>
+                <el-input v-model="login.password" @keyup.enter.native="user_login" type="password"></el-input>
             </el-form-item>
             <el-row>
                 <el-col :span="4" :offset="10">

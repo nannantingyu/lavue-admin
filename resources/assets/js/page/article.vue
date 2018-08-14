@@ -305,7 +305,7 @@
             </el-table>
             <el-row class="padding-row-top-40">
                 <el-col :span="8">
-                    <el-input @change="search_source_site" v-model="search_source_site_key" placeholder="请输入搜索关键词"></el-input>
+                    <el-input @change="search_source_site" @keyup.enter.native="search_source_site" v-model="search_source_site_key" placeholder="请输入搜索关键词"></el-input>
                 </el-col>
                 <el-col :offset="10" :span="4">
                     <el-button @click="dialog_visible_add=true">添加来源网站</el-button>
