@@ -14,6 +14,7 @@ const state = {
     search_key: '',
     category: [],
     source_sites: [],
+    source_sites_bak: [],
     order: 'desc',
     order_by: 'id',
     sites: [],
@@ -24,6 +25,7 @@ const state = {
     et: '',
     dialog_visible_list: false,
     dialog_visible_add: false,
+    search_source_site_key: '',
     columns: {
         id: {title: "ID", show: true},
         title: {title: "标题", show: true},
@@ -100,12 +102,12 @@ const state = {
         updated_at: ''
     },
     site_form: {
-        name: '',
+        site: '',
         state: 1,
-        old_name: ''
+        old_site: ''
     },
     site_rules: {
-        name: [
+        site: [
             { required: true, message: '请输入来源网站名称', trigger: 'blur' },
             { min: 2, max: 32, message: '来源网站名称长度在 3 到 32 个字符', trigger: 'blur' }
         ],
@@ -154,16 +156,24 @@ const mutations = {
     set_current_page: (state, current_page) => {
         state.current_page = current_page
     },
-    set_source_sites: (state, source_sites) => {
+    set_source_sites: (state, {source_sites, is_bak}) => {
         let sites = [];
         for(let site of source_sites) {
             sites.push({
-                'name': site['site'],
+                'site': site['site'],
                 'state': site['state'] == 1
             });
         }
 
-        state.source_sites = sites
+        is_bak && (state.source_sites_bak = sites)
+        const search_source_sites = state.source_sites_bak.filter(x=>{
+            return x.site.indexOf(state.search_source_site_key) > -1;
+        });
+
+        state.source_sites = search_source_sites
+    },
+    set_search_source_site_key: (state, search_source_site_key) => {
+        state.search_source_site_key = search_source_site_key
     },
     set_order: (state, order) => {
         state.order = order
@@ -420,14 +430,14 @@ const actions = {
     add_or_update_source_site({ commit, state }) {
         return new Promise((resolve, reject) => {
             let form = {
-                name: state.site_form.name,
-                old_name: state.site_form.old_name,
+                site: state.site_form.site,
+                old_site: state.site_form.old_site,
                 state: state.site_form.state?1:0
             };
 
             axios.post("/addOrUpdateSourceSite", form).then(function(result){
                 if(result.data.success === 1) {
-                    commit('set_source_sites', result.data.data);
+                    commit('set_source_sites', {source_sites: result.data.data, is_bak: true});
                     resolve()
                 }
                 else reject()
@@ -438,7 +448,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             axios.post("/removeSourceSite", {site: site}).then(function(result){
                 if(result.data.success === 1) {
-                    commit('set_source_sites', result.data.data);
+                    commit('set_source_sites', {source_sites: result.data.data, is_bak: true});
                     resolve()
                 }
                 else reject()

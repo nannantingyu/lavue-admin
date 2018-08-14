@@ -444,8 +444,8 @@ class ArticleController extends Controller
      * @param Request $request
      */
     public function addOrUpdateSourceSite(Request $request) {
-        $site = $request->input('name');
-        $old_name = $request->input('old_name');
+        $site = $request->input('site');
+        $old_name = $request->input('old_site');
         $state = $request->input('state');
         $name = empty($old_name)?$site:$old_name;
 

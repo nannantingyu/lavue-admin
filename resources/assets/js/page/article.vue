@@ -37,9 +37,9 @@
                         <el-select v-model="sites" multiple placeholder="请选择来源站点" @change="get_article_list">
                             <el-option
                                 v-for="item in source_sites"
-                                :key="item.name"
-                                :label="item.name"
-                                :value="item.name">
+                                :key="item.site"
+                                :label="item.site"
+                                :value="item.site">
                             </el-option>
                         </el-select>
                     </el-row>
@@ -273,7 +273,7 @@
                       @sort-change="changeTableSort"
                       style="width: 100%">
                 <el-table-column
-                    prop="name"
+                    prop="site"
                     label="来源网站"
                     width="*">
                 </el-table-column>
@@ -299,20 +299,23 @@
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
                             :disabled="!user_module_permission['article-delete']"
-                            @click="remove_source_site(scope.row.name)">删除</el-button>
+                            @click="remove_source_site(scope.row.site)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <el-row class="padding-row-15">
-                <el-col :offset="20" :span="4">
+            <el-row class="padding-row-top-40">
+                <el-col :span="8">
+                    <el-input @change="search_source_site" v-model="search_source_site_key" placeholder="请输入搜索关键词"></el-input>
+                </el-col>
+                <el-col :offset="10" :span="4">
                     <el-button @click="dialog_visible_add=true">添加来源网站</el-button>
                 </el-col>
             </el-row>
         </el-dialog>
         <el-dialog title="来源审核" :visible.sync="dialog_visible_add">
             <el-form ref="site_form" :model="site_form" :rules="site_rules">
-                <el-form-item label="来源网站" prop="name">
-                    <el-input v-model="site_form.name"></el-input>
+                <el-form-item label="来源网站" prop="site">
+                    <el-input v-model="site_form.site"></el-input>
                 </el-form-item>
                 <el-form-item label="状态" prop="image">
                     <el-switch v-model="site_form.state">启用</el-switch>
@@ -363,7 +366,7 @@
             if(this.source_sites.length === 0) {
                 this.$store.dispatch("config/get_config", {key: 'article_source_site'}).then(result=>{
                     if(result.data.success === 1) {
-                        _this.set_source_sites(result.data.data.value);
+                        _this.set_source_sites({source_sites: result.data.data.value, is_bak: true});
                     }
                 });
             }
@@ -372,6 +375,7 @@
             ...mapState({
                 article_lists: state=>state.article.article_lists,
                 source_sites: state=>state.article.source_sites,
+                source_sites_bak: state=>state.article.source_sites_bak,
                 loading: state=>state.article.loading,
                 total_page: state=>state.article.total_page,
                 current_page: state=>state.article.current_page,
@@ -474,6 +478,14 @@
                     this.filte_data()
                 }
             },
+            search_source_site_key: {
+                get() {
+                    return this.$store.state.article.search_source_site_key
+                },
+                set(value) {
+                    this.$store.commit('article/set_search_source_site_key', value)
+                }
+            },
         },
         methods: {
             ...mapMutations({
@@ -496,6 +508,9 @@
                 delete_article: "article/delete_article",
                 add_or_update_source_site: "article/add_or_update_source_site"
             }),
+            search_source_site: function(value) {
+                this.set_source_sites({source_sites: this.source_sites, is_bak: false});
+            },
             get_article_list: function() {
                 const _this = this;
                 this.$store.dispatch('article/get_data').then(data => {
@@ -503,10 +518,10 @@
                 })
             },
             change_source_site: function(index, row) {
-                const name = row['name'];
-                this.$store.commit('article/set_site_form_value', {key: 'name', value: name});
+                const site = row['site'];
+                this.$store.commit('article/set_site_form_value', {key: 'site', value: site});
                 this.$store.commit('article/set_site_form_value', {key: 'state', value: row['state']});
-                this.$store.commit('article/set_site_form_value', {key: 'old_name', value: name});
+                this.$store.commit('article/set_site_form_value', {key: 'old_site', value: site});
                 this.dialog_visible_add = true;
             },
             remove_source_site: function(site) {
@@ -666,5 +681,8 @@
 <style scoped>
     .padding-row-15 {
         padding: 15px;
+    }
+    .padding-row-top-40 {
+        padding-top: 40px;
     }
 </style>
