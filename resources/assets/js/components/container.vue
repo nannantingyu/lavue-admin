@@ -206,6 +206,34 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
+                <el-submenu
+                        v-if="user_module_permission['activity-read']"
+                        index="/calendar">
+                    <template slot="title">
+                        <i class="el-icon-date"></i>
+                        <span slot="title">财经日历</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item
+                                v-if="user_module_permission['calendar-read']"
+                                index="/calendar">
+                            <i class="el-icon-date"></i>
+                            <span slot="title">财经日历</span>
+                        </el-menu-item>
+                        <el-menu-item
+                                v-if="user_module_permission['event-read']"
+                                index="/event">
+                            <i class="el-icon-document"></i>
+                            <span slot="title">财经事件</span>
+                        </el-menu-item>
+                        <el-menu-item
+                                v-if="user_module_permission['holiday-read']"
+                                index="/holiday">
+                            <i class="el-icon-goods"></i>
+                            <span slot="title">财经假期</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
                 <el-menu-item
                         v-if="user_module_permission['live-read']"
                         index="/live">

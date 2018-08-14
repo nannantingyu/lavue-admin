@@ -1,5 +1,5 @@
 <template>
-    $END$
+    <div>holiday</div>
 </template>
 
 <script>

@@ -21,6 +21,7 @@ import category_activity from './modules/category_activity'
 import article_filter from './modules/article_filter'
 import crawl_article from "./modules/crawl_article"
 import article_need_look from "./modules/article_need_look"
+import calendar from "./modules/calendar"
 Vue.use(Vuex)
 import actions from "./actions"
 import mutations from "./mutations"
@@ -49,6 +50,7 @@ export default new Vuex.Store({
         crawl_article,
         article_filter,
         article_need_look,
+        calendar,
         template: template_generate
     },
     state: {

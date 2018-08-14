@@ -1,5 +1,5 @@
 <template>
-    $END$
+    <div>event</div>
 </template>
 
 <script>
