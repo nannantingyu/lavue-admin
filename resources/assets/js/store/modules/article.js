@@ -14,8 +14,8 @@ const state = {
     search_key: '',
     category: [],
     source_sites: [],
-    order: 'asc',
-    order_by: 'publish_time',
+    order: 'desc',
+    order_by: 'id',
     sites: [],
     selected: [],
     is_selected: true,
@@ -245,7 +245,8 @@ const actions = {
                 page: state.current_page,
                 num: state.per_page,
                 order: state.order,
-                order_by: state.order_by
+                order_by: state.order_by,
+                state: state.show_type
             };
 
             if(state.search_key) params['keywords'] = state.search_key

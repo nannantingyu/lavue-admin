@@ -18,7 +18,7 @@
                 </el-popover>
             </el-col>
             <el-col :span="8">
-                <el-radio-group v-model="show_type">
+                <el-radio-group v-model="show_type" @change="get_article_list">
                     <el-radio-button label="3">全部</el-radio-button>
                     <el-radio-button label="1">上线</el-radio-button>
                     <el-radio-button label="0">下线</el-radio-button>
@@ -325,7 +325,6 @@
                 },
                 set(value) {
                     this.$store.commit('article/set_show_type', value)
-                    this.filte_data()
                 }
             },
             is_selected: {

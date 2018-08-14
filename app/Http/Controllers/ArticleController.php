@@ -21,7 +21,7 @@ class ArticleController extends Controller
         $order = $request->input('order', 'asc');
         $order_by = $request->input('order_by', 'publish_time');
         $sites = $request->input('sites');
-        $state = $request->input('state', 2);
+        $state = $request->input('state', 3);
         $category = $request->input('category');
         $keywords = $request->input('keywords');
         $st = $request->input('st');
@@ -42,7 +42,7 @@ class ArticleController extends Controller
             $articles = $articles->where($time_key, "<=", $et);
         }
 
-        if($state != 2) {
+        if($state != 3) {
             $articles = $articles->where('state', $state);
         }
 
