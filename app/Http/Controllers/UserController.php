@@ -330,4 +330,24 @@ class UserController extends Controller
 
         return ['success' => 1];
     }
+
+    /**
+     * 设置用户状态
+     * @param Request $request
+     * @return array
+     */
+    public function setState(Request $request)
+    {
+        $id = $request->input('id');
+        $state = $request->input('state');
+
+        if(\numcheck::is_int($id) and \numcheck::is_int($state)) {
+            User::where('id', $id)
+                ->update(['state' => $state]);
+
+            return ['success' => 1];
+        }
+
+        return ['success' => 0];
+    }
 }

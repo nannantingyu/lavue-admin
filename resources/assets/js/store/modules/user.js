@@ -203,6 +203,14 @@ const actions = {
             })
         })
     },
+    set_user_state({commit, state}, {id, st}) {
+        return new Promise((resolve, reject)=> {
+            axios.post('/setState', {id: id, state: st}).then(result=> {
+                if(result.data.success === 1) resolve()
+                else reject()
+            })
+        })
+    },
     add_or_update_user ({commit, state}, form) {
         return new Promise((resolve, reject)=> {
             axios.post('/addOrUpdateUser', form).then(result=> {

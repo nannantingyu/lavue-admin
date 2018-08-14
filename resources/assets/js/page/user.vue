@@ -71,7 +71,7 @@
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
                             :disabled="!user_module_permission['user-delete']"
-                            @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
+                            @click="changeState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
@@ -246,10 +246,15 @@
                 });
 
             },
-            changeState: function (row) {
+            changeState: function (index, row) {
                 const _this = this;
-                this.set_user_state({id:row.id, state:row.state}).then(result=>{
+                this.set_user_state({id:row.id, st:1-row.state}).then(result=>{
                     let message = row.state?"上线成功":"下线成功";
+                    _this.update_user_list_by_index({
+                        index: index,
+                        key: 'state',
+                        value: 1-row.state == 1
+                    })
                     _this.filte_data()
                     _this.$message.success(message);
                 });
