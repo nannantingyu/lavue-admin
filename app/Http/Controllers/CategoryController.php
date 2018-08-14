@@ -50,6 +50,7 @@ class CategoryController extends Controller {
             'target' => $request->input('target'),
             'state' => $request->input('state'),
             'sequence' => $request->input('sequence'),
+            'type' => $request->input('type'),
         ];
 
         $id = $request->input('id');
