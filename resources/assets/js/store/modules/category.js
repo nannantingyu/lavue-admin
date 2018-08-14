@@ -129,9 +129,6 @@ const mutations = {
     update_category_list_by_index: (state, prop) => {
         let value = prop['value'], key = prop['key'];
 
-        if(state.to_booleans.includes(key))
-            value = value?1:0
-
         state.category_lists[prop['index']][key] = value
     },
     append_category_list: (state, row) => {

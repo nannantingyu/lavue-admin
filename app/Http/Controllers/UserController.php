@@ -169,7 +169,7 @@ class UserController extends Controller
      */
     public function getUsers(Request $request) {
         $users = User::orderBy('updated_at', 'desc')
-            ->select('id', 'name', 'nickname', 'phone', 'email', 'created_at', 'updated_at')
+            ->select('id', 'name', 'nickname', 'phone', 'state', 'email', 'created_at', 'updated_at')
             ->get();
 
         return ['success'=>1, 'data'=>$users];
@@ -265,5 +265,69 @@ class UserController extends Controller
             ->first();
 
         return !is_null($user_role);
+    }
+
+    /**
+     * 更新用户信息
+     * @param Request $request
+     */
+    public function addOrUpdateUser(Request $request) {
+        //验证表单
+        $validate = $this->validateForm($request);
+        if (!$validate['success']) {
+            return response()->json(['success' => 0, "errors" => $validate['msg']]);
+        }
+
+        $form = [
+            'name' => $username = $request->input('name'),
+            'nickname' => $username = $request->input('nickname'),
+            'email' => $username = $request->input('email'),
+            'phone' => $username = $request->input('phone'),
+        ];
+
+        User::find($request->input('id'))->update($form);
+        return ['success'=>1];
+    }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validateForm(Request $request)
+    {
+        $messages = [
+            'id.required' => '请输入用户ID',
+            'id.integer' => '请输入正确的用户ID',
+            'state.required' => '请输入正确的状态',
+            'state.integer' => '请输入正确的状态',
+            'name.required' => '请输入用户名',
+            'name.max' => '用户名长度不能超过32个字符',
+            'name.min' => '用户名长度不能少于3个字符',
+            'nickname.required' => '请输入昵称',
+            'nickname.max' => '昵称长度不能超过32个字符',
+            'nickname.min' => '昵称长度不能少于2个字符',
+            'email.required' => '请输入邮箱地址',
+            'email.E-Mail' => '邮箱地址不正确',
+            'phone.required' => '手机号不能为空',
+            'phone.regex' => '手机号格式不正确',
+        ];
+
+        $rules = [
+            'id' => 'required|integer',
+            'state' => 'required|integer',
+            'name' => 'required|max:32|min:3',
+            'nickname' => 'required|max:32|min:2',
+            'email' => 'required|E-Mail',
+            'phone' => ['required', 'regex:/^(13|14|15|17|18|19)\d{9}$/'],
+        ];
+
+        $validator = \Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            return ['success' => 0, 'msg' => $validator->errors()];
+        }
+
+        return ['success' => 1];
     }
 }

@@ -240,7 +240,6 @@
                 'set_category_state': "category/set_category_state"
             }),
             editcategory: function(index, row) {
-                console.log(row)
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
@@ -268,8 +267,10 @@
                 this.$refs['form'].validate((valid) => {
                     if (valid)
                         _this.add_or_update_category(this.form).then(function(result){
+                            console.log(_this.form)
                             if(_this.form.id) {
                                 for(let key in _this.form) {
+                                    key == 'state' && (_this.form[key] = _this.form[key] == 1)
                                     _this.update_category_list_by_index({
                                         index: _this.row_index,
                                         key: key,

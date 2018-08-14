@@ -87,6 +87,7 @@ const state = {
     loading: false,
     current_page: 1,
     total: 0,
+    back_data: [],
     per_page: 10,
     dialog_visible: false,
     dialog_password_visible: false,
@@ -124,8 +125,14 @@ const mutations = {
     set_form_value: (state, {key, value})=> {
         state.form[key] = value
     },
+    set_show_type: (state, show_type) => {
+        state.show_type = show_type;
+    },
     set_dialog_visible: (state, value) => {
         state.dialog_visible = value;
+    },
+    set_back_data: (state, back_data) => {
+        state.back_data = back_data;
     },
     set_dialog_password_visible: (state, value) => {
         state.dialog_password_visible = value;
@@ -140,6 +147,11 @@ const mutations = {
             }
         }
     },
+    update_user_list_by_index: (state, prop) => {
+        let value = prop['value'], key = prop['key'];
+
+        state.users[prop['index']][key] = value
+    },
     add_user_module_permission: (state, {path, values}) => {
         state.user_module_permission[path+'-read'] = ((values['permission'] & 1) === 1);
         state.user_module_permission[path+'-update'] = ((values['permission'] & 2) === 2);
@@ -147,7 +159,16 @@ const mutations = {
     },
     clear_user_module_permission: (state) => {
         state.user_module_permission = {}
-    }
+    },
+    filte_data: (state) => {
+        if(state.show_type == 3) state.users = state.back_data;
+        else
+            state.users = state.back_data.filter(x=>{
+                return x.state == state.show_type;
+            });
+
+        state.total = state.users.length;
+    },
 }
 const actions = {
     login ({commit, state, dispatch}, login) {
@@ -178,6 +199,14 @@ const actions = {
         return new Promise((resolve, reject)=> {
             axios.post('/setPassword', {userid: state.form.id, password: state.pwd}).then(result=> {
                 if(result.data.success === 1) resolve()
+                else reject()
+            })
+        })
+    },
+    add_or_update_user ({commit, state}, form) {
+        return new Promise((resolve, reject)=> {
+            axios.post('/addOrUpdateUser', form).then(result=> {
+                if(result.data.success == 1) resolve()
                 else reject()
             })
         })
@@ -237,6 +266,7 @@ const actions = {
             axios.get('/getUsers').then(result=> {
                 if(result.data.success === 1) {
                     commit('set_users', result.data.data)
+                    commit('set_back_data', result.data.data)
                     resolve()
                 }
                 else reject(result.data.msg)
