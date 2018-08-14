@@ -5,6 +5,7 @@ const state = {
         id: {title: "ID", show: true},
         name: {title: "分类名称", show: true},
         ename: {title: "英文名称", show: true},
+        type: {title: "分类类型", show: true},
         sequence: {title: "顺序", show: true},
         pid: {title: "父分类", show: true},
         state: {title: "状态", show: true},
@@ -20,6 +21,7 @@ const state = {
         state: 1,
         target: '',
         pid: null,
+        type: 'article_category',
         atype: [],
         created_at: '',
         updated_at: ''
@@ -34,6 +36,7 @@ const state = {
     per_page: 10,
     dialog_visible: false,
     row_index: 0,
+    category_types: [],
     rules: {
         name: [
             { required: true, message: '请输入分类名称', trigger: 'blur' },
@@ -42,6 +45,10 @@ const state = {
         ename: [
             { required: true, message: '请输入分类英文名称', trigger: 'blur' },
             { min: 2, max: 20, message: '分类英文名称长度在 2 到 20 个字符', trigger: 'blur' }
+        ],
+        type: [
+            { required: true, message: '请输入分类类型', trigger: 'blur' },
+            { min: 2, max: 20, message: '分类类型长度在 2 到 20 个字符', trigger: 'blur' }
         ],
         link: [
             { required: true, message: '请输入链接', trigger: 'blur' },
@@ -75,6 +82,9 @@ const mutations = {
     set_back_data: (state, back_data) => {
         state.back_data = back_data;
     },
+    set_category_types: (state, category_types) => {
+        state.category_types = category_types;
+    },
     set_row_index: (state, row_index) => {
         state.row_index = row_index;
     },
@@ -100,6 +110,7 @@ const mutations = {
             sequence: '',
             state: 1,
             tag: '',
+            type: 'article_category',
             logo: '',
             atype: [],
             created_at: '',
@@ -141,8 +152,8 @@ const actions = {
                         }
                     }
 
-                    // commit('set_category_list', category_lists);
-                    // commit('set_back_data', category_lists)
+                    commit('set_category_list', category_lists);
+                    commit('set_back_data', category_lists)
                     resolve(category_lists)
                 }
                 else reject()

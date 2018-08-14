@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-row>
-            <el-col :span="4">
+            <el-col :span="2">
                 <el-popover
                         placement="right"
                         width="400"
@@ -17,11 +17,12 @@
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="8">
                 <el-radio-group v-model="show_type">
                     <el-radio-button label="3">全部</el-radio-button>
                     <el-radio-button label="1">上线</el-radio-button>
                     <el-radio-button label="0">下线</el-radio-button>
+                    <el-radio-button label="-1">待审核</el-radio-button>
                 </el-radio-group>
             </el-col>
             <el-col :span="3">

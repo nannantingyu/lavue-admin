@@ -39,14 +39,16 @@ class ConfigController extends Controller {
             return ['success'=>0];
     }
 
+    /**
+     * 处理value，如果是json格式，则解构
+     * @param $value
+     * @return mixed
+     */
     private function handleConfigValue($value) {
-        try {
-            $value = json_decode($value);
-        }
-        catch (\Exception $exception) {
-        }
+        $ret = json_decode($value);
+        $ret = is_null($ret) ? $value: $ret;
 
-        return $value;
+        return $ret;
     }
 
     /**

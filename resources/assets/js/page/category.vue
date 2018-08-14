@@ -42,16 +42,18 @@
                     prop="name"
                     sortable
                     :label="columns['name']['title']"
-                    v-if="columns['name']['show']" width="200">
+                    v-if="columns['name']['show']" width="230">
             </el-table-column>
             <el-table-column
                     prop="ename"
+                    sortable
                     :label="columns['ename']['title']"
                     v-if="columns['ename']['show']"
                     width="*">
             </el-table-column>
             <el-table-column
                     prop="sequence"
+                    sortable
                     :label="columns['sequence']['title']"
                     v-if="columns['sequence']['show']"
                     width="120">
@@ -61,6 +63,15 @@
                     :label="columns['pid']['title']"
                     v-if="columns['pid']['show']"
                     width="160">
+                <template slot-scope="scope">
+                    {{ get_category_name_by_id(scope.row.pid) }}
+                </template>
+            </el-table-column>
+            <el-table-column
+                prop="type"
+                :label="columns['type']['title']"
+                v-if="columns['type']['show']"
+                width="200">
             </el-table-column>
             <el-table-column
                     prop="target"
@@ -121,6 +132,16 @@
                 <el-form-item :label-width="formLabelWidth" label="分类英文名称" prop="ename">
                     <el-input v-model="form.ename"></el-input>
                 </el-form-item>
+                <el-form-item :label-width="formLabelWidth" label="类型" prop="target">
+                    <el-select v-model="form.type" placeholder="请选择分类类型">
+                        <el-option
+                            v-for="item in category_types"
+                            :key="item"
+                            :label="item"
+                            :value="item">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item :label-width="formLabelWidth" label="Target" prop="target">
                     <el-input v-model="form.target"></el-input>
                 </el-form-item>
@@ -178,6 +199,7 @@
                 'rules': state=>state.category.rules,
                 'formLabelWidth': state=>state.formLabelWidth,
                 'row_index': state=>state.category.row_index,
+                'category_types': state=>state.category.category_types
             }),
             dialog_visible: {
                 get() {
@@ -208,7 +230,8 @@
                 'set_form_value': "category/set_form_value",
                 'update_category_list_by_index': "category/update_category_list_by_index",
                 'append_category_list': "category/append_category_list",
-                'set_default_form': "category/set_default_form"
+                'set_default_form': "category/set_default_form",
+                'set_category_types': "category/set_category_types"
             }),
             ...mapActions({
                 'get_category_lists': 'category/get_category_lists',
@@ -217,6 +240,7 @@
                 'set_category_state': "category/set_category_state"
             }),
             editcategory: function(index, row) {
+                console.log(row)
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
@@ -232,6 +256,12 @@
             add_category: function() {
                 this.set_default_form();
                 this.set_dialog_visible(true);
+            },
+            get_category_name_by_id: function(id) {
+                if(id === 0) return "顶级";
+                const cate = this.category_lists.filter(x=>x.id === id);
+                if(cate.length > 0) return cate[0]['name']
+                return "";
             },
             submitForm: function () {
                 const _this = this;
@@ -265,7 +295,16 @@
             const _this = this;
             this.get_category_lists().then(result=> {
                 _this.$message.success('成功获取文章分类！');
-            })
+            });
+
+            if(this.category_types.length === 0) {
+                this.$store.dispatch("config/get_config", {key: 'category_types'}).then(result=>{
+                    if(result.data.success === 1) {
+                        const types = result.data.data.value.split(',');
+                        _this.set_category_types(types);
+                    }
+                });
+            }
         }
     }
 </script>
