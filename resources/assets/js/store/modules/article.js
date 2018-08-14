@@ -28,7 +28,7 @@ const state = {
         image: {title: "封面图", show: true},
         description: {title: "描述", show: false},
         keywords: {title: "关键词", show: false},
-        author: {title: "作者", show: true},
+        author: {title: "作者", show: false},
         publish_time: {title: "发布时间", show: true},
         type: {title: "分类", show: true},
         hits: {title: "点击量", show: true},
@@ -39,7 +39,7 @@ const state = {
         source_type: {title: "原创类型", show: false},
         source_url: {title: "来源链接", show: true},
         source_site: {title: "来源网站", show: true},
-        created_at: {title: "创建时间", show: false},
+        created_at: {title: "创建时间", show: true},
         updated_at: {title: "更新时间", show: false},
     },
     rules: {
@@ -263,9 +263,15 @@ const actions = {
                 {
                     let article_lists = result.data.data.data;
                     for(let obj of article_lists) {
+                        obj['need_check'] = (obj['state'] === -1);
                         for(let o in obj) {
                             if(state.to_strings.includes(o)) obj[o] = obj[o].toString()
-                            else if(state.to_booleans.includes(o)) obj[o] = (obj[o] === 1 || !!obj[o])
+                            else if(state.to_booleans.includes(o)) {
+                                if (obj[o] === 1) {
+                                    obj[o] = true;
+                                }
+                                else obj[o] = false;
+                            }
                         }
                     }
 

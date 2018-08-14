@@ -17,7 +17,7 @@
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
                 <el-radio-group v-model="show_type" @change="get_article_list">
                     <el-radio-button label="3">全部</el-radio-button>
                     <el-radio-button label="1">上线</el-radio-button>
@@ -96,6 +96,7 @@
                     <el-row class="padding-row-15">
                         <el-button @click="multiOffline">批量下线</el-button>
                         <el-button @click="multiOnline">批量上线</el-button>
+                        <el-button @click="multiCheck">批量审核</el-button>
                         <!--<el-button @click="multiDelete">批量删除</el-button>-->
                     </el-row>
                     <el-button slot="reference">批量操作</el-button>
@@ -122,7 +123,7 @@
                 :label="columns['title']['title']"
                 v-if="columns['title']['show']" width="*">
                 <template slot-scope="scope">
-                    <a target="_blank" v-bind:href="scope.row.url">{{ scope.row.title }}</a>
+                    <a target="_blank" v-bind:href="'http://www.jujin8.com/read/'+scope.row.id+'.html'">{{ scope.row.title }}</a>
                 </template>
             </el-table-column>
             <el-table-column
@@ -210,20 +211,6 @@
                     prop="source_site"
                     :label="columns['source_site']['title']"
                     v-if="columns['source_site']['show']"
-                    width="80">
-            </el-table-column>
-            <el-table-column
-                    prop="created_at"
-                    sortable
-                    :label="columns['created_at']['title']"
-                    v-if="columns['created_at']['show']"
-                    width="120">
-            </el-table-column>
-            <el-table-column
-                    prop="updated_at"
-                    sortable
-                    :label="columns['updated_at']['title']"
-                    v-if="columns['updated_at']['show']"
                     width="120">
             </el-table-column>
             <el-table-column prop="author"
@@ -236,15 +223,34 @@
                 label="发布时间"
                 width="180">
             </el-table-column>
-
-            <el-table-column label="操作" fixed="right" width="140">
+            <el-table-column
+                prop="created_at"
+                sortable
+                :label="columns['created_at']['title']"
+                v-if="columns['created_at']['show']"
+                width="160">
+            </el-table-column>
+            <el-table-column
+                prop="updated_at"
+                sortable
+                :label="columns['updated_at']['title']"
+                v-if="columns['updated_at']['show']"
+                width="160">
+            </el-table-column>
+            <el-table-column label="操作" fixed="right" width="250">
                 <template slot-scope="scope">
-                    <router-link :class="'router-button'" :to="'/article-edit/'+scope.row.id">编辑</router-link>
+                    <router-link class="router-button router-button-mini" :to="'/article-edit/'+scope.row.id">编辑</router-link>
                     <el-button
                             size="mini"
                             :type="scope.row.state?'success':'danger'"
                             :disabled="!user_module_permission['article-delete']"
                             @click="drop_article(scope.$index, scope.row)">删除</el-button>
+                    <el-button
+                        size="mini"
+                        v-if="scope.row.need_check"
+                        :type="scope.row.state?'success':'danger'"
+                        :disabled="!user_module_permission['article-delete']"
+                        @click="changeState(scope.$index, scope.row)">审核</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -418,10 +424,11 @@
                 })
             },
             changeState: function(index, row) {
-                const state = row.state?1:0;
-                const new_state = state, _this = this, msg = new_state == 0?"下线":"上线";
+                const state = row.need_check?1:row.state?1:0;
+                const new_state = state, _this = this, msg = row.need_check?'审核':new_state == 0?"下线":"上线";
                 this.set_article_state({id: row.id, state: new_state, index: index})
                     .then((x)=>{
+                        _this.$store.commit('article/update_article_list_by_index',  {index: index, key: 'need_check', val: false})
                         _this.$message.success(msg + "成功");
                     }).catch((x)=>{
                     _this.$message.error(msg + "失败");
@@ -449,6 +456,18 @@
                 _this.$store.dispatch('article/multiOffline', _this.get_params()).then(result=> {
                     _this.update_article_state(false);
                     _this.$message.success("成功全部下线")
+                });
+            },
+            multiCheck: function() {
+                const _this = this;
+                if(this.is_selected && this.selected.length === 0) {
+                    this.$message.error('没有选中任何文章');
+                    return false;
+                }
+
+                _this.$store.dispatch('article/multiOnline', _this.get_params()).then(result=> {
+                    _this.update_article_state(true);
+                    _this.$message.success("成功全部通过审核")
                 });
             },
             multiOnline: function() {
