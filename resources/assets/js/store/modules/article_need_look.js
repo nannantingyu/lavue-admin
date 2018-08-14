@@ -153,7 +153,13 @@ const actions = {
                         if(r.data.success === 1) {
                             let configData = r.data.data;
                             if(configData){
-                                let arr=JSON.parse(configData.value);
+                                let arr=[];
+                                if(typeof configData.value == 'string'){
+                                    arr=JSON.parse(configData.value);
+                                }
+                                else{
+                                    arr=configData.value;
+                                }
                                 commit('set_options', arr);
                                 resolve(arr);
                             }
