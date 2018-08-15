@@ -23,6 +23,7 @@ import crawl_article from "./modules/crawl_article"
 import article_need_look from "./modules/article_need_look"
 import calendar from "./modules/calendar"
 import event from "./modules/event"
+import holiday from "./modules/holiday"
 Vue.use(Vuex)
 import actions from "./actions"
 import mutations from "./mutations"
@@ -53,6 +54,7 @@ export default new Vuex.Store({
         article_need_look,
         calendar,
         event,
+        holiday,
         template: template_generate
     },
     state: {

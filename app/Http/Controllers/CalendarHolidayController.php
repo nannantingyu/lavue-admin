@@ -57,8 +57,8 @@ class CalendarHolidayController extends Controller
             'country' => $request->input('country'),
             'time' => $request->input('time'),
             'market' => $request->input('market'),
-            'holiday_name' => $request->input('importance'),
-            'detail' => $request->input('event'),
+            'holiday_name' => $request->input('holiday_name'),
+            'detail' => $request->input('detail'),
             'date' => $request->input('date'),
             'source_id' => $request->input('source_id')
         ];
@@ -87,12 +87,19 @@ class CalendarHolidayController extends Controller
         $value = EconomicHoliday::orderBy('id', 'DESC')
             ->forPage($page, $pageSize)
             ->get();
-
-        return [
+        $data =[
             "list" => $value,
             'count' => $count,
             'page' => $page,
             'pageSize' => $pageSize
         ];
+        return ['success' => 1, 'data' => $data];
+
+//        return [
+//            "list" => $value,
+//            'count' => $count,
+//            'page' => $page,
+//            'pageSize' => $pageSize
+//        ];
     }
 }
