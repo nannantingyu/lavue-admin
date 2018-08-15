@@ -3,7 +3,7 @@
         <el-container>
             <el-header>
                 <h5>jujin8财经日历</h5>
-                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加日历数据</el-button>
+                <el-button type="primary" icon="el-icon-plus"  @click="addData" :disabled="!user_module_permission['calendar-delete']">添加日历数据</el-button>
                 <el-popover
                         placement="right"
                         width="400"
@@ -132,7 +132,7 @@
                             <el-button
                                     size="mini"
                                     type="success"
-                                    :disabled="!user_module_permission['live-delete']"
+                                    :disabled="!user_module_permission['calendar-delete']"
                                     @click="edit_row(scope.row)">编辑</el-button>
                         </template>
                     </el-table-column>
@@ -340,7 +340,6 @@
                     if (valid) {
                         let obj=deepCopy(_this.form);
                         _this.dialogFormVisible = false;
-                        obj.state=obj.state?1:0;
                         obj.id=obj.id=='自动填充'?"":obj.id;
                         _this.submitFn(obj);
 

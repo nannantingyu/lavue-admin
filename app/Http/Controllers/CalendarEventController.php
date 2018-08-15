@@ -61,9 +61,9 @@ class CalendarEventController extends Controller
 
         $id = $request->input('id');
         if (!is_null($id)) {
-            EconomicCalendar::where('id', $id)->update($form);
+            EconomicEvent::where('id', $id)->update($form);
         } else {
-            $info = new EconomicCalendar($form);
+            $info = new EconomicEvent($form);
             $info->save();
             $id = $info->id;
         }
@@ -83,12 +83,12 @@ class CalendarEventController extends Controller
         $value = EconomicEvent::orderBy('id', 'DESC')
             ->forPage($page, $pageSize)
             ->get();
-
-        return [
+        $data =[
             "list" => $value,
             'count' => $count,
             'page' => $page,
             'pageSize' => $pageSize
         ];
+        return ['success' => 1, 'data' => $data];
     }
 }
