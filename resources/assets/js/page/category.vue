@@ -269,7 +269,6 @@
                 this.$refs['form'].validate((valid) => {
                     if (valid)
                         _this.add_or_update_category(this.form).then(function(result){
-                            console.log(_this.form)
                             if(_this.form.id) {
                                 for(let key in _this.form) {
                                     key == 'state' && (_this.form[key] = _this.form[key] == 1)
@@ -289,7 +288,12 @@
 
                             _this.filte_data();
                             _this.set_dialog_visible(false);
-                        });
+                        }).catch(errors=> {
+                            for(let error_module in errors) {
+                                for(let msg of errors[error_module])
+                                    _this.$message.error(msg)
+                            }
+                        })
                     else _this.$message.error('请填写完整的信息！');
                 });
             },

@@ -201,7 +201,7 @@ const actions = {
 
             axios.post("/addCategory", subform).then(function(result){
                 if(result.data.success === 1) resolve(result.data.data)
-                else reject()
+                else reject(result.data.errors)
             });
         });
     }
