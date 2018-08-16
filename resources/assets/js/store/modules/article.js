@@ -115,7 +115,6 @@ const state = {
     to_strings: [],
     to_booleans: ['state', 'recommend']
 };
-
 const mutations = {
     set_article_list: (state, article_lists) => {
         state.article_lists = article_lists;
@@ -264,6 +263,17 @@ const mutations = {
     set_site_form_value: (state, {key, value})=> {
         state.site_form[key] = value
     },
+    clear_filter_options: (state) => {
+        state.search_key = '';
+        state.sites = [];
+        state.category = [];
+        state.st = null;
+        state.et = null;
+        state.time_key = 'id';
+        state.order_by = 'id';
+        state.order = 'desc';
+        state.show_type = 3;
+    }
 }
 const getters = {
     type_filter: state=> {
@@ -282,7 +292,6 @@ const getters = {
         return imgs;
     }
 };
-
 const actions = {
     get_data({ commit, state }) {
         return new Promise((resolve, reject)=> {
@@ -294,13 +303,20 @@ const actions = {
                 state: state.show_type
             };
 
+            console.log(state.search_key);
+            console.log(state.sites);
+            console.log(state.category);
+            console.log(state.st);
+            console.log(state.et);
+            console.log(state.time_key);
+            console.log(state.order_by);
             if(state.search_key) params['keywords'] = state.search_key
             if(state.sites.length > 0) params['sites'] = state.sites.join(',')
             if(state.category.length > 0) params['category'] = state.category.join(',')
             if(state.st || state.et) {
-                params['time_key'] = state.time_key
-                state.st && (params['st'] = state.st)
-                state.et && (params['et'] = state.et)
+                params['time_key'] = state.time_key;
+                state.st && (params['st'] = state.st);
+                state.et && (params['et'] = state.et);
             }
 
             axios.get("/articleLists", {params: params}).then(function(result){

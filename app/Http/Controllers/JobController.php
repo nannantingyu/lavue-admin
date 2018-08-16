@@ -27,7 +27,7 @@ class JobController extends Controller
 
         if(!is_null($url) && in_array($type, ['update', 'delete', 'api'])) {
             $this->updater->update($url, $type);
-            return [ "success"=> 1 ];
+            return [ "success"=> 1, 'data'=>$this->updater ];
         }
 
         return [ "success"=> 0 ];

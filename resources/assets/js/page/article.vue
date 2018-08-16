@@ -25,7 +25,7 @@
                     <el-radio-button label="-1">待审核</el-radio-button>
                 </el-radio-group>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="6">
                 <el-popover
                     placement="right"
                     width="600"
@@ -78,8 +78,10 @@
                                             style="width: 100%;"></el-date-picker>
                         </el-col>
                     </el-row>
-                    <el-button slot="reference">筛选</el-button>
+                    <el-button type="success" icon="el-icon-search" circle slot="reference"></el-button>
                 </el-popover>
+                <el-button icon="el-icon-refresh" type="success" circle title="刷新当前筛选条件" @click="get_article_list"></el-button>
+                <el-button type="success" @click="clear_filter" title="清空筛选条件">重置筛选</el-button>
                 <el-popover
                     placement="right"
                     width="400"
@@ -99,11 +101,11 @@
                         <el-button @click="multiCheck">批量审核</el-button>
                         <!--<el-button @click="multiDelete">批量删除</el-button>-->
                     </el-row>
-                    <el-button slot="reference">批量操作</el-button>
+                    <el-button type="warning" slot="reference">批量操作</el-button>
                 </el-popover>
             </el-col>
-            <el-col :span="2">
-                <el-button @click="dialog_visible_list=true">查看来源</el-button>
+            <el-col :offset="6" :span="2">
+                <el-button type="danger" @click="dialog_visible_list=true">查看来源</el-button>
             </el-col>
         </el-row>
         <el-table :data="article_lists"
@@ -501,7 +503,8 @@
                 set_time_key: "article/set_time_key",
                 set_st: "article/set_st",
                 set_et: "article/set_et",
-                filter_by_category: "article/filter_by_category"
+                filter_by_category: "article/filter_by_category",
+                clear_filter_options: "article/clear_filter_options"
             }),
             ...mapActions({
                 set_article_state: "article/set_article_state",
@@ -673,6 +676,10 @@
                         });
                     else _this.$message.error('请填写完整的信息！');
                 });
+            },
+            clear_filter: function () {
+                this.clear_filter_options();
+                this.get_article_list();
             }
         }
     }
