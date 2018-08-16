@@ -28,6 +28,12 @@ class UserController extends Controller
         $result = $this->authenticatesUsersLogin($request);
         if(!isset($result->message)) {
             $user = Auth::user();
+            if($user->state != 1) {
+                $this->guard()->logout();
+//                ["errors"=>["state"=>["该用户已被禁用，请联系管理员！"]]];
+                return response(["data"=>['_token'=>$request->session()->token()], "errors"=>["state"=>["该用户已被禁用，请联系管理员！"]]], 422);
+            }
+
             return ['success'=>1, 'userid'=>$user->id, 'nickname'=>$user->nickname, '_token'=>$request->session()->token()];
         }
         else {

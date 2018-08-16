@@ -146,7 +146,7 @@
                         v-if="user_module_permission['crawl-read']"
                         index="/crawl">
                     <template slot="title">
-                        <i class="el-icon-loading"></i>
+                        <i class="el-icon-upload"></i>
                         <span slot="title">爬虫</span>
                     </template>
                     <el-menu-item-group>

@@ -1,5 +1,6 @@
 import {check_integer_factory} from "../../plugin/tool";
 import $ from 'jquery'
+
 const state = {
     columns: {
         id: {title: "ID", show: true},
@@ -62,7 +63,6 @@ const state = {
         ],
     },
 };
-
 const mutations = {
     set_current_page: (state, current_page) => {
         state.current_page = current_page
@@ -133,10 +133,19 @@ const mutations = {
     append_company_list: (state, row) => {
         state.company_lists.splice(0, 0, row)
     },
+    set_loading: (state, loading) => {
+        state.loading = loading;
+    },
+    sort_data: (state, {column, order})=> {
+        state.company_lists = state.back_data.sort((x, y)=> {
+            if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
+            else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
+        })
+    }
 };
-
 const actions = {
     get_company_lists: ({commit, state}) => {
+        commit('set_loading', true);
         return new Promise((resolve, reject) => {
             axios.get('/companyLists').then(result=> {
                 if(result.data.success === 1) {
@@ -156,7 +165,10 @@ const actions = {
 
                     console.log(company_lists)
                     commit('set_company_list', company_lists);
-                    commit('set_back_data', company_lists)
+                    commit('set_back_data', company_lists);
+                    commit('set_current_page', 1);
+                    commit('set_total', company_lists.length);
+                    commit('set_loading', false);
                     resolve()
                 }
                 else reject()
@@ -201,7 +213,6 @@ const actions = {
         });
     }
 };
-
 const getters = {
     fileimgs: state=> {
         let imgs = [];

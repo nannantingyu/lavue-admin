@@ -62,7 +62,6 @@ const state = {
         ],
     },
 };
-
 const mutations = {
     set_current_page: (state, current_page) => {
         state.current_page = current_page
@@ -126,6 +125,9 @@ const mutations = {
 
         state.total = state.category_lists.length;
     },
+    set_loading: (state, loading) => {
+        state.loading = loading;
+    },
     update_category_list_by_index: (state, prop) => {
         let value = prop['value'], key = prop['key'];
 
@@ -134,10 +136,16 @@ const mutations = {
     append_category_list: (state, row) => {
         state.category_lists.splice(0, 0, row)
     },
+    sort_data: (state, {column, order})=> {
+        state.category_lists = state.back_data.sort((x, y)=> {
+            if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
+            else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
+        })
+    }
 };
-
 const actions = {
     get_category_lists: ({commit, state}) => {
+        commit('set_loading', true);
         return new Promise((resolve, reject) => {
             axios.get('/categoryLists').then(result=> {
                 if(result.data.success === 1) {
@@ -150,8 +158,11 @@ const actions = {
                     }
 
                     commit('set_category_list', category_lists);
-                    commit('set_back_data', category_lists)
-                    resolve(category_lists)
+                    commit('set_back_data', category_lists);
+                    commit('set_current_page', 1);
+                    commit('set_total', category_lists.length);
+                    commit('set_loading', false);
+                    resolve(category_lists);
                 }
                 else reject()
             })
@@ -196,20 +207,9 @@ const actions = {
     }
 };
 
-const getters = {
-    fileimgs: state=> {
-        let imgs = [];
-        if(state.form.logo)
-            imgs.push({url: 'http://images.jujin8.com'+state.form.logo.replace('/uploads/crawler', '/uploads')});
-
-        return imgs;
-    }
-};
-
 export default {
     namespaced: true,
     state,
-    getters,
     actions,
     mutations
 }

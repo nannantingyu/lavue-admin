@@ -60,17 +60,6 @@ const mutations = {
 };
 
 const actions = {
-    // set_feed_state({commit}, row)  {
-    //     return new Promise((resolve, reject)=> {
-    //         axios.post('/api/tool/add', row)
-    //             .then(function(result) {
-    //                 if(result.data.success === 1){
-    //                     resolve()
-    //                 }
-    //                 else reject()
-    //             });
-    //     })
-    // },
     add_update:({commit, state},form) => {
         return new Promise((resolve, reject) => {
             axios.post('/api/tool/add',form).then(result=> {
@@ -105,17 +94,6 @@ const actions = {
         })
     }
 };
-
-// const getters = {
-//     fileimgs: state=> {
-//         let imgs = [];
-//         console.log()
-//         if(state.form.image){
-//             imgs.push({url: 'http://images.jujin8.com'+state.form.image.replace('/uploads/crawler', '/uploads')});
-//         }
-//         return imgs;
-//     }
-// }
 
 export default {
     namespaced: true,

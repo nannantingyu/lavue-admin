@@ -77,9 +77,6 @@ const mutations = {
     set_article_options: (state, article_options) => {
         state.article_options = article_options;
     },
-    set_loading: (state, loading) => {
-        state.loading = loading;
-    },
     set_row_index: (state, row_index) => {
         state.row_index = row_index;
     },
@@ -130,12 +127,22 @@ const mutations = {
     },
     set_search_article_lists: (state, search_article_lists) => {
         state.search_article_lists = search_article_lists;
+    },
+    set_loading: (state, loading) => {
+        state.loading = loading;
+    },
+    sort_data: (state, {column, order})=> {
+        state.hot_banner_lists = state.back_data.sort((x, y)=> {
+            if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
+            else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
+        })
     }
 };
 
 const actions = {
     get_hot_banner_lists: ({commit, state}) => {
         return new Promise((resolve, reject) => {
+            commit('set_loading', true);
             axios.get('/hotBannerLists').then(result=> {
                 if(result.data.success === 1) {
                     let hot_banner_lists = result.data.data;
@@ -147,7 +154,10 @@ const actions = {
                     }
 
                     commit('set_hot_banner_list', hot_banner_lists);
-                    commit('set_back_data', hot_banner_lists)
+                    commit('set_back_data', hot_banner_lists);
+                    commit('set_current_page', 1);
+                    commit('set_total', hot_banner_lists.length);
+                    commit('set_loading', false);
                     resolve()
                 }
                 else reject()

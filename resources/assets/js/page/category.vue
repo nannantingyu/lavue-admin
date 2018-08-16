@@ -30,6 +30,7 @@
         </el-row>
         <el-table :data="category_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
+                  @sort-change="changeTableSort"
                   style="width: 100%">
             <el-table-column
                     prop="id"
@@ -68,10 +69,11 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="type"
-                :label="columns['type']['title']"
-                v-if="columns['type']['show']"
-                width="200">
+                    prop="type"
+                    sortable
+                    :label="columns['type']['title']"
+                    v-if="columns['type']['show']"
+                    width="200">
             </el-table-column>
             <el-table-column
                     prop="target"
@@ -290,7 +292,10 @@
                         });
                     else _this.$message.error('请填写完整的信息！');
                 });
-            }
+            },
+            changeTableSort: function(column) {
+                this.$store.commit("category/sort_data", {column:column['prop'], order: column['order']})
+            },
         },
         mounted() {
             const _this = this;

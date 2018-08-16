@@ -4,7 +4,7 @@ const state = {
     current_page: 1,
     total: 0,
     per_page: 10,
-    loading: false,
+    loading: true,
     article_lists: [],
     back_data: [],
     show_type: 3,
@@ -127,6 +127,9 @@ const mutations = {
     },
     set_time_key: (state, time_key) => {
         state.time_key = time_key;
+    },
+    set_loading: (state, loading) => {
+        state.loading = loading;
     },
     set_dialog_visible_list: (state, dialog_visible_list) => {
         state.dialog_visible_list = dialog_visible_list;
@@ -295,6 +298,7 @@ const getters = {
 const actions = {
     get_data({ commit, state }) {
         return new Promise((resolve, reject)=> {
+            commit('set_loading', true);
             let params = {
                 page: state.current_page,
                 num: state.per_page,
@@ -329,10 +333,11 @@ const actions = {
                         }
                     }
 
-                    commit('set_article_list', article_lists)
-                    commit('set_back_data', article_lists)
-                    commit('set_current_page', result.data.data.current_page)
-                    commit('set_total', result.data.data.total)
+                    commit('set_article_list', article_lists);
+                    commit('set_back_data', article_lists);
+                    commit('set_current_page', result.data.data.current_page);
+                    commit('set_total', result.data.data.total);
+                    commit('set_loading', false);
                     resolve()
                 }
                 else reject()

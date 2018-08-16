@@ -64,7 +64,6 @@ const mutations = {
         state.dialog_visible = value;
     },
     set_category_list: (state, value) => {
-        console.log(value)
         state.category_list = value;
     },
     set_form: (state, form) => {
@@ -103,10 +102,20 @@ const mutations = {
     append_crawl_article_list: (state, row) => {
         state.crawl_article_lists.splice(0, 0, row)
     },
+    set_loading: (state, loading) => {
+        state.loading = loading;
+    },
+    sort_data: (state, {column, order})=> {
+        state.crawl_article_lists = state.back_data.sort((x, y)=> {
+            if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
+            else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
+        })
+    }
 };
 const actions = {
     get_crawl_article_lists: ({commit, state}) => {
         return new Promise((resolve, reject) => {
+            commit('set_loading', true);
             axios.get('/crawlArticleLists').then(result=> {
                 if(result.data.success === 1) {
                     let crawl_article_lists = result.data.data;
@@ -118,9 +127,10 @@ const actions = {
                     }
 
                     commit('set_crawl_article_list', crawl_article_lists);
-                    commit('set_back_data', crawl_article_lists)
-                    commit('set_current_page', 1)
-                    commit('set_total', crawl_article_lists.length)
+                    commit('set_back_data', crawl_article_lists);
+                    commit('set_current_page', 1);
+                    commit('set_total', crawl_article_lists.length);
+                    commit('set_loading', false);
                     resolve(crawl_article_lists)
                 }
                 else reject()

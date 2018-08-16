@@ -119,12 +119,22 @@ const mutations = {
     append_config_list: (state, row) => {
         state.config_lists.splice(0, 0, row)
     },
+    set_loading: (state, loading) => {
+        state.loading = loading;
+    },
+    sort_data: (state, {column, order})=> {
+        state.config_lists = state.back_data.sort((x, y)=> {
+            if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
+            else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
+        })
+    }
 };
 
 const actions = {
     get_config_lists: ({commit, state}) => {
         return new Promise((resolve, reject) => {
             axios.get('/configLists').then(result=> {
+                commit('set_loading', true);
                 if(result.data.success === 1) {
                     let config_lists = result.data.data;
                     for(let obj of config_lists) {
@@ -137,7 +147,8 @@ const actions = {
                     commit('set_config_list', config_lists);
                     commit('set_back_data', config_lists)
                     commit('set_current_page', 1)
-                    commit('set_total', config_lists.length)
+                    commit('set_total', config_lists.length);
+                    commit('set_loading', false);
                     resolve()
                 }
                 else reject()

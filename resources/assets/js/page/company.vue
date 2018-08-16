@@ -28,9 +28,9 @@
                 <el-button @click="add_company">添加机构</el-button>
             </el-col>
         </el-row>
-
         <el-table :data="company_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
+                  @sort-change="changeTableSort"
                   style="width: 100%">
             <el-table-column
                     prop="id"
@@ -309,8 +309,10 @@
             },
             transfer: function(img) {
                 return img?'http://images.jujin8.com'+img.replace('/uploads/crawler', '/uploads'):''
-            }
-
+            },
+            changeTableSort: function(column) {
+                this.$store.commit("company/sort_data", {column:column['prop'], order: column['order']})
+            },
         },
         mounted() {
             const _this = this;

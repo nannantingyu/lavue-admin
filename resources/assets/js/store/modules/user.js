@@ -169,6 +169,19 @@ const mutations = {
 
         state.total = state.users.length;
     },
+    reset_token: (state, token)=> {
+        document.head.querySelector('meta[name="csrf-token"]').content = token;
+        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
+    },
+    set_loading: (state, loading) => {
+        state.loading = loading;
+    },
+    sort_data: (state, {column, order})=> {
+        state.users = state.back_data.sort((x, y)=> {
+            if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
+            else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
+        })
+    }
 }
 const actions = {
     login ({commit, state, dispatch}, login) {
@@ -181,8 +194,7 @@ const actions = {
                             nick_name: result.data.nickname
                         });
 
-                        document.head.querySelector('meta[name="csrf-token"]').content = result.data._token;
-                        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = result.data._token;
+                        commit('reset_token', result.data._token);
                         dispatch('get_user_module_permission').then(res=> {
                             resolve()
                         })
@@ -190,7 +202,12 @@ const actions = {
                     else {
                         reject(data.errors)
                     }
-                }).catch(data => {
+                })
+                .catch(data => {
+                    if(data.response.data.hasOwnProperty('data')) {
+                        commit('reset_token', data.response.data.data._token);
+                    }
+
                     reject(data.response.data.errors)
                 })
         })
@@ -272,9 +289,13 @@ const actions = {
     get_users ({commit, state}) {
         return new Promise((resolve, reject)=> {
             axios.get('/getUsers').then(result=> {
+                commit('set_loading', true);
                 if(result.data.success === 1) {
-                    commit('set_users', result.data.data)
-                    commit('set_back_data', result.data.data)
+                    commit('set_users', result.data.data);
+                    commit('set_back_data', result.data.data);
+                    commit('set_current_page', 1);
+                    commit('set_total', result.data.data.length);
+                    commit('set_loading', false);
                     resolve()
                 }
                 else reject(result.data.msg)

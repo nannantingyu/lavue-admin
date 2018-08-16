@@ -237,7 +237,8 @@
 
             if(this.category_list.length === 0) {
                 this.$store.dispatch('category/get_category_lists').then(result=> {
-                    _this.set_category_list(result);
+                    const article_categories = result.filter(x=>x.type == 'article_category')
+                    _this.set_category_list(article_categories);
                 })
             }
 
