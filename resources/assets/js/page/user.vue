@@ -27,6 +27,7 @@
         </el-row>
         <el-table :data="users"
                   v-loading="loading"
+                  @sort-change="changeTableSort"
                   style="width: 100%">
             <el-table-column
                     prop="id"
@@ -285,7 +286,10 @@
                         });
                     else _this.$message.error('请填写完整的信息！');
                 });
-            }
+            },
+            changeTableSort: function(column) {
+                this.$store.commit("user/sort_data", {column:column['prop'], order: column['order']})
+            },
         },
         mounted() {
             const _this = this;

@@ -114,6 +114,15 @@ const mutations = {
     append_category_map_list: (state, row) => {
         state.category_map_lists.splice(0, 0, row)
     },
+    sort_data: (state, {column, order})=> {
+        state.category_map_lists = state.back_data.sort((x, y)=> {
+            if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
+            else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
+        })
+    },
+    set_loading: (state, loading) => {
+        state.loading = loading;
+    },
 };
 const actions = {
     get_category_map_lists: ({commit, state}) => {
@@ -129,7 +138,10 @@ const actions = {
                     }
 
                     commit('set_category_map_list', category_map_lists);
-                    commit('set_back_data', category_map_lists)
+                    commit('set_back_data', category_map_lists);
+                    commit('set_current_page', 1);
+                    commit('set_total', category_map_lists.length);
+                    commit('set_loading', false);
                     resolve(category_map_lists)
                 }
                 else reject()

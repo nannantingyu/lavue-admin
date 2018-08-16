@@ -30,6 +30,7 @@
         </el-row>
         <el-table :data="crawl_article_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
+                  @sort-change="changeTableSort"
                   style="width: 100%">
             <el-table-column
                     prop="id"
@@ -109,7 +110,6 @@
         </el-dialog>
     </div>
 </template>
-
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
     import {Table, TableColumn, Pagination, Loading, Popover, RadioGroup, RadioButton, Dialog, FormItem, Input, Select, Option, Switch, DatePicker, Upload, Form} from 'element-ui'
@@ -231,7 +231,10 @@
             set_article_categories: function(categories) {
                 const article_categories = categories.filter(x=>x.type === 'article_category');
                 this.set_category_list(article_categories);
-            }
+            },
+            changeTableSort: function(column) {
+                this.$store.commit("crawl_article/sort_data", {column:column['prop'], order: column['order']})
+            },
         },
         mounted() {
             const _this = this;

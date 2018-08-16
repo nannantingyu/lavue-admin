@@ -30,6 +30,7 @@
         </el-row>
         <el-table :data="hot_banner_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
+                  @sort-change="changeTableSort"
                   style="width: 100%">
             <el-table-column
                     prop="id"
@@ -263,6 +264,9 @@
                 this.set_form(row);
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
+            },
+            changeTableSort: function(column) {
+                this.$store.commit("hot_banner/sort_data", {column:column['prop'], order: column['order']})
             },
             search_article_change: function(item) {
                 let article = this.search_article_lists.filter(x=> {
