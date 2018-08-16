@@ -538,12 +538,11 @@ class ArticleController extends Controller
         if($page){
             $source_id = md5($page);
             $article = DB::table('article')->where('source_id', $source_id)->select('id')->first();
-            dump($source_id);
             if($article) {
                 $url = 'http://www.jujin8.com/read/'.$article->id.'.html';
             }
         }
 
-//        return redirect()->away($url);
+        return redirect()->away($url);
     }
 }
