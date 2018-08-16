@@ -6,7 +6,7 @@ const state = {
         url: {title: "链接", show: true},
         user_id: {title: "用户", show: true},
         state: {title: "状态", show: true},
-        created_at: {title: "创建时间", show: false},
+        created_at: {title: "创建时间", show: true},
         updated_at: {title: "更新时间", show: false},
     },
     form: {
@@ -119,6 +119,8 @@ const actions = {
 
                     commit('set_crawl_article_list', crawl_article_lists);
                     commit('set_back_data', crawl_article_lists)
+                    commit('set_current_page', 1)
+                    commit('set_total', crawl_article_lists.length)
                     resolve(crawl_article_lists)
                 }
                 else reject()

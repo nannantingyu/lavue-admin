@@ -143,7 +143,7 @@
                     </el-menu-item-group>
                 </el-submenu>
                 <el-submenu
-                        v-if="user_module_permission['company-read']"
+                        v-if="user_module_permission['crawl-read']"
                         index="/crawl">
                     <template slot="title">
                         <i class="el-icon-loading"></i>
@@ -151,7 +151,7 @@
                     </template>
                     <el-menu-item-group>
                         <el-menu-item
-                                v-if="user_module_permission['company-read']"
+                                v-if="user_module_permission['category-map-read']"
                                 index="/category-map">
                             <i class="el-icon-goods"></i>
                             <span slot="title">分类转化</span>

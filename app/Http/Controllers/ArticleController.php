@@ -526,4 +526,24 @@ class ArticleController extends Controller
             ]
         ];
     }
+
+    /**
+     * 根据source_id跳转到前端页面
+     * @param Request $request
+     */
+    public function toArticlePage(Request $request) {
+        $page = $request->input('page');
+        $url = "http://www.jujin8.com";
+
+        if($page){
+            $source_id = md5($page);
+            $article = DB::table('article')->where('source_id', $source_id)->select('id')->first();
+            dump($source_id);
+            if($article) {
+                $url = 'http://www.jujin8.com/read/'.$article->id.'.html';
+            }
+        }
+
+//        return redirect()->away($url);
+    }
 }

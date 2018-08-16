@@ -303,13 +303,6 @@ const actions = {
                 state: state.show_type
             };
 
-            console.log(state.search_key);
-            console.log(state.sites);
-            console.log(state.category);
-            console.log(state.st);
-            console.log(state.et);
-            console.log(state.time_key);
-            console.log(state.order_by);
             if(state.search_key) params['keywords'] = state.search_key
             if(state.sites.length > 0) params['sites'] = state.sites.join(',')
             if(state.category.length > 0) params['category'] = state.category.join(',')

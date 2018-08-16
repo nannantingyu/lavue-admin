@@ -43,6 +43,18 @@
                     sortable
                     :label="columns['url']['title']"
                     v-if="columns['url']['show']" width="*">
+                <template slot-scope="scope">
+                    <a :href="scope.row.url" target="_blank">{{scope.row.url}}</a>
+                </template>
+            </el-table-column>
+            <el-table-column
+                prop="url"
+                sortable
+                :label="columns['url']['title']"
+                v-if="columns['url']['show']" width="100">
+                <template slot-scope="scope">
+                    <a :href="'/toArticlePage?page='+scope.row.url" target="_blank">官网展示</a>
+                </template>
             </el-table-column>
             <el-table-column
                     :label="columns['user_id']['title']"
@@ -50,16 +62,6 @@
                     width="120">
                 <template slot-scope="scope">
                     {{ get_catname(scope.row.target) }}
-                </template>
-            </el-table-column>
-            <el-table-column
-                    prop="state"
-                    sortable
-                    :label="columns['state']['title']"
-                    v-if="columns['state']['show']"
-                    width="80">
-                <template slot-scope="scope">
-                    <el-switch v-model="scope.row.state" @change="changeState(scope.row)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column
@@ -73,20 +75,6 @@
                     :label="columns['updated_at']['title']"
                     v-if="columns['updated_at']['show']"
                     width="120">
-            </el-table-column>
-            <el-table-column label="操作" fixed="right" width="160">
-                <template slot-scope="scope">
-                    <el-button
-                            size="mini"
-                            :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['crawl-article-delete']"
-                            @click="setState(scope.$index, scope.row)">{{scope.row.state==1?"下线":"上线"}}</el-button>
-                    <el-button
-                            size="mini"
-                            :type="scope.row.state?'success':'danger'"
-                            :disabled="!user_module_permission['crawl-article-delete']"
-                            @click="editcrawl_article(scope.$index, scope.row)">编辑</el-button>
-                </template>
             </el-table-column>
         </el-table>
         <el-pagination
