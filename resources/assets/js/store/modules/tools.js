@@ -23,7 +23,6 @@ const state = {
     loading: false,
     radio:"全部",
     dialogFormVisible: false,
-    form: {},
     rules: {
         image: [
             { required: true, message: '请上传图片', trigger: 'blur' }
@@ -61,7 +60,7 @@ const mutations = {
         state.lists = list
     },
     set_dialogFormVisible: (state, value) => {
-        state.set_dialogFormVisible = value;
+        state.dialogFormVisible = value;
     },
     set_current_page: (state, current_page) => {
         state.current_page = current_page;
@@ -101,6 +100,9 @@ const mutations = {
     set_loading: (state, loading) => {
         state.loading = loading;
     },
+    set_radio: (state, radio) => {
+        state.radio = radio;
+    },
     sort_data: (state, {column, order})=> {
         state.lists = state.back_data.sort((x, y)=> {
             if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
@@ -112,7 +114,7 @@ const mutations = {
 const actions = {
     add_update:({commit, state},form) => {
         return new Promise((resolve, reject) => {
-            axios.post('/api/tool/add',form).then(result=> {
+            axios.post('/api/tool/add', form).then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
                     resolve(data);
@@ -127,7 +129,7 @@ const actions = {
             axios.get('/api/tool/list').then(result=> {
                 if(result.data.success === 1) {
                     let data = result.data.data;
-                    for(let o of data) o.state = o.state === 0;
+                    for(let o of data) o.state = o.state === 1;
 
                     commit('set_list', data);
                     commit('set_lists_all', data);

@@ -25,7 +25,7 @@
                 </el-radio-group>
             </el-col>
             <el-col :span="3" :offset="8">
-                <el-button type="primary" icon="el-icon-plus"  @click="addData">添加工具</el-button>
+                <el-button type="primary" icon="el-icon-plus" @click="addData">添加工具</el-button>
             </el-col>
         </el-row>
         <el-table
@@ -199,6 +199,11 @@
     Vue.use(Popover);
     export default {
         name: "tools",
+        data() {
+            return {
+                form: {}
+            }
+        },
         computed: {
             ...mapState(['headers', 'formLabelWidth']),
             ...mapState({
@@ -209,17 +214,22 @@
                 'current_page': state=>state.tools.current_page,
                 'per_page': state=>state.tools.per_page,
                 loading: state=>state.tools.loading,
-                radio:state=>state.tools.radio,
-                dialogFormVisible: state=>state.tools.total,
-                form: state=>state.tools.form,
                 rules: state=>state.tools.rules,
             }),
             dialogFormVisible: {
                 get() {
-                    return this.$store.state.category.dialogFormVisible
+                    return this.$store.state.tools.dialogFormVisible
                 },
                 set(value) {
                     this.$store.commit('tools/set_dialogFormVisible', value)
+                }
+            },
+            radio: {
+                get() {
+                    return this.$store.state.tools.radio
+                },
+                set(value) {
+                    this.$store.commit('tools/set_radio', value)
                 }
             },
             fileimgs:function() {
@@ -257,7 +267,6 @@
                         this.filterData(this.radio);
                         this.$message.success('已更新列表！');
                     }).catch((ErrMsg)=>{
-                        console.log(ErrMsg);
                         this.$message.error('刷新数据失败，请刷新此页！');
                         //获取数据失败时的处理逻辑
                     })
@@ -274,7 +283,6 @@
                         _this.submitFn(obj);
 
                     } else {
-                        console.log('error submit!!');
                         return false;
                     }
                 });
@@ -286,6 +294,7 @@
                 }else{
                     obj.state=row.state?0:1;
                 }
+
                 this.submitFn(obj);
             },
             filterData:function (state) {
@@ -317,10 +326,6 @@
         mounted(){
             var _this = this;
             this.get_lists().then(result=> {
-                console.log(_this.lists)
-                console.log(_this.current_page)
-                console.log(_this.total)
-                console.log(_this.lists.slice((_this.current_page-1)*_this.per_page, _this.current_page*_this.per_page))
                 _this.$message.success('成功获取投资工具列表！');
             }).catch((ErrMsg)=>{
                 _this.$message.error('获取数据失败，请刷新此页！');
