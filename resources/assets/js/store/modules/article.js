@@ -114,6 +114,7 @@ const state = {
         ],
     },
     to_strings: [],
+    redownload_file_lists: [],
     to_booleans: ['state', 'recommend']
 };
 const mutations = {
@@ -143,6 +144,9 @@ const mutations = {
     },
     set_et: (state, et) => {
         state.et = et;
+    },
+    append_redownload_file_lists: (state, file) => {
+        state.redownload_file_lists.push(file);
     },
     set_back_data: (state, back_data) => {
         state.back_data = back_data;
@@ -333,6 +337,8 @@ const actions = {
                     let article_lists = result.data.data.data;
                     for(let obj of article_lists) {
                         obj['need_check'] = (obj['state'] === -1);
+                        obj['image_alt'] = obj['image'];
+                        obj['image_exist'] = true;
                         for(let o in obj) {
                             if(state.to_strings.includes(o)) obj[o] = obj[o].toString()
                             else if(state.to_booleans.includes(o)) {
@@ -352,6 +358,14 @@ const actions = {
                     resolve()
                 }
                 else reject()
+            })
+        })
+    },
+    redownload_img ({commit, state}, url) {
+        return new Promise((resolve, reject)=> {
+            axios.post('/redownloadImage', {url: url}).then(result=> {
+                if(result.data.success === 1) resolve();
+                else reject();
             })
         })
     },

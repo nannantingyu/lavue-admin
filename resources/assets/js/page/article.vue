@@ -154,10 +154,11 @@
                     v-if="columns['image']['show']"
                     width="160">
                 <template slot-scope="scope">
-                    <img width="140" :src="transfer(scope.row.image)" :alt="scope.row.image">
+                    <img width="140" :src="transfer(scope.row.image)"
+                         @error="image_load_error(scope.$index)"
+                         @click="redownload(scope.$index)" :alt="scope.row.image_alt">
                 </template>
             </el-table-column>
-
             <el-table-column
                     prop="type"
                     :label="columns['type']['title']"
@@ -396,6 +397,7 @@
                 article_categories_group: state=>state.article.article_categories_group,
                 site_form: state=>state.article.site_form,
                 site_rules: state=>state.article.site_rules,
+                redownload_file_lists: state=>state.article.redownload_file_lists,
             }),
             ...mapGetters({
                 'type_filter': 'article/type_filter'
@@ -518,6 +520,26 @@
                 delete_article: "article/delete_article",
                 add_or_update_source_site: "article/add_or_update_source_site"
             }),
+            image_load_error: function(index) {
+                this.$store.commit('article/update_article_list_by_index',  {index: index, key: 'image_alt', val: "图片加载失败，点击可重新下载"})
+                this.$store.commit('article/update_article_list_by_index',  {index: index, key: 'image_exist', val: false});
+            },
+            redownload: function(index) {
+                const this_file = this.article_lists[index]['image'], _this = this, exist = this.article_lists[index]['image_exist'];
+                if(exist) {
+                    this.$message.error("图片已存在，请勿重复下载！");
+                    return;
+                }
+
+                if(this.redownload_file_lists.includes(this_file)) {
+                    this.$message.info("你已经添加该下载任务了，无需重新添加！请等待图片下载")
+                }
+                else this.$store.dispatch('article/redownload_img', this_file).then(x=>{
+                    _this.$message.success("成功添加下载任务");
+                }).catch(x=>{
+                    _this.$message.error("未能添加下载任务，图片原地址不存在");
+                });
+            },
             search_source_site: function(value) {
                 this.set_source_sites({source_sites: this.source_sites, is_bak: false});
             },

@@ -7,11 +7,16 @@ use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleBody;
 use App\Models\ArticleCategory;
-use App\Models\Category;
 use Illuminate\Support\Facades\DB;
+use App\Support\Kafka;
 
 class ArticleController extends Controller
 {
+    public function __construct(Kafka $kafka)
+    {
+        $this->kafka = $kafka;
+    }
+
     /**
      * 获取文章列表
      * @return array
@@ -544,5 +549,20 @@ class ArticleController extends Controller
         }
 
         return redirect()->away($url);
+    }
+
+    /**
+     * 重新下载未成功的图片
+     * @param Request $request
+     */
+    public function redownloadImage(Request $request) {
+        $url = $request->input('url');
+        $ori = DB::table('image_map')->where('img_path', $url)->select('real_path')->first();
+        if($ori) {
+            $this->kafka->produce('downfile_queue_with_thumb', $ori->real_path);
+            return ['success'=>1];
+        }
+
+        return ['success'=>0];
     }
 }

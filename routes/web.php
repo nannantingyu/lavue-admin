@@ -31,6 +31,7 @@ Route::post('/multiDelete', 'ArticleController@multiDelete');
 Route::post('/addOrUpdateSourceSite', 'ArticleController@addOrUpdateSourceSite');
 Route::post('/removeSourceSite', 'ArticleController@removeSourceSite');
 Route::get('/toArticlePage', 'ArticleController@toArticlePage');
+Route::post('/redownloadImage', 'ArticleController@redownloadImage');
 
 
 // 文章分类
@@ -89,7 +90,6 @@ Route::get('/getRoleUsers', 'UserController@getRoleUsers');
 Route::post('/setPassword', 'UserController@setPassword');
 Route::post('/addOrUpdateUser', 'UserController@addOrUpdateUser');
 Route::post('/setState', 'UserController@setState');
-
 
 // 上传
 Route::post('/uploads_image', 'UploadsController@image');
