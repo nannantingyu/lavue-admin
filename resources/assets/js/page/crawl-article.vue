@@ -146,7 +146,7 @@
                 'rules': state=>state.crawl_article.rules,
                 'formLabelWidth': state=>state.formLabelWidth,
                 'row_index': state=>state.crawl_article.row_index,
-                'article_categories': state=>state.article.article_categories,
+                'article_categories': state=>state.crawl_article.category_list,
             }),
             dialog_visible: {
                 get() {
@@ -227,6 +227,10 @@
                 return this.category_list.filter(x=> {
                     x.id = id;
                 })
+            },
+            set_article_categories: function(categories) {
+                const article_categories = categories.filter(x=>x.type === 'article_category');
+                this.set_category_list(article_categories);
             }
         },
         mounted() {
@@ -237,10 +241,10 @@
 
             if(this.category_list.length === 0) {
                 this.$store.dispatch('category/get_category_lists').then(result=> {
-                    const article_categories = result.filter(x=>x.type == 'article_category')
-                    _this.set_category_list(article_categories);
+                    this.set_article_categories(result)
                 })
             }
+            else this.set_article_categories(this.category_lists);
 
             if(this.article_categories.length <= 0) {
                 this.$store.dispatch("category/get_category_lists").then(result=> {

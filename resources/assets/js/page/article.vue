@@ -45,12 +45,17 @@
                     </el-row>
                     <el-row class="padding-row-15">
                         <el-select v-model="category" multiple placeholder="请选择分类" @change="get_article_list">
-                            <el-option
-                                v-for="item in article_categories"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                            </el-option>
+                            <el-option-group
+                                v-for="group in article_categories_group"
+                                :key="group.label"
+                                :label="group.label">
+                                <el-option
+                                    v-for="item in group.data"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                                </el-option>
+                            </el-option-group>
                         </el-select>
                     </el-row>
                     <el-row class="padding-row-15">
@@ -334,7 +339,7 @@
 
 <script>
     import {mapState, mapActions, mapMutations, mapGetters} from 'vuex'
-    import {Table, TableColumn, Pagination, MessageBox, Form, FormItem, Dialog, Loading, DatePicker, Popover, Switch, RadioGroup, RadioButton, Input, Select, Option} from 'element-ui'
+    import {Table, TableColumn, Pagination, MessageBox, Form, FormItem, Dialog, OptionGroup, Loading, DatePicker, Popover, Switch, RadioGroup, RadioButton, Input, Select, Option} from 'element-ui'
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Pagination);
@@ -350,6 +355,7 @@
     Vue.use(Form);
     Vue.use(FormItem);
     Vue.use(Dialog);
+    Vue.use(OptionGroup);
 
     export default {
         name: "article-list",
@@ -387,6 +393,7 @@
                 selected: state=>state.article.selected,
                 user_module_permission: state=>state.user.user_module_permission,
                 article_categories: state=>state.article.article_categories,
+                article_categories_group: state=>state.article.article_categories_group,
                 site_form: state=>state.article.site_form,
                 site_rules: state=>state.article.site_rules,
             }),

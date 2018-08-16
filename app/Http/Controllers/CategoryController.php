@@ -10,7 +10,7 @@ class CategoryController extends Controller {
      * @return array
      */
     public function lists () {
-        return ['success'=>1, 'data'=>Category::orderBy('updated_at', 'desc')->get()];
+        return ['success'=>1, 'data'=>Category::orderBy('sequence', 'desc')->get()];
     }
 
     /**

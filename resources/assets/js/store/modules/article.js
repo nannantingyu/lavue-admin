@@ -83,6 +83,7 @@ const state = {
     },
     modules: [],
     article_categories: [],
+    article_categories_group: {},
     form: {
         id: null,
         title: '',
@@ -200,6 +201,16 @@ const mutations = {
     },
     set_article_categories: (state, article_categories) => {
         state.article_categories = article_categories;
+        state.article_categories_group = {};
+        for(let cat of article_categories) {
+            if(!state.article_categories_group.hasOwnProperty(cat['type'])) {
+                state.article_categories_group[cat['type']] = {
+                    'data': [cat],
+                    'label': cat['type']
+                };
+            }
+            else state.article_categories_group[cat['type']]['data'].push(cat);
+        }
     },
     filte_data: (state) => {
         if(state.show_type == 3) state.article_lists = state.back_data;
