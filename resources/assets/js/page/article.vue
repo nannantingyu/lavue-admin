@@ -526,6 +526,11 @@
             },
             redownload: function(index) {
                 const this_file = this.article_lists[index]['image'], _this = this, exist = this.article_lists[index]['image_exist'];
+                if(!this_file) {
+                    this.$message.error("该图片为空，无法下载，可在编辑中自行添加！");
+                    return;
+                }
+
                 if(exist) {
                     this.$message.error("图片已存在，请勿重复下载！");
                     return;

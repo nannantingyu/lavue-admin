@@ -557,10 +557,17 @@ class ArticleController extends Controller
      */
     public function redownloadImage(Request $request) {
         $url = $request->input('url');
-        $ori = DB::table('image_map')->where('img_path', $url)->select('real_path')->first();
-        if($ori) {
-            $this->kafka->produce('downfile_queue_with_thumb', $ori->real_path);
-            return ['success'=>1];
+
+        if($url) {
+            $url = str_replace("/uploads/crawler", "/data/images/uploads", $url);
+            $ori = DB::table('image_map')->where('img_path', $url)->select('real_path')->first();
+            if($ori)
+            {
+                $this->kafka->produce('downfile_queue_with_thumb', $ori->real_path);
+                return ['success'=>1];
+            }
+
+            return ['success'=>0];
         }
 
         return ['success'=>0];

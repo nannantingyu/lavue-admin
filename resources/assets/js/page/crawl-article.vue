@@ -135,7 +135,6 @@
         computed: {
             ...mapState({
                 'crawl_article_lists': state=>state.crawl_article.crawl_article_lists,
-                'category_list': state=>state.crawl_article.category_list,
                 'columns': state=>state.crawl_article.columns,
                 'loading': state=>state.crawl_article.loading,
                 'current_page': state=>state.crawl_article.current_page,
@@ -224,12 +223,10 @@
                 });
             },
             get_catname: function(id) {
-                return this.category_list.filter(x=> {
-                    x.id = id;
-                })
+                return this.article_categories.filter(x=>x.id === id);
             },
-            set_article_categories: function(categories) {
-                const article_categories = categories.filter(x=>x.type === 'article_category');
+            set_filter_article_categories: function(categories) {
+                let article_categories = categories.filter(x=>x.type === 'article_category');
                 this.set_category_list(article_categories);
             },
             changeTableSort: function(column) {
@@ -242,18 +239,12 @@
                 _this.$message.success('成功获取文章分类！');
             });
 
-            if(this.category_list.length === 0) {
+            if(this.article_categories.length === 0) {
                 this.$store.dispatch('category/get_category_lists').then(result=> {
-                    this.set_article_categories(result)
+                    this.set_filter_article_categories(result)
                 })
             }
-            else this.set_article_categories(this.category_lists);
-
-            if(this.article_categories.length <= 0) {
-                this.$store.dispatch("category/get_category_lists").then(result=> {
-                    _this.set_article_categories(result);
-                })
-            }
+            else this.set_filter_article_categories(this.category_lists);
         }
     }
 </script>
