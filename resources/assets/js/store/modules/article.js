@@ -474,6 +474,7 @@ const actions = {
                 state: state.site_form.state?1:0
             };
 
+            console.log(form);
             axios.post("/addOrUpdateSourceSite", form).then(function(result){
                 if(result.data.success === 1) {
                     commit('set_source_sites', {source_sites: result.data.data, is_bak: true});

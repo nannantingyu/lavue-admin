@@ -131,6 +131,8 @@ const mutations = {
         else {
             state.category_map_lists = state.back_data.filter(x=>sites.includes(x.source_site));
         }
+
+        state.total = state.category_map_lists.length;
     },
     set_loading: (state, loading) => {
         state.loading = loading;

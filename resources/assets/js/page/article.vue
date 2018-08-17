@@ -293,6 +293,7 @@
                     <template slot-scope="scope">
                         <el-switch
                             :disabled="!user_module_permission['config-delete']"
+                            @change="change_source_site_state(scope.$index, scope.row)"
                             v-model="scope.row.state"></el-switch>
                     </template>
                 </el-table-column>
@@ -561,9 +562,20 @@
                 this.$store.commit('article/set_site_form_value', {key: 'old_site', value: site});
                 this.dialog_visible_add = true;
             },
+            change_source_site_state: function(index, row) {
+                const _this = this;
+                const site = row['site'];
+                this.$store.commit('article/set_site_form_value', {key: 'site', value: site});
+                this.$store.commit('article/set_site_form_value', {key: 'state', value: row['state']});
+                this.$store.commit('article/set_site_form_value', {key: 'old_site', value: site});
+
+                this.$store.dispatch('article/add_or_update_source_site').then(x=>{
+                    _this.$store.commit('article/set_default_site_form');
+                    _this.$message.success("修改成功");
+                });
+            },
             remove_source_site: function(site) {
                 const _this = this;
-                console.log(site)
                 this.$store.dispatch('article/remove_source_site', site).then(result=> {
                     _this.$message.success('删除成功');
                 });
