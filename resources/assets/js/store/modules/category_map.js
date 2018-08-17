@@ -19,6 +19,7 @@ const state = {
         created_at: '',
         updated_at: ''
     },
+    sites: [],
     to_strings: [],
     to_booleans: ['state'],
     category_map_lists: [],
@@ -51,6 +52,9 @@ const mutations = {
     },
     set_total: (state, total) => {
         state.total = total
+    },
+    set_sites: (state, sites) => {
+        state.sites = sites
     },
     set_per_page: (state, per_page) => {
         state.per_page = per_page
@@ -119,6 +123,14 @@ const mutations = {
             if(order === 'ascending') return !isNaN(x[column])?x[column] - y[column] : x[column] > y[column]?1:-1;
             else return !isNaN(x[column])?y[column] - x[column] : y[column] > x[column]?1:-1;
         })
+    },
+    filter_data_by_site: (state, sites) =>{
+        if(!sites || sites.length === 0) {
+            state.category_map_lists = state.back_data;
+        }
+        else {
+            state.category_map_lists = state.back_data.filter(x=>sites.includes(x.source_site));
+        }
     },
     set_loading: (state, loading) => {
         state.loading = loading;

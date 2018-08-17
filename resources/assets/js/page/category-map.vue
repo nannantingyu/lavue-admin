@@ -17,12 +17,22 @@
                     <el-button slot="reference">显示隐藏列</el-button>
                 </el-popover>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="5">
                 <el-radio-group v-model="show_type">
                     <el-radio-button label="3">全部</el-radio-button>
                     <el-radio-button label="1">上线</el-radio-button>
                     <el-radio-button label="0">下线</el-radio-button>
                 </el-radio-group>
+            </el-col>
+            <el-col :span="4">
+                <el-select v-model="sites" multiple placeholder="请选择来源站点" @change="filter_data">
+                    <el-option
+                        v-for="item in source_sites"
+                        :key="item.site"
+                        :label="item.site"
+                        :value="item.site">
+                    </el-option>
+                </el-select>
             </el-col>
             <el-col :span="2">
                 <el-button @click="add_category_map">添加文章分类</el-button>
@@ -30,6 +40,7 @@
         </el-row>
         <el-table :data="category_map_lists.slice((current_page-1)*per_page, current_page*per_page)"
                   v-loading="loading"
+                  @sort-change="changeTableSort"
                   style="width: 100%">
             <el-table-column
                     prop="id"
@@ -53,10 +64,11 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="source_site"
-                :label="columns['source_site']['title']"
-                v-if="columns['source_site']['show']"
-                width="*">
+                    prop="source_site"
+                    sortable
+                    :label="columns['source_site']['title']"
+                    v-if="columns['source_site']['show']"
+                    width="*">
             </el-table-column>
             <el-table-column
                     prop="state"
@@ -70,12 +82,14 @@
             </el-table-column>
             <el-table-column
                     prop="created_at"
+                    sortable
                     :label="columns['created_at']['title']"
                     v-if="columns['created_at']['show']"
                     width="120">
             </el-table-column>
             <el-table-column
                     prop="updated_at"
+                    sortable
                     :label="columns['updated_at']['title']"
                     v-if="columns['updated_at']['show']"
                     width="120">
@@ -162,6 +176,7 @@
                 'category_list': state=>state.category_map.category_list,
                 'columns': state=>state.category_map.columns,
                 'loading': state=>state.category_map.loading,
+                'source_sites': state=>state.article.source_sites,
                 'current_page': state=>state.category_map.current_page,
                 'per_page': state=>state.category_map.per_page,
                 'total': state=>state.category_map.total,
@@ -171,6 +186,15 @@
                 'formLabelWidth': state=>state.formLabelWidth,
                 'row_index': state=>state.category_map.row_index,
             }),
+
+            sites: {
+                get() {
+                    return this.$store.state.category_map.sites
+                },
+                set(value) {
+                    this.$store.commit('category_map/set_sites', value)
+                }
+            },
             dialog_visible: {
                 get() {
                     return this.$store.state.category_map.dialog_visible
@@ -197,6 +221,7 @@
                 'set_dialog_visible': "category_map/set_dialog_visible",
                 'set_form': "category_map/set_form",
                 'set_row_index': "category_map/set_row_index",
+                'set_source_sites': "article/set_source_sites",
                 'set_form_value': "category_map/set_form_value",
                 'update_category_map_list_by_index': "category_map/update_category_map_list_by_index",
                 'append_category_map_list': "category_map/append_category_map_list",
@@ -214,6 +239,9 @@
                 this.set_row_index(index);
                 this.set_dialog_visible(true);
             },
+            changeTableSort: function(column) {
+                this.$store.commit("category_map/sort_data", {column:column['prop'], order: column['order']})
+            },
             changeState: function (row) {
                 const _this = this;
                 this.set_category_map_state({id:row.id, state:row.state}).then(result=>{
@@ -221,6 +249,10 @@
                     _this.filte_data()
                     _this.$message.success(message);
                 });
+            },
+            filter_data: function() {
+                console.log(this.sites)
+                this.$store.commit("category_map/filter_data_by_site", this.sites);
             },
             add_category_map: function() {
                 this.set_default_form();
@@ -277,6 +309,14 @@
             }
             else {
                 _this.get_table_data();
+            }
+
+            if(this.source_sites.length === 0) {
+                this.$store.dispatch("config/get_config", {key: 'article_source_site'}).then(result=>{
+                    if(result.data.success === 1) {
+                        _this.set_source_sites({source_sites: result.data.data.value, is_bak: true});
+                    }
+                });
             }
         }
     }
