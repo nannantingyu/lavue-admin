@@ -14,6 +14,7 @@ class ArticleController extends Controller
 {
     public function __construct(Kafka $kafka)
     {
+        parent::__construct();
         $this->kafka = $kafka;
     }
 
