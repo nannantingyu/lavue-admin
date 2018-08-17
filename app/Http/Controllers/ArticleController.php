@@ -9,12 +9,13 @@ use App\Models\ArticleBody;
 use App\Models\ArticleCategory;
 use Illuminate\Support\Facades\DB;
 use App\Support\Kafka;
+use App\Support\TemplateUpdater;
 
 class ArticleController extends Controller
 {
-    public function __construct(Kafka $kafka)
+    public function __construct(Kafka $kafka, TemplateUpdater $template_updater)
     {
-        parent::__construct();
+        parent::__construct($template_updater);
         $this->kafka = $kafka;
     }
 
