@@ -19,6 +19,7 @@ class ArticleController extends Controller
 
     /**
      * 获取文章列表
+     * @auth article:read
      * @return array
      */
     public function lists(Request $request)
@@ -74,12 +75,18 @@ class ArticleController extends Controller
         return ['success' => 1, 'data' => $articles];
     }
 
+    /**
+     * @auth article:read
+     * 获取所有的source_site
+     * @return array
+     */
     public function source_site() {
         return ['success'=>1, 'data'=>Article::pluck('source_site')];
     }
 
     /**
-     *获取文章所有来源
+     * @auth article:read
+     * 获取文章所有来源
      * */
     public function source()
     {
@@ -92,6 +99,7 @@ class ArticleController extends Controller
     }
 
     /**
+     * @auth article:read
      * 根据分类获取文章列表
      */
     public function articleListsByCategory(Request $request)
@@ -112,6 +120,7 @@ class ArticleController extends Controller
     }
 
     /**
+     * @auth article:read
      * 获取单个文章详情
      */
     public function info(Request $request)
@@ -126,8 +135,9 @@ class ArticleController extends Controller
     }
 
     /**
-     * 删除文章
+     * @auth article:delete
      * @param id 文章id
+     * 删除文章
      */
     public function deleteArticle(Request $request)
     {
@@ -144,6 +154,7 @@ class ArticleController extends Controller
 
     /**
      * 搜索文章
+     * @auth article:read
      * @param keyword 关键词
      */
     public function searchArticle(Request $request)
@@ -168,6 +179,7 @@ class ArticleController extends Controller
 
     /**
      * 设置文章发布状态
+     * @auth article:delete
      * @param Request $request
      */
     public function setArticleState(Request $request)
@@ -188,6 +200,12 @@ class ArticleController extends Controller
     }
 
 
+    /**
+     * 批量设置文章状态
+     * @auth article:delete
+     * @param Request $request
+     * @return array
+     */
     public function setState(Request $request)
     {
         $id = $request->input('id');
@@ -201,6 +219,7 @@ class ArticleController extends Controller
 
     /**
      * 批量设置文章状态
+     * @auth article:delete
      * @param $request
      * @param $state
      */
@@ -222,6 +241,7 @@ class ArticleController extends Controller
 
     /**
      * 批量删除文章
+     * @auth article:delete
      * @param $request
      * @param $state
      */
@@ -243,6 +263,7 @@ class ArticleController extends Controller
 
     /**
      * 批量下线文章
+     * @auth article:delete
      * @param Request $request
      */
     public function multiOffline(Request $request) {
@@ -252,6 +273,7 @@ class ArticleController extends Controller
 
     /**
      * 批量上线文章
+     * @auth article:delete
      * @param Request $request
      */
     public function multiOnline(Request $request) {
@@ -261,6 +283,7 @@ class ArticleController extends Controller
 
     /**
      * 获取筛选的文章
+     * @auth article:read
      * @param $request
      * @return \Illuminate\Database\Query\Builder
      */
@@ -297,6 +320,7 @@ class ArticleController extends Controller
 
     /**
      * 添加或者更新文章
+     * @auth article:edit
      * @param Request $request
      */
     public function addArticle(Request $request)
@@ -446,6 +470,7 @@ class ArticleController extends Controller
 
     /**
      * 添加来源网站
+     * @auth article:edit
      * @param Request $request
      */
     public function addOrUpdateSourceSite(Request $request) {
@@ -481,6 +506,7 @@ class ArticleController extends Controller
 
     /**
      * 删除来源网站
+     * @auth article:delete
      * @param Request $request
      */
     public function removeSourceSite(Request $request) {
@@ -504,6 +530,11 @@ class ArticleController extends Controller
         return ['success'=>0];
     }
 
+    /**
+     * @auth article:all
+     * @param Request $request
+     * @return array
+     */
     public function listBySite(Request $request)
     {
         $pageSize = $request->input('size');
@@ -553,6 +584,7 @@ class ArticleController extends Controller
 
     /**
      * 重新下载未成功的图片
+     * @auth article:read
      * @param Request $request
      */
     public function redownloadImage(Request $request) {

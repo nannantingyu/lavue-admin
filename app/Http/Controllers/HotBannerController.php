@@ -9,6 +9,8 @@ class HotBannerController extends Controller
 {
     /**
      * 获取热门广告列表
+     *
+     * @auth hot-banner:read
      * @return array
      */
     public function lists()
@@ -18,6 +20,8 @@ class HotBannerController extends Controller
 
     /**
      * 获取具体的热门广告
+     *
+     * @auth hot-banner:read
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @return array
@@ -35,6 +39,8 @@ class HotBannerController extends Controller
 
     /**
      * 添加或者更新热门广告
+     *
+     * @auth hot-banner:update
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @param $form array 表单数据
@@ -72,6 +78,7 @@ class HotBannerController extends Controller
 
     /**
      * 表单验证
+     *
      * @param Request $request
      * @return array
      */
@@ -106,6 +113,8 @@ class HotBannerController extends Controller
 
     /**
      * 根据id设置hotbanner状态
+     *
+     * @auth hot-banner:delete
      */
     public function setHotBannerState(Request $request)
     {

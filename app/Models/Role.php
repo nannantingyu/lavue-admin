@@ -16,7 +16,7 @@ class Role extends Model {
     }
 
     public function modulePermission($module) {
-        $key = is_numeric($module)?'module_id': 'module_path';
+        $key = is_numeric($module)?'id': 'path';
         $module_permission = $this->modules->keyBy($key)->get($module, null);
         return is_null($module_permission) ? 0: $module_permission->pivot->permission;
     }

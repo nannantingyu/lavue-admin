@@ -6,6 +6,7 @@ use App\Models\Config;
 class ConfigController extends Controller {
     /**
      * 获取配置列表
+     * @auth config:read
      * @return array
      */
     public function lists () {
@@ -14,6 +15,7 @@ class ConfigController extends Controller {
 
     /**
      * 获取具体的配置
+     * @auth config:read
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @return array
@@ -53,6 +55,8 @@ class ConfigController extends Controller {
 
     /**
      * 添加或者更新配置
+     *
+     * @auth config:update
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @param $form array 表单数据
@@ -122,6 +126,7 @@ class ConfigController extends Controller {
 
     /**
      * 根据id设置config状态
+     * @auth config:delete
      * @param Request $request
      */
     public function setConfigState(Request $request) {

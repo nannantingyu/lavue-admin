@@ -18,6 +18,9 @@ class JobController extends Controller
     }
 
     /**
+     * 手动生成静态页
+     *
+     * @auth job_update
      * @param Request $request
      * @return array
      */

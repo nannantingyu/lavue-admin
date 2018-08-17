@@ -7,6 +7,7 @@ use App\Models\Config;
 class CategoryController extends Controller {
     /**
      * 获取分类列表
+     * @auth category:read
      * @return array
      */
     public function lists () {
@@ -15,6 +16,7 @@ class CategoryController extends Controller {
 
     /**
      * 获取具体的分类
+     * @auth category:read
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @return array
@@ -30,6 +32,8 @@ class CategoryController extends Controller {
 
     /**
      * 添加或者更新分类
+     *
+     * @auth category:update
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @param $form array 表单数据
@@ -129,6 +133,7 @@ class CategoryController extends Controller {
 
     /**
      * 根据id设置分类状态
+     * @auth category:delete
      * @param Request $request
      */
     public function setCategoryState(Request $request) {

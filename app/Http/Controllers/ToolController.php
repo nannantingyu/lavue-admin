@@ -39,6 +39,8 @@ class ToolController extends Controller
     }
 
     /** 添加工具
+     *
+     * @auth tool:update
      * @param Request $request
      * @return array
      */
@@ -73,6 +75,8 @@ class ToolController extends Controller
 
     /**
      * 获取所有的工具列表
+     *
+     * @auth tool:read
      * @param Request $request
      * @return array
      */

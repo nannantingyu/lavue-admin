@@ -56,6 +56,8 @@ class UserController extends Controller
 
     /**
      * 修改用户密码
+     *
+     * @auth user:edit
      * @param Request $request
      */
     public function setPassword(Request $request) {
@@ -86,6 +88,7 @@ class UserController extends Controller
 
     /**
      * 添加角色
+     *
      * @auth add-role:update
      * @param Request $request
      * @return array|\Illuminate\Http\JsonResponse
@@ -157,6 +160,7 @@ class UserController extends Controller
 
     /**
      * 获取所有的角色
+     *
      * @auth role-user:read
      * @param Request $request
      */
@@ -170,6 +174,7 @@ class UserController extends Controller
 
     /**
      * 获取所有的用户
+     *
      * @auth user:read
      * @param Request $request
      */
@@ -183,6 +188,7 @@ class UserController extends Controller
 
     /**
      * 获取角色下所有的用户
+     *
      * @auth role-user:read
      * @param Request $request
      */
@@ -202,6 +208,7 @@ class UserController extends Controller
 
     /**
      * 为用户添加角色
+     *
      * @auth role-user:update
      * @param Request $request
      */

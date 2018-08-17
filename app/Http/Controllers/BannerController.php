@@ -56,6 +56,8 @@ class BannerController extends Controller
 
     /**
      * 添加活动
+     *
+     * @auth banner:update
      */
     public function add(Request $request)
     {
@@ -89,6 +91,8 @@ class BannerController extends Controller
 
     /**
      * 获取所有活动
+     *
+     * @auth banner:read
      */
     public function getList(Request $request)
     {
@@ -97,6 +101,8 @@ class BannerController extends Controller
 
     /**
      * 更改banner状态
+     *
+     * @auth banner:delete
      * @param Request $request
      * @return array
      */

@@ -16,6 +16,8 @@ class CrawlArticleController extends Controller
 
     /**
      * 获取要抓取的文章列表
+     *
+     * @auth crawl-article:read
      * @return array
      */
     public function lists()
@@ -25,6 +27,8 @@ class CrawlArticleController extends Controller
 
     /**
      * 获取具体的抓取信息
+     *
+     * @auth crawl-article:read
      * @param $id int 根据id获取
      * @return array
      */
@@ -39,6 +43,8 @@ class CrawlArticleController extends Controller
 
     /**
      * 添加或者更新抓取列表
+     *
+     * @auth crawl-article:update
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @param $form array 表单数据

@@ -23,9 +23,6 @@ class MenuController extends Controller
             'area.required' => '请输入显示区域',
             'sequence.required' => '请输入排序',
             'state.required' => '是否启用',
-//            'title.required' => 'title必填',
-//            'keywords.required' => 'keywords必填',
-//            'description.required' => 'description必填',
         ];
 
         $rules = [
@@ -34,15 +31,13 @@ class MenuController extends Controller
             'area' => 'required',
             'sequence' => 'required',
             'state' => 'required',
-//            'title' => 'required',
-//            'keywords' => 'required',
-//            'description' => 'required',
         ];
 
         return Validator::make($data, $rules, $messages);
     }
 
     /** 添加菜单
+     * @auth menu:update
      * @param Request $request
      * @return array
      */
@@ -79,6 +74,7 @@ class MenuController extends Controller
 
     /**
      * 获取所有的Menu配置
+     * @auth menu:read
      * @param Request $request
      * @return array
      */

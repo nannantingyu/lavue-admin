@@ -7,6 +7,7 @@ use App\Models\CompanyCategory;
 class CompanyController extends Controller {
     /**
      * 获取配置列表
+     * @auth company:read
      * @return array
      */
     public function lists () {
@@ -15,6 +16,7 @@ class CompanyController extends Controller {
 
     /**
      * 获取具体的配置
+     * @auth company:read
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @return array
@@ -30,6 +32,7 @@ class CompanyController extends Controller {
 
     /**
      * 添加或者更新机构
+     * @auth company:update
      * @param $id int 根据id获取
      * @param $key string 根据key获取
      * @param $form array 表单数据
@@ -123,6 +126,7 @@ class CompanyController extends Controller {
 
     /**
      * 根据id设置company状态
+     * @auth company:delete
      * @param Request $request
      */
     public function setCompanyState(Request $request) {
