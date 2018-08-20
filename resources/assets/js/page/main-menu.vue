@@ -82,7 +82,7 @@
                             prop="title"
                             :label="columns['title']['title']"
                             v-if="columns['title']['show']"
-                            width="100">
+                            width="*">
                     </el-table-column>
                     <el-table-column
                             prop="description"
