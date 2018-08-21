@@ -111,7 +111,7 @@
                 <el-menu-item
                         v-if="user_module_permission['main-menu-read']"
                         index="/main-menu">
-                    <i class="el-icon-tickets"></i>
+                    <i class="el-icon-mobile-phone"></i>
                     <span slot="title">导航管理</span>
                 </el-menu-item>
                 <el-menu-item
