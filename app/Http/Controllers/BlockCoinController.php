@@ -143,6 +143,6 @@ class BlockCoinController extends Controller
      */
     private function updateBlockCoinTemplate()
     {
-//        $this->template_updater->update_page('virtualcurrency');
+        $this->template_updater->update_page('virtualcurrency');
     }
 }
