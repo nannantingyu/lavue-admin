@@ -112,6 +112,7 @@
 
                 _this.$store.dispatch('module/add_or_update_module', form)
                     .then(function(result){
+                        _this.$store.commit('module/set_default_form');
                         _this.$message.success("移动成功");
                     });
             },

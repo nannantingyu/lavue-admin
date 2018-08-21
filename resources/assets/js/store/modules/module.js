@@ -58,7 +58,18 @@ export default {
         },
         set_module_option: (state, module_option) => {
             state.module_option = module_option
-        }
+        },
+        set_default_form: (state) => {
+            state.form = {
+                id: null,
+                name: '',
+                path: '',
+                state: 1,
+                display: 1,
+                sequence: 1,
+                pid: ''
+            }
+        },
     },
     actions:{
         get_modules({commit, state}) {
