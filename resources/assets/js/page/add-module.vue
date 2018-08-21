@@ -87,6 +87,8 @@
 
                                     this.$message.success("更新成功");
                                 }
+
+                                this.$store.commit('module/set_default_form');
                             });
                     else
                         this.$message.error('请填写完整的信息！');

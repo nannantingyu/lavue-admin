@@ -78,6 +78,7 @@
         },
         methods: {
             append_module(data, node) {
+                this.$store.commit('module/set_default_form');
                 this.$store.commit('module/set_active_module', data)
                 this.$store.commit('module/set_parent_label', data.label)
                 this.$store.commit('module/set_form_val', {prop: 'pid', val: data.id})
@@ -91,6 +92,8 @@
                 children.splice(index, 1);
             },
             edit_module(data, node) {
+                this.$store.commit('module/set_default_form');
+
                 for(let k in data) {
                     this.$store.commit('module/set_form_val', {prop: k, val: data[k]})
                 }
