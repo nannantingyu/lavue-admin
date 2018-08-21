@@ -57,6 +57,12 @@ Route::get('/configInfo', 'ConfigController@info');
 Route::post('/setConfigState', 'ConfigController@setConfigState');
 Route::post('/addConfig', 'ConfigController@addConfig');
 
+// 区块链
+Route::get('/blockCoinLists', 'BlockCoinController@lists');
+Route::get('/blockCoinInfo', 'BlockCoinController@info');
+Route::post('/setBlockCoinState', 'BlockCoinController@setBlockCoinState');
+Route::post('/addBlockCoin', 'BlockCoinController@addBlockCoin');
+
 // 机构
 Route::get('/companyLists', 'CompanyController@lists');
 Route::get('/companyInfo', 'CompanyController@info');

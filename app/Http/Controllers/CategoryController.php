@@ -3,15 +3,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Config;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller {
     /**
      * 获取分类列表
-     * @auth category:read
      * @return array
      */
     public function lists () {
-        return ['success'=>1, 'data'=>Category::orderBy('sequence', 'desc')->get()];
+        $roles = Auth::user()->roles;
+        $is_super = false;
+        foreach ($roles as $role) {
+            if($role->role_name == '超级管理员'){
+                $is_super = true;
+                break;
+            }
+        }
+
+        $data = Category::orderBy('sequence', 'desc');
+        if(!$is_super) {
+            $data = $data->where('type', 'article_category');
+        }
+
+        $data = $data->get();
+        return ['success'=>1, 'data'=>$data];
     }
 
     /**

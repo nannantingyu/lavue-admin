@@ -33,6 +33,7 @@
                         v-loading="loading">
                     <el-table-column
                             prop="id"
+                            sortable
                             :label="columns['id']['title']"
                             v-if="columns['id']['show']"
                             width="50">
@@ -74,6 +75,7 @@
                     </el-table-column>
                     <el-table-column
                             prop="sequence"
+                            sortable
                             :label="columns['sequence']['title']"
                             v-if="columns['sequence']['show']"
                             width="100">
@@ -109,7 +111,7 @@
                     <el-table-column
                             fixed="right"
                             label="操作"
-                            min-width="200">
+                            width="180">
                         <template slot-scope="scope">
                             <el-button
                                     size="mini"
