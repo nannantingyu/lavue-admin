@@ -24,6 +24,7 @@ import article_need_look from "./modules/article_need_look"
 import calendar from "./modules/calendar"
 import event from "./modules/event"
 import holiday from "./modules/holiday"
+import block_coin from "./modules/block_coin"
 Vue.use(Vuex)
 import actions from "./actions"
 import mutations from "./mutations"
@@ -54,6 +55,7 @@ export default new Vuex.Store({
         article_need_look,
         calendar,
         event,
+        block_coin,
         holiday,
         template: template_generate
     },

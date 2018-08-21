@@ -153,6 +153,11 @@ export default new VueRouter({
             name: "crawl-article",
             path: '/crawl-article',
             component: resolve =>void(require(['./page/crawl-article.vue'], resolve))
+        },
+        {
+            name: "block-coin",
+            path: '/block-coin',
+            component: resolve =>void(require(['./page/block-coin.vue'], resolve))
         }
     ]
 })

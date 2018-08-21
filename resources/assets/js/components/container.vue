@@ -143,6 +143,22 @@
                     </el-menu-item-group>
                 </el-submenu>
                 <el-submenu
+                    v-if="user_module_permission['hq-read']"
+                    index="/hq">
+                    <template slot="title">
+                        <i class="el-icon-bell"></i>
+                        <span slot="title">行情</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item
+                            v-if="user_module_permission['block-coin-read']"
+                            index="/block-coin">
+                            <i class="el-icon-bell"></i>
+                            <span slot="title">区块链币种</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu
                         v-if="user_module_permission['crawl-read']"
                         index="/crawl">
                     <template slot="title">
