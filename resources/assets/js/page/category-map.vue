@@ -123,7 +123,15 @@
                     <el-input v-model="form.source_category"></el-input>
                 </el-form-item>
                 <el-form-item :label-width="formLabelWidth" label="源网站" prop="source_site">
-                    <el-input v-model="form.source_site"></el-input>
+                    <!--<el-input v-model="form.source_site"></el-input>-->
+                    <el-select v-model="form.source_site" placeholder="请选择来源站点">
+                        <el-option
+                            v-for="item in source_sites"
+                            :key="item.site"
+                            :label="item.site"
+                            :value="item.site">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label-width="formLabelWidth" label="目标分类" prop="target">
                     <el-select v-model="form.target" placeholder="请选择分类">
