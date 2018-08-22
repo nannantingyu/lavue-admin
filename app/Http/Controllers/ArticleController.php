@@ -322,7 +322,7 @@ class ArticleController extends Controller
 
     /**
      * 添加或者更新文章
-     * @auth article:edit
+     * @auth article:update
      * @param Request $request
      */
     public function addArticle(Request $request)
@@ -472,7 +472,7 @@ class ArticleController extends Controller
 
     /**
      * 添加来源网站
-     * @auth article:edit
+     * @auth article:update
      * @param Request $request
      */
     public function addOrUpdateSourceSite(Request $request) {
